@@ -1,15 +1,32 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import Favorite from "../models/Favorite";
+import { AuthRequest } from "../middlewares/authMiddleware";
 
-export const addFavorite = async (req: Request, res: Response) => {
-    const { tmdbId, title } = req.body;
-    return res.status(201).json({ message: `Film ajouté aux favoris : ${title || tmdbId}` });
-};
+export const addFavorite = async (req: AuthRequest, res: Response) => {
+    try {
+        const userId = req.userId;
+        const { tmdbId, title } = req.body;
 
-export const getFavorites = async (req: Request, res: Response) => {
-    return res.json({ message: "Liste des favoris (mock)" });
-};
+        if (!tmdbId) {
+            return res.status(400).json({ message: "tmdbId est requis" });
+        }
 
-export const removeFavorite = async (req: Request, res: Response) => {
-    const { tmdbId } = req.params;
-    return res.json({ message: `Favori supprimé : ${tmdbId}` });
+        const existing = await Favorite.findOne({ user: userId, tmdbId });
+        if (existing) {
+            return res.status(400).json({ message: "Ce film est déjà dans vos favoris" });
+        }
+
+        const favorite = new Favorite({
+            user: userId,
+            tmdbId,
+            title
+        });
+
+        await favorite.save();
+
+        res.status(201).json({ message: "Favori ajouté", favorite });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
 };

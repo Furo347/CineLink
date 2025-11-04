@@ -1,14 +1,22 @@
 import { Request, Response } from "express";
 import User from "../models/User";
 import bcrypt from "bcryptjs";
-import * as jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { validationResult } from "express-validator";
 
 dotenv.config();
 
-const jwtSecret: jwt.Secret = process.env.JWT_SECRET || "dev_secret";
-const jwtExpires = process.env.JWT_EXPIRES_IN || "7d";
+if (!process.env.JWT_SECRET || !process.env.JWT_EXPIRES_IN) {
+    throw new Error("JWT_SECRET et JWT_EXPIRES_IN doivent être définis dans le .env")
+}
+
+interface JwtPayload {
+    userId: string;
+}
+
+const jwtSecret = process.env.JWT_SECRET as string;
+const jwtExpires = process.env.JWT_EXPIRES_IN as string;
 
 export const register = async (req: Request, res: Response) => {
     const errors = validationResult(req);
@@ -25,7 +33,12 @@ export const register = async (req: Request, res: Response) => {
         const user = new User({ email, password: hashed, name });
         await user.save();
 
-        const token = jwt.sign({ userId: user._id }, jwtSecret, { expiresIn: jwtExpires });
+        const token = jwt.sign(
+            { userId: user._id },
+            jwtSecret,
+            { expiresIn: jwtExpires } as jwt.SignOptions
+        );
+
         res.status(201).json({ token, user: { id: user._id, email: user.email, name: user.name } });
     } catch (err) {
         console.error(err);
@@ -45,7 +58,12 @@ export const login = async (req: Request, res: Response) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Identifiants invalides" });
 
-        const token = jwt.sign({ userId: user._id }, jwtSecret, { expiresIn: jwtExpires });
+        const token = jwt.sign(
+            { userId: user._id },
+            jwtSecret,
+            { expiresIn: jwtExpires } as jwt.SignOptions
+        );
+
         res.json({ token, user: { id: user._id, email: user.email, name: user.name } });
     } catch (err) {
         console.error(err);
