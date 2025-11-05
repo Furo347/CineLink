@@ -28,4 +28,4 @@ const start = async () => {
 
 start();
 
-export default app; // utile pour les tests
+export default app;

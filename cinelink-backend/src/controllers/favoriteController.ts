@@ -2,6 +2,18 @@ import { Response } from "express";
 import Favorite from "../models/Favorite";
 import { AuthRequest } from "../middlewares/authMiddleware";
 
+export const getFavorites = async (req: any, res: Response) => {
+    try {
+        const userId = req.user.id;
+        const favorites = await Favorite.find({ user:userId });
+        console.log("userId envoyé au find():", req.user.id);
+        res.json(favorites);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+};
+
 export const addFavorite = async (req: AuthRequest, res: Response) => {
     try {
         const userId = req.userId;

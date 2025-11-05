@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export interface IFavorite extends Document {
     user: mongoose.Types.ObjectId;
-    tmdbId: number; // id du film TMDB
+    tmdbId: number;
     title?: string;
     createdAt: Date;
 }
