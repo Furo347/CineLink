@@ -11,10 +11,6 @@ if (!process.env.JWT_SECRET || !process.env.JWT_EXPIRES_IN) {
     throw new Error("JWT_SECRET et JWT_EXPIRES_IN doivent être définis dans le .env")
 }
 
-interface JwtPayload {
-    userId: string;
-}
-
 const jwtSecret = process.env.JWT_SECRET as string;
 const jwtExpires = process.env.JWT_EXPIRES_IN as string;
 

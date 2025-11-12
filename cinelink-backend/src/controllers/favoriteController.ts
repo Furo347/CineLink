@@ -2,15 +2,49 @@ import { Response } from "express";
 import Favorite from "../models/Favorite";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import mongoose from "mongoose";
+import axios from "axios";
+
+async function fetchMovieDetails(tmdbId: number) {
+    try {
+        const response = await axios.get(
+            `https://api.themoviedb.org/3/movie/${tmdbId}?api_key=${process.env.TMDB_API_KEY}&language=fr-FR`
+        );
+        return response.data;
+    } catch (err) {
+        console.error(`Erreur TMDB pour le film ${tmdbId}:`, err);
+        return null;
+    }
+}
 
 export const getFavorites = async (req: any, res: Response) => {
     try {
-        const userId = req.user.id;
-        const favorites = await Favorite.find({ user:userId });
-        console.log("userId envoyé au find():", req.user.id);
-        res.json(favorites);
+        const userId = new mongoose.Types.ObjectId(req.user.id);
+        const favorites = await Favorite.find({ user: userId });
+
+        if (!favorites.length) {
+            return res.json([]);
+        }
+
+        const enrichedFavorites = await Promise.all(
+            favorites.map(async (fav) => {
+                const movie = await fetchMovieDetails(fav.tmdbId);
+
+                return {
+                    _id: fav._id,
+                    tmdbId: fav.tmdbId,
+                    title: movie?.title ?? fav.title, // fallback si TMDB échoue
+                    poster: movie?.poster_path
+                        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                        : null,
+                    overview: movie?.overview ?? "Aucune description disponible",
+                    vote_average: movie?.vote_average ?? null,
+                };
+            })
+        );
+
+        res.json(enrichedFavorites);
     } catch (err) {
-        console.error(err);
+        console.error("Erreur serveur:", err);
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -29,12 +63,7 @@ export const addFavorite = async (req: AuthRequest, res: Response) => {
             return res.status(400).json({ message: "Ce film est déjà dans vos favoris" });
         }
 
-        const favorite = new Favorite({
-            user: userId,
-            tmdbId,
-            title
-        });
-
+        const favorite = new Favorite({ user: userId, tmdbId, title });
         await favorite.save();
 
         res.status(201).json({ message: "Favori ajouté", favorite });
@@ -49,7 +78,6 @@ export const deleteFavorite = async (req: any, res: Response) => {
         const userId = new mongoose.Types.ObjectId(req.user.id);
         const favoriteId = req.params.id;
 
-        // Vérifie que le favori existe et appartient bien à l'utilisateur
         const favorite = await Favorite.findOne({ _id: favoriteId, user: userId });
 
         if (!favorite) {
