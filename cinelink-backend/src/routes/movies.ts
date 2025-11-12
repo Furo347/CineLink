@@ -3,7 +3,7 @@ import { getPopularMovies, searchMovies } from "../controllers/movieController";
 
 const router = Router();
 
-router.get("/", getPopularMovies); // GET /api/movies
-router.get("/search", searchMovies); // GET /api/movies/search?q=...
+router.get("/", getPopularMovies);
+router.get("/search", searchMovies);
 
 export default router;

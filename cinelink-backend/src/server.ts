@@ -5,6 +5,7 @@ import { connectDB } from "./config/db";
 import authRoutes from "./routes/auth";
 import movieRoutes from "./routes/movies";
 import favoriteRoutes from "./routes/favorites";
+import searchRoutes from "./routes/search";
 
 dotenv.config();
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/movies", movieRoutes);
 app.use("/api/favorites", favoriteRoutes);
+app.use("/api/search", searchRoutes);
 
 const PORT = process.env.PORT || 3000;
 
