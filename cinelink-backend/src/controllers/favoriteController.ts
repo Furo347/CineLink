@@ -32,12 +32,13 @@ export const getFavorites = async (req: any, res: Response) => {
                 return {
                     _id: fav._id,
                     tmdbId: fav.tmdbId,
-                    title: movie?.title ?? fav.title, // fallback si TMDB échoue
+                    title: movie?.title ?? fav.title,
                     poster: movie?.poster_path
                         ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
                         : null,
                     overview: movie?.overview ?? "Aucune description disponible",
                     vote_average: movie?.vote_average ?? null,
+                    rating: fav.rating ?? null
                 };
             })
         );
@@ -89,5 +90,30 @@ export const deleteFavorite = async (req: any, res: Response) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Erreur serveur" });
+    }
+};
+
+export const rateFavorite = async (req: any, res: Response) => {
+    try {
+        const userId = new mongoose.Types.ObjectId(req.user.id);
+        const favoriteId = req.params.id;
+        const { rating } = req.body;
+
+        if (rating === undefined || rating < 0 || rating > 10) {
+            return res.status(400).json({ message: "La note doit être comprise entre 0 et 10." });
+        }
+
+        const favorite = await Favorite.findOne({ _id: favoriteId, user: userId });
+        if (!favorite) {
+            return res.status(404).json({ message: "Favori introuvable ou non autorisé." });
+        }
+
+        favorite.rating = rating;
+        await favorite.save();
+
+        res.json({ message: "Note enregistrée avec succès.", favorite });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Erreur serveur." });
     }
 };
