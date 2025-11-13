@@ -1,9 +1,9 @@
-import { Router } from "express";
-import { getPopularMovies, searchMovies } from "../controllers/movieController";
+import express from "express";
+import { getPopularMovies } from "../controllers/moviesController";
+import { authMiddleware } from "../middlewares/authMiddleware";
 
-const router = Router();
+const router = express.Router();
 
-router.get("/", getPopularMovies);
-router.get("/search", searchMovies);
+router.get("/popular", authMiddleware, getPopularMovies);
 
 export default router;

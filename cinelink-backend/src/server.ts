@@ -3,7 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
 import authRoutes from "./routes/auth";
-import movieRoutes from "./routes/movies";
+import moviesRoutes from "./routes/movies";
 import favoriteRoutes from "./routes/favorites";
 import searchRoutes from "./routes/search";
 
@@ -15,7 +15,7 @@ app.use(express.json());
 
 // routes
 app.use("/api/auth", authRoutes);
-app.use("/api/movies", movieRoutes);
+app.use("/api/movies", moviesRoutes);
 app.use("/api/favorites", favoriteRoutes);
 app.use("/api/search", searchRoutes);
 
