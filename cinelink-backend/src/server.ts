@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth";
 import moviesRoutes from "./routes/movies";
 import favoriteRoutes from "./routes/favorites";
 import searchRoutes from "./routes/search";
+import commentRoutes from "./routes/comments";
 
 dotenv.config();
 const app = express();
@@ -18,6 +19,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/movies", moviesRoutes);
 app.use("/api/favorites", favoriteRoutes);
 app.use("/api/search", searchRoutes);
+app.use("/api/comments", commentRoutes);
 
 const PORT = process.env.PORT || 3000;
 
