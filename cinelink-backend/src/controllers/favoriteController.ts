@@ -3,6 +3,7 @@ import Favorite from "../models/Favorite";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import mongoose from "mongoose";
 import axios from "axios";
+import {logActivity} from "../utils/activityLogger";
 
 async function fetchMovieDetails(tmdbId: number) {
     try {
@@ -67,6 +68,12 @@ export const addFavorite = async (req: AuthRequest, res: Response) => {
         const favorite = new Favorite({ user: userId, tmdbId, title });
         await favorite.save();
 
+        await logActivity({
+            actor: userId!,
+            type: "ADD_FAVORITE",
+            targetMovie: tmdbId
+        });
+
         res.status(201).json({ message: "Favori ajouté", favorite });
     } catch (err) {
         console.error(err);
@@ -110,6 +117,13 @@ export const rateFavorite = async (req: any, res: Response) => {
 
         favorite.rating = rating;
         await favorite.save();
+
+        await logActivity({
+            actor: userId.toString(),
+            type: "RATE_MOVIE",
+            targetMovie: favorite.tmdbId,
+            payload: { rating }
+        });
 
         res.json({ message: "Note enregistrée avec succès.", favorite });
     } catch (err) {

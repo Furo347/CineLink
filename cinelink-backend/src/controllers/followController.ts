@@ -2,6 +2,7 @@ import { Response } from "express";
 import Follow from "../models/Follow";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import mongoose from "mongoose";
+import {logActivity} from "../utils/activityLogger";
 
 export const followUser = async (req: AuthRequest, res: Response) => {
     try {
@@ -19,6 +20,13 @@ export const followUser = async (req: AuthRequest, res: Response) => {
 
         const relation = new Follow({ follower: followerId, following: followingId });
         await relation.save();
+
+        await logActivity({
+            actor: followerId.toString(),
+            type: "FOLLOW_USER",
+            targetUser: followingId.toString()
+        });
+
 
         res.status(201).json({ message: "Utilisateur suivi" });
     } catch (error) {

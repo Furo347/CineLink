@@ -2,6 +2,7 @@ import { Response } from "express";
 import mongoose from "mongoose";
 import Comment from "../models/Comment";
 import { AuthRequest } from "../middlewares/authMiddleware";
+import {logActivity} from "../utils/activityLogger";
 
 export const addComment = async (req: AuthRequest, res: Response) => {
     try {
@@ -19,6 +20,14 @@ export const addComment = async (req: AuthRequest, res: Response) => {
         });
 
         await comment.save();
+
+        await logActivity({
+            actor: userId!,
+            type: "COMMENT_MOVIE",
+            targetMovie: movieId,
+            payload: { comment }
+        });
+
 
         res.status(201).json({
             message: "Commentaire ajouté",
