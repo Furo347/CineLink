@@ -1,11 +1,9 @@
 import mongoose from "mongoose";
 
-const mongoUri = process.env.MONGO_URI || "mongodb://localhost:27017/cinelink";
-
-export const connectDB = async () => {
+export const connectDB = async (mongoUri?: string) => {
     try {
-        await mongoose.connect(mongoUri);
-        console.log("MongoDB connected");
+        const uri = mongoUri || process.env.MONGO_URI!;
+        await mongoose.connect(uri);
     } catch (err) {
         console.error("MongoDB connection error:", err);
         process.exit(1);
