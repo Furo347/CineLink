@@ -1,0 +1,57 @@
+name: Backend CI
+
+on:
+  push:
+    paths:
+      - "cinelink-backend/**"
+  pull_request:
+    paths:
+      - "cinelink-backend/**"
+
+jobs:
+  backend:
+    name: Test & Build Backend
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      NODE_ENV: test
+      MONGO_URI: mongodb://localhost:27017/cinelink_test
+      JWT_SECRET: test-secret
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: cinelink-backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: cinelink-backend
+        run: npm ci
+
+      - name: Run tests
+        working-directory: cinelink-backend
+        run: npm test
+
+      - name: Build project
+        working-directory: cinelink-backend
+        run: npm run build
+
+      - name: Docker build (validation)
+        working-directory: cinelink-backend
+        run: docker build -t cinelink-backend:test .
