@@ -1,14 +1,14 @@
 import AuthLayout from "../components/AuthLayout";
 
-export default function LoginPage() {
+export default function RegisterPage() {
     return (
         <AuthLayout>
             <h2 className="text-xl text-text-primary mb-4">
-                Se connecter
+                Créer un compte
             </h2>
 
             <p className="text-text-secondary">
-                Login form à venir
+                Register form à venir
             </p>
         </AuthLayout>
     );
