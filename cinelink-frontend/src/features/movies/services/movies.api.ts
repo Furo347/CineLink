@@ -3,12 +3,12 @@ import type { Movie } from "../types";
 
 export const moviesApi = {
     getAll: async (): Promise<Movie[]> => {
-        const response = await api.get<Movie[]>("/movies");
+        const response = await api.get<Movie[]>("/api/movies");
         return response.data;
     },
 
     getById: async (id: string): Promise<Movie> => {
-        const response = await api.get<Movie>(`/movies/${id}`);
+        const response = await api.get<Movie>(`/api/movies/${id}`);
         return response.data;
     },
 };
