@@ -6,6 +6,8 @@ import { favoritesApi } from "../favorites.api";
 import type { Favorite } from "../favorites.types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+
 
 export default function FavoritesPage() {
     const [items, setItems] = useState<Favorite[]>([]);
@@ -71,24 +73,29 @@ export default function FavoritesPage() {
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {items.map((f) => (
                         <Card key={f._id} className="overflow-hidden bg-white/5">
-                            <div className="relative aspect-[16/9] w-full overflow-hidden">
-                                {f.poster ? (
-                                    <img
-                                        src={f.poster}
-                                        alt={f.title}
-                                        className="h-full w-full object-cover"
-                                        loading="lazy"
-                                    />
-                                ) : (
-                                    <div className="h-full w-full bg-gradient-to-br from-white/10 to-white/0" />
-                                )}
-                                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                            </div>
+                            <Link to={`/app/movies/${f.tmdbId}`} className="block group">
+                                <div className="relative aspect-[16/9] w-full overflow-hidden">
+                                    {f.poster ? (
+                                        <img
+                                            src={f.poster}
+                                            alt={f.title}
+                                            className="h-full w-full object-cover group-hover:scale-[1.02] transition duration-300"
+                                            loading="lazy"
+                                        />
+                                    ) : (
+                                        <div className="h-full w-full bg-gradient-to-br from-white/10 to-white/0" />
+                                    )}
+                                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                                </div>
+                            </Link>
+
 
                             <CardContent className="space-y-3">
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="min-w-0">
-                                        <div className="text-lg font-semibold leading-snug line-clamp-2">{f.title}</div>
+                                        <Link to={`/app/movies/${f.tmdbId}`} className="hover:underline underline-offset-4">
+                                            <div className="text-lg font-semibold leading-snug line-clamp-2">{f.title}</div>
+                                        </Link>
                                         <div className="text-xs text-text-secondary">TMDB #{f.tmdbId}</div>
                                     </div>
 

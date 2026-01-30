@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from "react-router-dom";
-import { Film, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { authStorage } from "@/services/auth.storage";
 import { cn } from "@/lib/utils";
@@ -10,12 +10,14 @@ export default function AppShell() {
             <header className="sticky top-0 z-10 border-b border-white/10 bg-background/80 backdrop-blur">
                 <div className="px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <div className="h-10 w-10 rounded-2xl bg-primary/15 border border-primary/25 flex items-center justify-center">
-                            <Film className="h-5 w-5 text-primary" />
-                        </div>
+                        <img
+                            src="/logo.svg"
+                            alt="CineLink Logo"
+                            className="h-10 w-10"
+                        />
                         <div>
                             <div className="font-semibold leading-none">CineLink</div>
-                            <div className="text-xs text-text-secondary">Your cinema graph</div>
+                            <div className="text-xs text-text-secondary">Re-découvrez le cinéma !</div>
                         </div>
                     </div>
 

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Background -->
+  <circle cx="16" cy="16" r="15" fill="#0f0f0f"></circle>
+
+  <!-- Clapper body -->
+  <rect x="7" y="13" width="18" height="11" rx="2" fill="#1a1a1a" stroke="#ff2d2d" stroke-width="1.5"></rect>
+
+  <!-- Clapper top (tilted) -->
+  <g transform="rotate(-12 16 11)">
+    <rect x="7" y="8" width="18" height="4" rx="1" fill="#ff2d2d"></rect>
+    <!-- stripes -->
+    <line x1="9" y1="8" x2="12" y2="12" stroke="#0f0f0f" stroke-width="1"></line>
+    <line x1="13" y1="8" x2="16" y2="12" stroke="#0f0f0f" stroke-width="1"></line>
+    <line x1="17" y1="8" x2="20" y2="12" stroke="#0f0f0f" stroke-width="1"></line>
+    <line x1="21" y1="8" x2="24" y2="12" stroke="#0f0f0f" stroke-width="1"></line>
+  </g>
+
+  <!-- Subtle play hint (cinema + platform) -->
+  <polygon points="15,16 20,18.5 15,21" fill="#ff2d2d"></polygon>
+
+</svg>

@@ -12,11 +12,17 @@ import { SectionTitle, SectionHint } from "@/components/ui/section";
 import { favoritesApi } from "@/features/favorites/favorites.api";
 import CommentsSection from "@/features/comments/components/CommentsSection";
 
+import { useRef } from "react";
+import type { CommentsSectionRef } from "@/features/comments/components/CommentsSection";
+
+
 
 export default function MovieDetailsPage() {
     const { id } = useParams();
     const [movie, setMovie] = useState<Movie | null>(null);
     const [loading, setLoading] = useState(true);
+
+    const commentsRef = useRef<CommentsSectionRef>(null);
 
     useEffect(() => {
         if (!id) return;
@@ -56,6 +62,7 @@ export default function MovieDetailsPage() {
             </div>
         );
     }
+
     getPoster(movie);
     const trailerKey =
         movie.videos?.find((v) => v.type === "Trailer")?.key ??
@@ -120,7 +127,15 @@ export default function MovieDetailsPage() {
                             >
                                 Ajouter aux favoris
                             </Button>
-                            <Button variant="secondary">Commenter</Button>
+                            <Button
+                                variant="secondary"
+                                onClick={() => {
+                                    commentsRef.current?.focus();
+                                    document.getElementById("comments")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                                }}
+                            >
+                                Commenter
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -162,9 +177,10 @@ export default function MovieDetailsPage() {
                     ) : null}
 
                     {/* COMMENTS */}
-                    <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                        <CommentsSection movieId={movie.tmdbId} />
+                    <div id="comments" className="mt-10">
+                        <CommentsSection ref={commentsRef} movieId={movie.tmdbId} />
                     </div>
+
                 </div>
 
                 {/* TRAILER */}
