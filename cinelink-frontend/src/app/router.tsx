@@ -8,6 +8,8 @@ import RegisterPage from "@/features/auth/pages/RegisterPage";
 import MoviesPage from "@/features/movies/pages/MoviesPage";
 import MovieDetailsPage from "@/features/movies/pages/MovieDetailsPage";
 
+import FavoritesPage from "@/features/favorites/pages/FavoritesPage";
+
 export const router = createBrowserRouter([
     { path: "/", element: <Navigate to="/login" replace /> },
     { path: "/login", element: <LoginPage /> },
@@ -22,6 +24,7 @@ export const router = createBrowserRouter([
                 children: [
                     { path: "movies", element: <MoviesPage /> },
                     { path: "movies/:id", element: <MovieDetailsPage /> },
+                    { path: "favorites", element: <FavoritesPage /> },
                 ],
             },
         ],

@@ -32,6 +32,18 @@ export default function AppShell() {
                             Catalogue
                         </NavLink>
 
+                        <NavLink
+                            to="/app/favorites"
+                            className={({ isActive }) =>
+                                cn(
+                                    "text-sm px-3 py-2 rounded-xl border border-white/10 hover:bg-white/10 transition",
+                                    isActive ? "bg-white/10 text-text-primary" : "text-text-secondary"
+                                )
+                            }
+                        >
+                            Favoris
+                        </NavLink>
+
                         <Button
                             variant="secondary"
                             size="sm"

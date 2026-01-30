@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getPoster } from "../movies.types";
+import {favoritesApi} from "@/features/favorites/favorites.api.ts";
 
 export default function MovieDetailsPage() {
     const { id } = useParams();
@@ -88,7 +89,18 @@ export default function MovieDetailsPage() {
                     )}
 
                     <div className="mt-6 flex gap-3">
-                        <Button>Ajouter aux favoris</Button>
+                        <Button
+                            onClick={async () => {
+                                try {
+                                    await favoritesApi.add({ tmdbId: movie.tmdbId, title: movie.title });
+                                    toast.success("Ajouté aux favoris");
+                                } catch {
+                                    toast.error("Impossible d’ajouter aux favoris");
+                                }
+                            }}
+                        >
+                            Ajouter aux favoris
+                        </Button>
                         <Button variant="secondary">Commenter</Button>
                     </div>
                 </div>
