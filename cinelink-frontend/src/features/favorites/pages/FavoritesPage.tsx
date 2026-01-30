@@ -40,7 +40,9 @@ export default function FavoritesPage() {
     const rate = async (id: string, rating: number) => {
         try {
             const updated = await favoritesApi.rate(id, rating);
-            setItems((prev) => prev.map((f) => (f._id === id ? updated : f)));
+            setItems((prev) =>
+                prev.map((f) => (f._id === id ? { ...f, ...updated } : f))
+            );
             toast.success("Note enregistrée");
         } catch {
             toast.error("Impossible d’enregistrer la note");
@@ -107,7 +109,7 @@ export default function FavoritesPage() {
 
                                 <div className="pt-2 flex items-center justify-between">
                                     <div className="flex items-center gap-1">
-                                        {[1, 2, 3, 4, 5].map((n) => (
+                                        {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
                                             <button
                                                 key={n}
                                                 onClick={() => rate(f._id, n)}
@@ -116,7 +118,7 @@ export default function FavoritesPage() {
                                             >
                                                 <Star
                                                     className={`h-5 w-5 ${
-                                                        (f.rating ?? 0) >= n ? "text-primary" : "text-text-secondary"
+                                                        (f.rating ?? 0) >= n ? "text-primary fill-primary" : "text-text-secondary"
                                                     }`}
                                                 />
                                             </button>
@@ -124,8 +126,9 @@ export default function FavoritesPage() {
                                     </div>
 
                                     <div className="text-xs text-text-secondary">
-                                        Ta note : <span className="text-text-primary font-medium">{f.rating ?? "-"}</span>/5
+                                        Ta note : <span className="text-text-primary font-medium">{f.rating ?? "-"}</span>/10
                                     </div>
+
                                 </div>
                             </CardContent>
                         </Card>

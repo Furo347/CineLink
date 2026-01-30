@@ -108,17 +108,14 @@ export default function MovieDetailsPage() {
                             <Button
                                 onClick={async () => {
                                     try {
-                                        await favoritesApi.add({
-                                            tmdbId: movie.tmdbId,
-                                            title: movie.title,
-                                            poster: movie.poster,
-                                            overview: movie.overview,
-                                            vote_average: movie.vote_average,
-                                        });
+                                        await favoritesApi.add({ tmdbId: movie.tmdbId, title: movie.title });
                                         toast.success("Ajouté aux favoris");
-                                    } catch {
-                                        toast.error("Impossible d’ajouter aux favoris");
+                                    } catch (e: any) {
+                                        const msg = e?.response?.data?.message;
+                                        if (msg?.includes("déjà")) toast.info("Déjà dans tes favoris");
+                                        else toast.error("Impossible d’ajouter aux favoris");
                                     }
+
                                 }}
                             >
                                 Ajouter aux favoris

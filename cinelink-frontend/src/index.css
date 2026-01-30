@@ -9,3 +9,10 @@
 
     --radius-xl: 0.75rem;
 }
+
+[data-sonner-toaster] {
+    pointer-events: none;
+}
+[data-sonner-toast] {
+    pointer-events: auto;
+}
