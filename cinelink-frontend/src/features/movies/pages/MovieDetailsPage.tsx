@@ -163,7 +163,7 @@ export default function MovieDetailsPage() {
 
                     {/* COMMENTS */}
                     <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                        <CommentsSection movieId={String(movie.tmdbId)} />
+                        <CommentsSection movieId={movie.tmdbId} />
                     </div>
                 </div>
 

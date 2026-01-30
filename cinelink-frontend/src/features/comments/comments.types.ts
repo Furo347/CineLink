@@ -1,10 +1,13 @@
+export interface CommentUser {
+    _id: string;
+    name: string;
+    email?: string;
+}
+
 export interface Comment {
     _id: string;
-    movieId: string;
+    movieId: number;
     content: string;
-    user?: {
-        _id: string;
-        username?: string;
-    };
-    createdAt?: string;
+    createdAt: string;
+    user: CommentUser | string;
 }

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-export default function CommentsSection({ movieId }: { movieId: string }) {
+export default function CommentsSection({ movieId }: { movieId: number }) {
     const [items, setItems] = useState<Comment[]>([]);
     const [loading, setLoading] = useState(true);
     const [content, setContent] = useState("");
@@ -52,8 +52,10 @@ export default function CommentsSection({ movieId }: { movieId: string }) {
             await commentsApi.remove(id);
             setItems((prev) => prev.filter((c) => c._id !== id));
             toast.success("Commentaire supprimé");
-        } catch {
-            toast.error("Suppression impossible");
+        } catch (e: any) {
+            const msg = e?.response?.data?.message;
+            if (msg?.includes("Non autorisé")) toast.error("Tu ne peux supprimer que tes commentaires.");
+            else toast.error("Suppression impossible");
         }
     };
 
@@ -86,23 +88,27 @@ export default function CommentsSection({ movieId }: { movieId: string }) {
                 </div>
             ) : (
                 <div className="space-y-3">
-                    {items.map((c) => (
-                        <Card key={c._id} className="bg-white/5">
-                            <CardContent className="flex items-start justify-between gap-4">
-                                <div className="min-w-0">
-                                    <div className="text-sm text-text-secondary">
-                                        {c.user?.username ?? "Utilisateur"} •{" "}
-                                        {c.createdAt ? new Date(c.createdAt).toLocaleString() : ""}
-                                    </div>
-                                    <div className="mt-2 text-text-primary">{c.content}</div>
-                                </div>
+                    {items.map((c) => {
+                        const author = typeof c.user === "string" ? "Utilisateur" : (c.user?.name ?? "Utilisateur");
 
-                                <Button variant="secondary" size="sm" onClick={() => remove(c._id)}>
-                                    <Trash2 className="h-4 w-4" />
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    ))}
+                        return (
+                            <Card key={c._id} className="bg-white/5">
+                                <CardContent className="flex items-start justify-between gap-4">
+                                    <div className="min-w-0">
+                                        <div className="text-sm text-text-secondary">
+                                            {author} • {c.createdAt ? new Date(c.createdAt).toLocaleString() : ""}
+                                        </div>
+
+                                        <div className="mt-2 text-text-primary">{c.content}</div>
+                                    </div>
+
+                                    <Button variant="secondary" size="sm" onClick={() => remove(c._id)}>
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        );
+                    })}
                 </div>
             )}
         </div>
