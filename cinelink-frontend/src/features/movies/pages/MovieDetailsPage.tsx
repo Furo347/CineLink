@@ -92,7 +92,13 @@ export default function MovieDetailsPage() {
                         <Button
                             onClick={async () => {
                                 try {
-                                    await favoritesApi.add({ tmdbId: movie.tmdbId, title: movie.title });
+                                    await favoritesApi.add({
+                                        tmdbId: movie.tmdbId,
+                                        title: movie.title,
+                                        poster: movie.poster,
+                                        overview: movie.overview,
+                                        vote_average: movie.vote_average,
+                                    });
                                     toast.success("Ajouté aux favoris");
                                 } catch {
                                     toast.error("Impossible d’ajouter aux favoris");

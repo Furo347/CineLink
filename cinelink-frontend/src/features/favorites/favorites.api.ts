@@ -2,7 +2,7 @@ import { api } from "@/services/api";
 import type { Favorite } from "./favorites.types";
 
 export const favoritesApi = {
-    add: async (payload: { tmdbId: number; title: string }): Promise<Favorite> => {
+    add: async (payload: { tmdbId: number; title: string; poster?: string|null; overview?: string; vote_average?: number }):Promise<Favorite> => {
         const { data } = await api.post<Favorite>("/api/favorites", payload);
         return data;
     },

@@ -66,15 +66,47 @@ export default function FavoritesPage() {
                     </p>
                 </div>
             ) : (
-                <div className="grid gap-4 lg:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {items.map((f) => (
-                        <Card key={f._id} className="bg-white/5">
-                            <CardContent className="flex items-start justify-between gap-4">
-                                <div className="min-w-0">
-                                    <div className="text-lg font-semibold">{f.title}</div>
-                                    <div className="text-sm text-text-secondary">TMDB #{f.tmdbId}</div>
+                        <Card key={f._id} className="overflow-hidden bg-white/5">
+                            <div className="relative aspect-[16/9] w-full overflow-hidden">
+                                {f.poster ? (
+                                    <img
+                                        src={f.poster}
+                                        alt={f.title}
+                                        className="h-full w-full object-cover"
+                                        loading="lazy"
+                                    />
+                                ) : (
+                                    <div className="h-full w-full bg-gradient-to-br from-white/10 to-white/0" />
+                                )}
+                                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                            </div>
 
-                                    <div className="mt-4 flex items-center gap-2">
+                            <CardContent className="space-y-3">
+                                <div className="flex items-start justify-between gap-3">
+                                    <div className="min-w-0">
+                                        <div className="text-lg font-semibold leading-snug line-clamp-2">{f.title}</div>
+                                        <div className="text-xs text-text-secondary">TMDB #{f.tmdbId}</div>
+                                    </div>
+
+                                    <Button variant="secondary" size="sm" onClick={() => remove(f._id)}>
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                </div>
+
+                                {typeof f.vote_average === "number" && (
+                                    <div className="text-sm text-text-secondary">
+                                        Note TMDB : <span className="text-text-primary font-medium">{f.vote_average.toFixed(1)}</span>
+                                    </div>
+                                )}
+
+                                {f.overview && (
+                                    <p className="text-sm text-text-secondary line-clamp-3">{f.overview}</p>
+                                )}
+
+                                <div className="pt-2 flex items-center justify-between">
+                                    <div className="flex items-center gap-1">
                                         {[1, 2, 3, 4, 5].map((n) => (
                                             <button
                                                 key={n}
@@ -90,12 +122,11 @@ export default function FavoritesPage() {
                                             </button>
                                         ))}
                                     </div>
-                                </div>
 
-                                <Button variant="secondary" size="sm" onClick={() => remove(f._id)}>
-                                    <Trash2 className="h-4 w-4" />
-                                    Supprimer
-                                </Button>
+                                    <div className="text-xs text-text-secondary">
+                                        Ta note : <span className="text-text-primary font-medium">{f.rating ?? "-"}</span>/5
+                                    </div>
+                                </div>
                             </CardContent>
                         </Card>
                     ))}
