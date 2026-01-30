@@ -77,14 +77,13 @@ export default function MovieDetailsPage() {
                     <h1 className="text-3xl font-semibold tracking-tight">{movie.title}</h1>
 
                     <div className="mt-3 flex flex-wrap gap-2">
-                        {movie.releaseDate && <Badge>{movie.releaseDate.slice(0, 4)}</Badge>}
-                        {movie.genres?.map((g) => <Badge key={g}>{g}</Badge>)}
-                        {typeof movie.rating === "number" && <Badge>⭐ {movie.rating.toFixed(1)}</Badge>}
+                        {movie.release_date && <Badge>{movie.release_date.slice(0, 4)}</Badge>}
+                        {typeof movie.vote_average === "number" && <Badge>⭐ {movie.vote_average.toFixed(1)}</Badge>}
                     </div>
 
-                    {movie.description && (
+                    {movie.overview && (
                         <p className="mt-5 text-text-secondary leading-relaxed">
-                            {movie.description}
+                            {movie.overview}
                         </p>
                     )}
 

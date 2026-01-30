@@ -1,22 +1,16 @@
-export type MovieId = string;
-
 export interface Movie {
-    _id?: string;
-    id?: string;
+    tmdbId: number;
     title: string;
-    description?: string;
-    releaseDate?: string;
-    posterUrl?: string;
-    poster?: string;
-    backdropUrl?: string;
-    genres?: string[];
-    rating?: number;
+    poster: string | null;
+    overview: string;
+    vote_average: number;
+    release_date: string;
 }
 
-export function getMovieId(m: Movie): MovieId {
-    return (m.id ?? m._id ?? "") as MovieId;
+export function getMovieId(m: Movie): string {
+    return String(m.tmdbId);
 }
 
-export function getPoster(m: Movie): string | undefined {
-    return m.posterUrl ?? m.poster;
+export function getPoster(m: Movie): string | null {
+    return m.poster;
 }

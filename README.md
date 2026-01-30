@@ -35,7 +35,7 @@ cinelink-backend/
 │  ├─ routes/             # Définition des routes API
 │  ├─ controllers/        # Logique métier
 │  ├─ models/             # Modèles Mongoose
-│  ├─ middleware/         # Middlewares (auth, etc.)
+│  ├─ middlewares/        # Middlewares (auth, etc.)
 │  └─ utils/              # Fonctions utilitaires
 ├─ tests/                 # Tests automatisés
 ├─ Dockerfile
@@ -104,7 +104,7 @@ L'API est accessible sur : `http://localhost:3000`
 
 | Méthode | Endpoint | Description | Auth |
 |---------|----------|-------------|------|
-| GET | `/api/movies` | Liste des films | ✅ |
+| GET | `/api/movies/popular` | Liste des films populaires | ✅ |
 | GET | `/api/movies/:id` | Détails d'un film | ✅ |
 
 ### Recherche
@@ -117,23 +117,26 @@ L'API est accessible sur : `http://localhost:3000`
 
 | Méthode | Endpoint | Description | Auth |
 |---------|----------|-------------|------|
-| POST | `/api/favorites/:movieId` | Ajouter un favori | ✅ |
-| DELETE | `/api/favorites/:movieId` | Supprimer un favori | ✅ |
+| POST | `/api/favorites` | Ajouter un favori (body: tmdbId, title) | ✅ |
 | GET | `/api/favorites` | Liste des favoris | ✅ |
+| DELETE | `/api/favorites/:id` | Supprimer un favori | ✅ |
+| PUT | `/api/favorites/:id/rate` | Noter un favori | ✅ |
 
 ### Commentaires
 
 | Méthode | Endpoint | Description | Auth |
 |---------|----------|-------------|------|
-| POST | `/api/comments/:movieId` | Ajouter un commentaire | ✅ |
+| POST | `/api/comments` | Ajouter un commentaire (body: movieId, content) | ✅ |
 | GET | `/api/comments/:movieId` | Liste des commentaires d'un film | ❌ |
+| DELETE | `/api/comments/:id` | Supprimer un commentaire | ✅ |
 
 ### Relations (follow)
 
 | Méthode | Endpoint | Description | Auth |
 |---------|----------|-------------|------|
-| POST | `/api/follow/:userId` | Suivre un utilisateur | ✅ |
-| DELETE | `/api/follow/:userId` | Ne plus suivre | ✅ |
+| POST | `/api/follow/:id` | Suivre un utilisateur | ✅ |
+| DELETE | `/api/follow/:id` | Ne plus suivre | ✅ |
+| GET | `/api/follow` | Liste des abonnements | ✅ |
 
 ### Fil d'actualité
 

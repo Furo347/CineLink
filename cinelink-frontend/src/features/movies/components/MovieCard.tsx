@@ -37,17 +37,18 @@ export default function MovieCard({ movie }: { movie: Movie }) {
                 </div>
 
                 <div className="mt-2 flex flex-wrap gap-2">
-                    {movie.genres?.slice(0, 2).map((g) => (
-                        <Badge key={g}>{g}</Badge>
-                    ))}
-                    {movie.releaseDate && <Badge>{movie.releaseDate.slice(0, 4)}</Badge>}
+                    {movie.release_date && <Badge>{movie.release_date.slice(0, 4)}</Badge>}
+                    {typeof movie.vote_average === "number" && (
+                        <Badge>⭐ {movie.vote_average.toFixed(1)}</Badge>
+                    )}
                 </div>
 
-                {movie.description && (
+                {movie.overview && (
                     <p className="mt-3 text-sm text-text-secondary line-clamp-2">
-                        {movie.description}
+                        {movie.overview}
                     </p>
                 )}
+
             </div>
         </Link>
     );

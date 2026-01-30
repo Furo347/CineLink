@@ -33,7 +33,7 @@ export default function MoviesPage() {
     useEffect(() => {
         setLoading(true);
         moviesApi
-            .getAll()
+            .getPopular()
             .then(setMovies)
             .catch(() => toast.error("Impossible de charger le catalogue"))
             .finally(() => setLoading(false));
@@ -69,11 +69,29 @@ export default function MoviesPage() {
             {loading ? (
                 <MoviesSkeleton />
             ) : filtered.length === 0 ? (
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
-                    <p className="text-text-primary font-medium">Aucun film trouvé</p>
-                    <p className="mt-1 text-sm text-text-secondary">
-                        Essaie un autre titre.
+                <div className="rounded-2xl border border-white/10 bg-white/5 p-10 text-center">
+                    <p className="text-text-primary text-lg font-semibold">Aucun film disponible</p>
+                    <p className="mt-2 text-sm text-text-secondary">
+                        Ta base est probablement vide. Lance un seed côté backend, puis réessaye.
                     </p>
+
+                    <div className="mt-6 flex items-center justify-center gap-3">
+                        <button
+                            onClick={() => window.location.reload()}
+                            className="h-11 px-4 rounded-xl bg-primary text-white font-medium hover:opacity-90 transition"
+                        >
+                            Réessayer
+                        </button>
+
+                        <a
+                            className="h-11 px-4 rounded-xl border border-white/10 text-text-primary hover:bg-white/10 transition inline-flex items-center"
+                            href="http://localhost:3000/api/movies"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            Ouvrir l’API
+                        </a>
+                    </div>
                 </div>
             ) : (
                 <MovieGrid movies={filtered} />
