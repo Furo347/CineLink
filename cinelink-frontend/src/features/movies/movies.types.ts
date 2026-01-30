@@ -1,10 +1,30 @@
+export interface Credit {
+    name: string;
+    character: string;
+    profile_path?: string | null;
+}
+
+export interface Video {
+    type: string;
+    key: string;
+}
+
 export interface Movie {
     tmdbId: number;
     title: string;
+
     poster: string | null;
     overview: string;
-    vote_average: number;
+
     release_date: string;
+    vote_average: number;
+
+    // details only
+    backdrop?: string | null;
+    runtime?: number;
+    genres?: string[];
+    credits?: Credit[];
+    videos?: Video[];
 }
 
 export function getMovieId(m: Movie): string {
