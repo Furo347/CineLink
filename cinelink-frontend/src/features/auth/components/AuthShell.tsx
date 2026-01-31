@@ -1,5 +1,4 @@
 import type {PropsWithChildren} from "react";
-import { Film } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card.tsx";
 
 export default function AuthShell({ children }: PropsWithChildren) {
@@ -11,14 +10,16 @@ export default function AuthShell({ children }: PropsWithChildren) {
 
             <div className="relative min-h-screen flex items-center justify-center px-4 py-10">
                 <div className="w-full max-w-md">
-                    <div className="mb-6 flex items-center justify-center gap-2">
-                        <div className="h-10 w-10 rounded-2xl bg-primary/15 border border-primary/25 flex items-center justify-center">
-                            <Film className="h-5 w-5 text-primary" />
-                        </div>
-                        <div className="text-center">
-                            <div className="text-2xl font-bold tracking-tight">CineLink</div>
-                            <div className="text-sm text-text-secondary">Discover • Share • Follow</div>
-                        </div>
+                    <div className="mb-2 flex items-center justify-center gap-1">
+                        <img
+                            src="/logo.svg"
+                            alt="CineLink Logo"
+                            className="h-10 w-10"
+                        />
+                        <div className="text-2xl font-bold tracking-tight">CineLink</div>
+                    </div>
+                    <div className="mb-3 text-center">
+                        <div className="text-sm text-text-secondary">Découvre • Partage • Follow</div>
                     </div>
 
                     <Card>
