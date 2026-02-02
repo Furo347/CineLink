@@ -11,6 +11,9 @@ import MovieDetailsPage from "@/features/movies/pages/MovieDetailsPage";
 import FavoritesPage from "@/features/favorites/pages/FavoritesPage";
 import SearchPage from "@/features/search/pages/SearchPage";
 
+import FollowingPage from "@/features/follow/pages/FollowingPage";
+
+
 
 export const router = createBrowserRouter([
     { path: "/", element: <Navigate to="/login" replace /> },
@@ -28,6 +31,7 @@ export const router = createBrowserRouter([
                     { path: "movies/:id", element: <MovieDetailsPage /> },
                     { path: "favorites", element: <FavoritesPage /> },
                     { path: "search", element: <SearchPage /> },
+                    { path: "following", element: <FollowingPage /> },
                 ],
             },
         ],
