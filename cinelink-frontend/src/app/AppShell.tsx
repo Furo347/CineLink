@@ -1,8 +1,6 @@
 import { Outlet, NavLink } from "react-router-dom";
-import { LogOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { authStorage } from "@/services/auth.storage";
 import { cn } from "@/lib/utils";
+import ProfileMenu from "@/features/users/components/ProfileMenu.tsx";
 
 export default function AppShell() {
     return (
@@ -59,7 +57,7 @@ export default function AppShell() {
                         </NavLink>
 
                         <NavLink
-                            to="/app/following"
+                            to="/app/users"
                             className={({ isActive }) =>
                                 cn(
                                     "text-sm px-3 py-2 rounded-xl border border-white/10 hover:bg-white/10 transition",
@@ -67,20 +65,10 @@ export default function AppShell() {
                                 )
                             }
                         >
-                            Abonnements
+                            Suivre
                         </NavLink>
 
-                        <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={() => {
-                                authStorage.clear();
-                                window.location.href = "/login";
-                            }}
-                        >
-                            <LogOut className="h-4 w-4" />
-                            Déconnexion
-                        </Button>
+                        <ProfileMenu />
                     </div>
                 </div>
             </header>

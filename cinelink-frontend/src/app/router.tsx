@@ -12,6 +12,9 @@ import FavoritesPage from "@/features/favorites/pages/FavoritesPage";
 import SearchPage from "@/features/search/pages/SearchPage";
 
 import FollowingPage from "@/features/follow/pages/FollowingPage";
+import UsersPage from "@/features/users/pages/UsersPage.tsx";
+import UserProfilePage from "@/features/users/pages/UserProfilePage.tsx";
+import MePage from "@/features/users/pages/MePage.tsx";
 
 
 
@@ -32,6 +35,9 @@ export const router = createBrowserRouter([
                     { path: "favorites", element: <FavoritesPage /> },
                     { path: "search", element: <SearchPage /> },
                     { path: "following", element: <FollowingPage /> },
+                    { path: "users", element: <UsersPage /> },
+                    { path: "users/:id", element: <UserProfilePage /> },
+                    { path: "me", element: <MePage /> },
                 ],
             },
         ],

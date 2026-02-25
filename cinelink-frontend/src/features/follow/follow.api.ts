@@ -16,4 +16,9 @@ export const followApi = {
     unfollow: async (userId: string): Promise<void> => {
         await api.delete<MessageResponse>(`/api/follow/${userId}`);
     },
+
+    listFollowing: async (): Promise<FollowRelation[]> => {
+        const { data } = await api.get<FollowRelation[]>("/api/follow");
+        return data;
+    },
 };
