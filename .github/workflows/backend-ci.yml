@@ -43,6 +43,10 @@ jobs:
         working-directory: cinelink-backend
         run: npm test
 
+      - name: Typecheck tests
+        working-directory: cinelink-backend
+        run: npm run typecheck:test
+
       - name: Build project
         working-directory: cinelink-backend
         run: npm run build
