@@ -6,6 +6,13 @@ const config: Config = {
     testMatch: ["**/tests/**/*.test.ts"],
     setupFilesAfterEnv: ["<rootDir>/tests/setup.ts"],
     clearMocks: true,
+    globals: {
+        "ts-jest": {
+            tsconfig: {
+                esModuleInterop: true,
+            },
+        },
+    },
 };
 
 export default config;
