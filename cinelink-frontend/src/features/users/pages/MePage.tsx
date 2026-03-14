@@ -1,26 +1,25 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { User } from "lucide-react";
+import { User as UserIcon } from "lucide-react";
 
 import { authStorage } from "@/services/auth.storage";
 import { decodeToken, getJwtEmail, getJwtName, getJwtUserId } from "@/lib/jwt";
 import { usersApi } from "@/features/users/users.api";
 import type { UserComment, UserFavorite, UserProfile } from "@/features/users/users.types";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 
 import MovieRow from "@/features/users/components/MovieRow";
 import { getMovieMini, type MovieMini } from "@/features/movies/movies.cache";
-import {followApi} from "@/features/follow/follow.api.ts";
 
 export default function MePage() {
     const token = authStorage.get();
     const decoded = useMemo(() => (token ? decodeToken(token) : null), [token]);
 
     const userId = useMemo(() => getJwtUserId(decoded), [decoded]);
-    const email = useMemo(() => getJwtEmail(decoded), [decoded]);
+    const emailFromJwt = useMemo(() => getJwtEmail(decoded), [decoded]);
     const nameFromJwt = useMemo(() => getJwtName(decoded), [decoded]);
 
     const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -31,9 +30,6 @@ export default function MePage() {
     const [favMinis, setFavMinis] = useState<MovieMini[]>([]);
     const [commentMovieMap, setCommentMovieMap] = useState<Map<number, MovieMini>>(new Map());
     const [enriching, setEnriching] = useState(false);
-
-    const [followingCount, setFollowingCount] = useState<number>(0);
-    const [followersCount, setFollowersCount] = useState<number | null>(null); // null = pas dispo
 
     useEffect(() => {
         const load = async () => {
@@ -73,15 +69,11 @@ export default function MePage() {
     }, [token, userId]);
 
     useEffect(() => {
-        const run = async () => {
+        const enrich = async () => {
             if (!profile) return;
 
-            const favIds = Array.from(new Set(favorites.map((f) => f.tmdbId))).filter(
-                (x) => typeof x === "number"
-            );
-            const commentIds = Array.from(new Set(comments.map((c) => c.movieId))).filter(
-                (x) => typeof x === "number"
-            );
+            const favIds = Array.from(new Set(favorites.map((f) => f.tmdbId)));
+            const commentIds = Array.from(new Set(comments.map((c) => c.movieId)));
 
             if (favIds.length === 0 && commentIds.length === 0) {
                 setFavMinis([]);
@@ -92,8 +84,8 @@ export default function MePage() {
             setEnriching(true);
             try {
                 const [favMovies, commentMovies] = await Promise.all([
-                    Promise.all(favIds.map((id) => getMovieMini(id))),
-                    Promise.all(commentIds.map((id) => getMovieMini(id))),
+                    Promise.all(favIds.map((mid) => getMovieMini(mid))),
+                    Promise.all(commentIds.map((mid) => getMovieMini(mid))),
                 ]);
 
                 setFavMinis(favMovies);
@@ -102,41 +94,17 @@ export default function MePage() {
                 commentMovies.forEach((m) => map.set(m.tmdbId, m));
                 setCommentMovieMap(map);
             } catch {
-                // silent: page must remain usable even if TMDB/details fail
+                // fallback silencieux
             } finally {
                 setEnriching(false);
             }
         };
 
-        run();
+        enrich();
     }, [profile, favorites, comments]);
 
-    useEffect(() => {
-        const loadCounts = async () => {
-            if (!profile) return;
-
-            try {
-                const following = await followApi.listFollowing();
-                setFollowingCount(following.length);
-            } catch {
-                // silent
-            }
-
-            try {
-            //    const followers = await followApi.listFollowers();
-            //    setFollowersCount(followers.length);
-                const followers = null; // backend n'ayant pas encore de followers, on affiche 0 au lieu de "—"
-                setFollowersCount(followers);
-            } catch {
-                setFollowersCount(null);
-            }
-        };
-
-        loadCounts();
-    }, [profile]);
-
-    const displayName = profile?.name ?? nameFromJwt ?? "Moi";
-    const displayEmail = profile?.email ?? email ?? "";
+    const displayName = profile?.name ?? nameFromJwt ?? profile?.email ?? emailFromJwt ?? "Compte";
+    const displayEmail = profile?.email ?? emailFromJwt ?? "";
 
     if (!token) {
         return (
@@ -182,56 +150,43 @@ export default function MePage() {
 
     return (
         <div className="space-y-8">
-            {/* Header premium */}
+            {/* HEADER */}
             <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6 sm:p-8">
                 <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4 min-w-0">
                         <div className="h-14 w-14 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center shrink-0">
-                            <User className="h-6 w-6 text-textSecondary" />
+                            <UserIcon className="h-6 w-6 text-textSecondary" />
                         </div>
 
                         <div className="min-w-0">
                             <h1 className="text-3xl font-semibold tracking-tight truncate text-textPrimary">
                                 {displayName}
                             </h1>
+
                             {displayEmail ? (
                                 <p className="mt-1 text-sm text-textSecondary truncate">{displayEmail}</p>
                             ) : null}
 
                             <div className="mt-3 flex flex-wrap gap-2">
+                                <Badge>{profile.followersCount ?? 0} abonnés</Badge>
+                                <Link to="/app/following">
+                                    <Badge>{profile.followingCount ?? 0} abonnements</Badge>
+                                </Link>
                                 <Badge>{favorites.length} favoris</Badge>
                                 <Badge>{comments.length} commentaires</Badge>
                                 {profile.createdAt ? (
-                                    <Badge>Membre depuis {new Date(profile.createdAt).toLocaleDateString()}</Badge>
+                                    <Badge>
+                                        Membre depuis {new Date(profile.createdAt).toLocaleDateString()}
+                                    </Badge>
                                 ) : null}
-                                {enriching ? <Badge>Enrichissement…</Badge> : null}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                        <Link
-                            to="/app/following"
-                            className="rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition px-4 py-3 text-left"
-                        >
-                            <div className="text-xs text-textSecondary">Abonnements</div>
-                            <div className="text-lg font-semibold text-textPrimary">{followingCount}</div>
-                        </Link>
-
-                        <div
-                            className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left opacity-90"
-                            title={followersCount === null ? "Non disponible (backend à ajouter)" : ""}
-                        >
-                            <div className="text-xs text-textSecondary">Abonnés</div>
-                            <div className="text-lg font-semibold text-textPrimary">
-                                {followersCount === null ? "—" : followersCount}
+                                {enriching ? <Badge>Chargement films…</Badge> : null}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Favoris */}
+            {/* FAVORIS */}
             <section className="space-y-4">
                 <div className="flex items-end justify-between gap-4">
                     <h2 className="text-xl font-semibold text-textPrimary">Mes favoris</h2>
@@ -252,43 +207,29 @@ export default function MePage() {
                     </div>
                 ) : favMinis.length > 0 ? (
                     <div className="grid gap-4">
-                        {favMinis.slice(0, 8).map((m) => {
+                        {favMinis.map((m) => {
                             const fav = favorites.find((f) => f.tmdbId === m.tmdbId);
                             return (
                                 <MovieRow
                                     key={m.tmdbId}
                                     movie={m}
                                     subtitle={
-                                        typeof fav?.rating === "number" ? (
-                                            <>
-                                                Ta note :{" "}
-                                                <span className="text-textPrimary font-medium">
-                          {fav.rating}/10
-                        </span>
-                                            </>
-                                        ) : (
-                                            "Non noté"
-                                        )
+                                        typeof fav?.rating === "number"
+                                            ? `Ta note : ${fav.rating}/10`
+                                            : "Non noté"
                                     }
                                 />
                             );
                         })}
                     </div>
                 ) : (
-                    // fallback if enrichment failed
-                    <div className="grid gap-3">
-                        {favorites.slice(0, 8).map((f) => (
+                    <div className="grid gap-4">
+                        {favorites.map((f) => (
                             <Card key={f._id} className="bg-white/5">
-                                <CardContent className="space-y-2">
-                                    <Link
-                                        to={`/app/movies/${f.tmdbId}`}
-                                        className="font-semibold hover:underline underline-offset-4"
-                                    >
-                                        {f.title}
-                                    </Link>
-                                    <div className="flex gap-2 flex-wrap">
-                                        {typeof f.rating === "number" ? <Badge>Ta note : {f.rating}/10</Badge> : <Badge>Non noté</Badge>}
-                                        {f.createdAt ? <Badge>{new Date(f.createdAt).toLocaleDateString()}</Badge> : null}
+                                <CardContent>
+                                    <div className="text-textPrimary font-medium">{f.title}</div>
+                                    <div className="mt-2 text-sm text-textSecondary">
+                                        {typeof f.rating === "number" ? `Ta note : ${f.rating}/10` : "Non noté"}
                                     </div>
                                 </CardContent>
                             </Card>
@@ -297,7 +238,7 @@ export default function MePage() {
                 )}
             </section>
 
-            {/* Commentaires */}
+            {/* COMMENTAIRES */}
             <section className="space-y-4">
                 <h2 className="text-xl font-semibold text-textPrimary">Mes commentaires</h2>
 
@@ -310,20 +251,17 @@ export default function MePage() {
                     </div>
                 ) : (
                     <div className="grid gap-4">
-                        {comments.slice(0, 10).map((c) => {
+                        {comments.map((c) => {
                             const m = commentMovieMap.get(c.movieId);
 
                             if (!m) {
                                 return (
                                     <Card key={c._id} className="bg-white/5">
-                                        <CardContent className="space-y-2">
+                                        <CardContent>
                                             <div className="text-sm text-textSecondary">
-                                                <Link to={`/app/movies/${c.movieId}`} className="hover:underline underline-offset-4">
-                                                    Film #{c.movieId}
-                                                </Link>
-                                                {c.createdAt ? ` • ${new Date(c.createdAt).toLocaleString()}` : ""}
+                                                Film #{c.movieId}
                                             </div>
-                                            <div className="text-textPrimary">{c.content}</div>
+                                            <div className="mt-2 text-textPrimary">{c.content}</div>
                                         </CardContent>
                                     </Card>
                                 );
