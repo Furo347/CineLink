@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import { toast } from "sonner";
@@ -9,22 +9,27 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
+type UserAny = UserLite & { id?: string };
+
+function getUserId(u: UserAny): string | undefined {
+    return (u as any)._id ?? u.id;
+}
+
 export default function UsersPage() {
     const nav = useNavigate();
 
     const [q, setQ] = useState("");
-    const [items, setItems] = useState<UserLite[]>([]);
+    const [items, setItems] = useState<UserAny[]>([]);
     const [loading, setLoading] = useState(false);
 
-    // Default suggestions on first load (avoid empty page)
     useEffect(() => {
         const loadDefault = async () => {
             setLoading(true);
             try {
-                const res = await usersApi.search("a");
-                setItems(res);
+                const res = await usersApi.getAll();
+                setItems(res as UserAny[]);
             } catch {
-                // silent: don't spam user on first load
+                // silent
             } finally {
                 setLoading(false);
             }
@@ -32,10 +37,9 @@ export default function UsersPage() {
         loadDefault();
     }, []);
 
-    // Search with debounce (min 2 chars)
     useEffect(() => {
         const term = q.trim();
-        if (term.length === 0) return; // keep default suggestions
+        if (term.length === 0) return;
         if (term.length < 2) {
             setItems([]);
             return;
@@ -45,7 +49,7 @@ export default function UsersPage() {
             setLoading(true);
             try {
                 const res = await usersApi.search(term);
-                setItems(res);
+                setItems(res as UserAny[]);
             } catch {
                 toast.error("Erreur lors de la recherche");
             } finally {
@@ -55,6 +59,10 @@ export default function UsersPage() {
 
         return () => window.clearTimeout(handle);
     }, [q]);
+
+    const safeItems = useMemo(() => {
+        return items.filter((u) => !!getUserId(u));
+    }, [items]);
 
     return (
         <div className="space-y-6">
@@ -77,31 +85,32 @@ export default function UsersPage() {
 
             {loading ? (
                 <div className="text-textSecondary">Chargement…</div>
-            ) : items.length === 0 && q.trim().length >= 2 ? (
+            ) : safeItems.length === 0 && q.trim().length >= 2 ? (
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-10 text-center">
                     <p className="text-textPrimary text-lg font-semibold">Aucun utilisateur trouvé</p>
-                    <p className="mt-2 text-sm text-textSecondary">
-                        Essaie un autre nom ou email.
-                    </p>
+                    <p className="mt-2 text-sm text-textSecondary">Essaie un autre nom ou email.</p>
                 </div>
             ) : (
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {items.map((u) => (
-                        <Card key={u._id} className="bg-white/5">
-                            <CardContent className="space-y-3">
-                                <div className="min-w-0">
-                                    <div className="text-lg font-semibold truncate text-textPrimary">{u.name}</div>
-                                    {u.email ? (
-                                        <div className="text-sm text-textSecondary truncate">{u.email}</div>
-                                    ) : null}
-                                </div>
+                    {safeItems.map((u) => {
+                        const uid = getUserId(u)!;
+                        return (
+                            <Card key={uid} className="bg-white/5">
+                                <CardContent className="space-y-3">
+                                    <div className="min-w-0">
+                                        <div className="text-lg font-semibold truncate text-textPrimary">{u.name}</div>
+                                        {u.email ? (
+                                            <div className="text-sm text-textSecondary truncate">{u.email}</div>
+                                        ) : null}
+                                    </div>
 
-                                <Button onClick={() => nav(`/app/users/${u._id}`)}>
-                                    Voir le profil
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    ))}
+                                    <Button onClick={() => nav(`/app/users/${uid}`)}>
+                                        Voir le profil
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        );
+                    })}
                 </div>
             )}
         </div>

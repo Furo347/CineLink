@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { UserPlus, UserMinus } from "lucide-react";
 
+import { followApi } from "@/features/follow/follow.api";
 import { Button } from "@/components/ui/button";
-import { followApi } from "../follow.api";
 
 export default function FollowButton({
                                          userId,
@@ -12,12 +11,23 @@ export default function FollowButton({
                                      }: {
     userId: string;
     initialFollowing: boolean;
-    onChange?: (following: boolean) => void;
+    onChange?: (next: boolean) => void;
 }) {
-    const [following, setFollowing] = useState(initialFollowing);
+    const [following, setFollowing] = useState<boolean>(initialFollowing);
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        setFollowing(initialFollowing);
+    }, [initialFollowing]);
+
     const toggle = async () => {
+        if (!userId) {
+            toast.error("Utilisateur invalide");
+            return;
+        }
+
+        if (loading) return;
+
         setLoading(true);
         try {
             if (following) {
@@ -32,17 +42,27 @@ export default function FollowButton({
                 toast.success("Abonné");
             }
         } catch (e: any) {
-            const msg = e?.response?.data?.message;
-            toast.error(msg || "Action impossible");
+            const msg =
+                e?.response?.data?.message ||
+                "Action impossible pour le moment";
+            toast.error(msg);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <Button variant={following ? "secondary" : "default"} onClick={toggle} disabled={loading}>
-            {following ? <UserMinus className="h-4 w-4" /> : <UserPlus className="h-4 w-4" />}
-            {following ? "Ne plus suivre" : "Suivre"}
+        <Button
+            onClick={toggle}
+            disabled={loading}
+            className={
+                following
+                    ? "bg-white/10 text-textPrimary hover:bg-white/15 border border-white/10"
+                    : "bg-primary text-white hover:opacity-90"
+            }
+            variant={following ? "secondary" : "default"}
+        >
+            {loading ? "..." : following ? "Ne plus suivre" : "Suivre"}
         </Button>
     );
 }

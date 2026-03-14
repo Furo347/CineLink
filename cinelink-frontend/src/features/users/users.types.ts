@@ -1,11 +1,15 @@
 export interface UserLite {
     _id: string;
-    name: string;
+    id?: string;
+    name?: string;
     email?: string;
 }
 
 export interface UserProfile extends UserLite {
     createdAt?: string;
+    followersCount?: number;
+    followingCount?: number;
+    isFollowing?: boolean;
 }
 
 export interface UserFavorite {

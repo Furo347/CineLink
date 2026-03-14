@@ -125,7 +125,7 @@ export default function MePage() {
             try {
             //    const followers = await followApi.listFollowers();
             //    setFollowersCount(followers.length);
-                const followers = 0; // backend n'ayant pas encore de followers, on affiche 0 au lieu de "—"
+                const followers = null; // backend n'ayant pas encore de followers, on affiche 0 au lieu de "—"
                 setFollowersCount(followers);
             } catch {
                 setFollowersCount(null);
@@ -135,7 +135,7 @@ export default function MePage() {
         loadCounts();
     }, [profile]);
 
-    const displayName = profile?.name ?? nameFromJwt ?? "Compte";
+    const displayName = profile?.name ?? nameFromJwt ?? "Moi";
     const displayEmail = profile?.email ?? email ?? "";
 
     if (!token) {

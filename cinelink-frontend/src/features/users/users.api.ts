@@ -9,6 +9,12 @@ export const usersApi = {
         return data;
     },
 
+    getAll: async (): Promise<UserLite[]> => {
+        const { data } = await api.get<UserLite[]>("/api/users/all",
+        );
+        return data;
+    },
+
     getProfile: async (id: string): Promise<UserProfile> => {
         const { data } = await api.get<UserProfile>(`/api/users/${id}`);
         return data;
