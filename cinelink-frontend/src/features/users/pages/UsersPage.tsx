@@ -22,24 +22,30 @@ export default function UsersPage() {
     const [items, setItems] = useState<UserAny[]>([]);
     const [loading, setLoading] = useState(false);
 
+    const loadDefaultUsers = async () => {
+        setLoading(true);
+        try {
+            const res = await usersApi.getAll();
+            setItems(res as UserAny[]);
+        } catch {
+            setItems([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const loadDefault = async () => {
-            setLoading(true);
-            try {
-                const res = await usersApi.getAll();
-                setItems(res as UserAny[]);
-            } catch {
-                // silent
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadDefault();
+        loadDefaultUsers();
     }, []);
 
     useEffect(() => {
         const term = q.trim();
-        if (term.length === 0) return;
+
+        if (term.length === 0) {
+            loadDefaultUsers();
+            return;
+        }
+
         if (term.length < 2) {
             setItems([]);
             return;
@@ -88,7 +94,9 @@ export default function UsersPage() {
             ) : safeItems.length === 0 && q.trim().length >= 2 ? (
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-10 text-center">
                     <p className="text-textPrimary text-lg font-semibold">Aucun utilisateur trouvé</p>
-                    <p className="mt-2 text-sm text-textSecondary">Essaie un autre nom ou email.</p>
+                    <p className="mt-2 text-sm text-textSecondary">
+                        Essaie un autre nom ou email.
+                    </p>
                 </div>
             ) : (
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -98,9 +106,13 @@ export default function UsersPage() {
                             <Card key={uid} className="bg-white/5">
                                 <CardContent className="space-y-3">
                                     <div className="min-w-0">
-                                        <div className="text-lg font-semibold truncate text-textPrimary">{u.name}</div>
+                                        <div className="text-lg font-semibold truncate text-textPrimary">
+                                            {u.name ?? u.email ?? "Utilisateur"}
+                                        </div>
                                         {u.email ? (
-                                            <div className="text-sm text-textSecondary truncate">{u.email}</div>
+                                            <div className="text-sm text-textSecondary truncate">
+                                                {u.email}
+                                            </div>
                                         ) : null}
                                     </div>
 

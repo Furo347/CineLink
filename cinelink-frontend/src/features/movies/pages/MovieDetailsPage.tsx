@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Check } from "lucide-react";
 
 import { moviesApi } from "../movies.api";
 import type { Movie } from "../movies.types";
@@ -22,6 +22,9 @@ export default function MovieDetailsPage() {
     const [movie, setMovie] = useState<Movie | null>(null);
     const [loading, setLoading] = useState(true);
 
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [favoriteLoading, setFavoriteLoading] = useState(false);
+
     const commentsRef = useRef<CommentsSectionRef>(null);
 
     useEffect(() => {
@@ -33,6 +36,22 @@ export default function MovieDetailsPage() {
             .catch(() => toast.error("Impossible de charger le film"))
             .finally(() => setLoading(false));
     }, [id]);
+
+    useEffect(() => {
+        const loadFavoriteState = async () => {
+            if (!movie) return;
+
+            try {
+                const favs = await favoritesApi.list();
+                const exists = favs.some((f) => f.tmdbId === movie.tmdbId);
+                setIsFavorite(exists);
+            } catch {
+                // silent
+            }
+        };
+
+        loadFavoriteState();
+    }, [movie]);
 
     if (loading) {
         return (
@@ -113,19 +132,41 @@ export default function MovieDetailsPage() {
 
                         <div className="flex gap-3">
                             <Button
+                                disabled={favoriteLoading || isFavorite}
                                 onClick={async () => {
+                                    if (!movie || isFavorite) return;
+
+                                    setFavoriteLoading(true);
                                     try {
-                                        await favoritesApi.add({ tmdbId: movie.tmdbId, title: movie.title });
+                                        await favoritesApi.add({
+                                            tmdbId: movie.tmdbId,
+                                            title: movie.title,
+                                        });
+                                        setIsFavorite(true);
                                         toast.success("Ajouté aux favoris");
                                     } catch (e: any) {
                                         const msg = e?.response?.data?.message;
-                                        if (msg?.includes("déjà")) toast.info("Déjà dans tes favoris");
-                                        else toast.error("Impossible d’ajouter aux favoris");
+                                        if (msg?.includes("déjà")) {
+                                            setIsFavorite(true);
+                                            toast.info("Déjà dans tes favoris");
+                                        } else {
+                                            toast.error("Impossible d’ajouter aux favoris");
+                                        }
+                                    } finally {
+                                        setFavoriteLoading(false);
                                     }
-
                                 }}
                             >
-                                Ajouter aux favoris
+                                {isFavorite ? (
+                                    <>
+                                        <Check className="h-4 w-4" />
+                                        Déjà en favoris
+                                    </>
+                                ) : favoriteLoading ? (
+                                    "Ajout..."
+                                ) : (
+                                    "Ajouter aux favoris"
+                                )}
                             </Button>
                             <Button
                                 variant="secondary"
