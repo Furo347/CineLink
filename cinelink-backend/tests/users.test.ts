@@ -19,6 +19,7 @@ async function getAuthToken() {
         name: "Test User",
         email: "testuser@mail.com",
         password: "password123",
+        avatar: "avatar1",
     });
 
     const loginRes = await request(app).post("/api/auth/login").send({
@@ -63,6 +64,7 @@ describe("Users routes", () => {
         expect(user).toHaveProperty("id");
         expect(user).toHaveProperty("name");
         expect(user).toHaveProperty("email");
+        expect(user).toHaveProperty("avatar");
         expect(JSON.stringify(user)).not.toMatch(/password/i);
     });
 
@@ -104,7 +106,6 @@ describe("Users routes", () => {
     it("GET /api/users/:id should return 404 for non-existing id", async () => {
         const token = await getAuthToken();
 
-        // ObjectId valide mais inexistant
         const res = await request(app)
             .get("/api/users/507f1f77bcf86cd799439011")
             .set("Authorization", `Bearer ${token}`);
@@ -112,7 +113,7 @@ describe("Users routes", () => {
         expect(res.status).toBe(404);
     });
 
-    it("GET /api/users/:id should return profile with counters", async () => {
+    it("GET /api/users/:id should return profile with counters and avatar", async () => {
         const token = await getAuthToken();
         const userId = await getFirstUserId(token);
 
@@ -124,6 +125,7 @@ describe("Users routes", () => {
         expect(res.body).toHaveProperty("id");
         expect(res.body).toHaveProperty("name");
         expect(res.body).toHaveProperty("email");
+        expect(res.body).toHaveProperty("avatar");
         expect(res.body).toHaveProperty("followersCount");
         expect(res.body).toHaveProperty("followingCount");
         expect(res.body).toHaveProperty("isFollowing");
@@ -157,7 +159,6 @@ describe("Users routes", () => {
         const token = await getAuthToken();
         const userId = await getFirstUserId(token);
 
-        // Insert un favori directement en DB (rapide et stable)
         await Favorite.create({
             user: userId,
             tmdbId: 123,
@@ -175,8 +176,41 @@ describe("Users routes", () => {
 
         const fav = res.body[0];
         expect(fav).toHaveProperty("tmdbId", 123);
-        expect(fav).toHaveProperty("title", "Mock Movie"); // vient du mock axios
+        expect(fav).toHaveProperty("title", "Mock Movie");
         expect(fav).toHaveProperty("poster");
         expect(fav).toHaveProperty("overview");
+    });
+
+    it("PUT /api/users/me/avatar should return 400 for invalid avatar", async () => {
+        const token = await getAuthToken();
+
+        const res = await request(app)
+            .put("/api/users/me/avatar")
+            .set("Authorization", `Bearer ${token}`)
+            .send({ avatar: "avatar999" });
+
+        expect(res.status).toBe(400);
+    });
+
+    it("PUT /api/users/me should return 400 for invalid avatar", async () => {
+        const token = await getAuthToken();
+
+        const res = await request(app)
+            .put("/api/users/me")
+            .set("Authorization", `Bearer ${token}`)
+            .send({ avatar: "avatar999" });
+
+        expect(res.status).toBe(400);
+    });
+
+    it("PUT /api/users/me should return 400 for invalid name", async () => {
+        const token = await getAuthToken();
+
+        const res = await request(app)
+            .put("/api/users/me")
+            .set("Authorization", `Bearer ${token}`)
+            .send({ name: "a" });
+
+        expect(res.status).toBe(400);
     });
 });
