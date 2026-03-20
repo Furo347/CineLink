@@ -21,7 +21,7 @@ export const register = async (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-    const { email, password, name } = req.body;
+    const { email, password, name, avatar } = req.body;
     try {
         const existing = await User.findOne({ email });
         if (existing) return res.status(400).json({ message: "Email déjà utilisé" });
@@ -29,7 +29,7 @@ export const register = async (req: Request, res: Response) => {
         const salt = await bcrypt.genSalt(10);
         const hashed = await bcrypt.hash(password, salt);
 
-        const user = new User({ email, password: hashed, name });
+        const user = new User({ email, password: hashed, name, avatar: avatar || "avatar1" });
         await user.save();
 
         const token = jwt.sign(
@@ -38,7 +38,7 @@ export const register = async (req: Request, res: Response) => {
             { expiresIn: jwtExpires } as jwt.SignOptions
         );
 
-        res.status(201).json({ token, user: { id: user._id, email: user.email, name: user.name } });
+        res.status(201).json({ token, user: { id: user._id, email: user.email, name: user.name, avatar: user.avatar } });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Erreur serveur" });
@@ -63,7 +63,7 @@ export const login = async (req: Request, res: Response) => {
             { expiresIn: jwtExpires } as jwt.SignOptions
         );
 
-        res.json({ token, user: { id: user._id, email: user.email, name: user.name } });
+        res.json({ token, user: { id: user._id, email: user.email, name: user.name, avatar: user.avatar } });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: "Erreur serveur" });

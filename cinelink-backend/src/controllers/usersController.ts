@@ -5,6 +5,7 @@ import Favorite from "../models/Favorite";
 import Comment from "../models/Comment";
 import Follow from "../models/Follow";
 import axios from "axios";
+import { validationResult } from "express-validator";
 
 async function fetchMovieDetails(tmdbId: number) {
     try {
@@ -26,7 +27,7 @@ export const getAllUsers = async (req: any, res: Response) => {
         );
 
         const users = await User.find()
-            .select("_id name email")
+            .select("_id name email avatar")
             .limit(limit)
             .sort({ createdAt: -1 });
 
@@ -35,6 +36,7 @@ export const getAllUsers = async (req: any, res: Response) => {
                 id: u._id,
                 name: u.name,
                 email: u.email,
+                avatar: u.avatar,
             }))
         );
     } catch (err) {
@@ -55,7 +57,7 @@ export const searchUsers = async (req: Request, res: Response) => {
         const users = await User.find({
             $or: [{ name: regex }, { email: regex }],
         })
-            .select("_id name email")
+            .select("_id name email avatar")
             .limit(limit);
 
         res.json(
@@ -63,6 +65,7 @@ export const searchUsers = async (req: Request, res: Response) => {
                 id: u._id,
                 name: u.name,
                 email: u.email,
+                avatar: u.avatar
             }))
         );
     } catch (err) {
@@ -78,7 +81,7 @@ export const getUserProfile = async (req: any, res: Response) => {
             return res.status(400).json({ message: "ID utilisateur invalide" });
         }
 
-        const user = await User.findById(userIdParam).select("_id name email");
+        const user = await User.findById(userIdParam).select("_id name email avatar");
         if (!user) return res.status(404).json({ message: "Utilisateur introuvable" });
 
         const followersCount = await Follow.countDocuments({ following: user._id });
@@ -93,6 +96,7 @@ export const getUserProfile = async (req: any, res: Response) => {
             id: user._id,
             name: user.name,
             email: user.email,
+            avatar: user.avatar,
             followersCount,
             followingCount,
             isFollowing,
@@ -160,6 +164,80 @@ export const getUserComments = async (req: Request, res: Response) => {
         );
     } catch (err) {
         console.error("Erreur getUserComments:", err);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+};
+
+export const updateMyAvatar = async (req: any, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+        const userId = req.user?.id;
+        const { avatar } = req.body;
+
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { avatar },
+            { new: true }
+        ).select("_id name email avatar");
+
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur introuvable" });
+        }
+
+        res.json({
+            message: "Avatar mis à jour",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                avatar: user.avatar,
+            },
+        });
+    } catch (err) {
+        console.error("Erreur updateMyAvatar:", err);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+};
+
+export const updateMyProfile = async (req: any, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+        const userId = req.user?.id;
+        const { name, avatar } = req.body;
+
+        const updateData: Record<string, unknown> = {};
+        if (name !== undefined) updateData.name = name;
+        if (avatar !== undefined) updateData.avatar = avatar;
+
+        const user = await User.findByIdAndUpdate(
+            userId,
+            updateData,
+            { new: true }
+        ).select("_id name email avatar");
+
+        if (!user) {
+            return res.status(404).json({ message: "Utilisateur introuvable" });
+        }
+
+        res.json({
+            message: "Profil mis à jour",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                avatar: user.avatar,
+            },
+        });
+    } catch (err) {
+        console.error("Erreur updateMyProfile:", err);
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
