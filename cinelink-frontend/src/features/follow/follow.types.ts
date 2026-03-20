@@ -1,7 +1,8 @@
 export interface UserLite {
     _id: string;
-    name: string;
+    name?: string;
     email?: string;
+    avatar?: string;
 }
 
 export interface FollowRelation {

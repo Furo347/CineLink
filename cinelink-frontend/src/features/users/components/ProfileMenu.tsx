@@ -2,12 +2,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LogOut, User, Users } from "lucide-react";
 
-import { authStorage } from "@/services/auth.storage.ts";
-import { decodeToken } from "@/lib/jwt.ts";
+import { authStorage } from "@/services/auth.storage";
+import { decodeToken } from "@/lib/jwt";
 
 type JwtLike = {
     name?: string;
     email?: string;
+    avatar?: string;
 };
 
 export default function ProfileMenu() {
@@ -23,13 +24,12 @@ export default function ProfileMenu() {
     }, [token]);
 
     const displayName = decoded?.name ?? decoded?.email ?? "Compte";
+    const avatar = decoded?.avatar;
 
     useEffect(() => {
         const onDown = (e: MouseEvent) => {
             if (!ref.current) return;
-            if (!ref.current.contains(e.target as Node)) {
-                setOpen(false);
-            }
+            if (!ref.current.contains(e.target as Node)) setOpen(false);
         };
 
         document.addEventListener("mousedown", onDown);
@@ -42,18 +42,19 @@ export default function ProfileMenu() {
         nav("/auth/login");
     };
 
-    const close = () => setOpen(false);
-
     return (
         <div ref={ref} className="relative">
-            {/* ICON BUTTON */}
             <button
                 type="button"
                 onClick={() => setOpen((v) => !v)}
-                className="h-10 w-10 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition flex items-center justify-center text-textPrimary"
+                className="h-10 w-10 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition flex items-center justify-center overflow-hidden"
                 aria-label="Menu profil"
             >
-                <User className="h-5 w-5" />
+                {avatar ? (
+                    <img src={avatar} alt="Avatar" className="h-full w-full object-cover" />
+                ) : (
+                    <User className="h-5 w-5 text-textPrimary" />
+                )}
             </button>
 
             {open && (
@@ -72,7 +73,7 @@ export default function ProfileMenu() {
                     <div className="p-1">
                         <Link
                             to="/app/me"
-                            onClick={close}
+                            onClick={() => setOpen(false)}
                             className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-white/10 transition text-sm text-textPrimary"
                         >
                             <User className="h-4 w-4 text-textSecondary" />
@@ -81,7 +82,7 @@ export default function ProfileMenu() {
 
                         <Link
                             to="/app/following"
-                            onClick={close}
+                            onClick={() => setOpen(false)}
                             className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-white/10 transition text-sm text-textPrimary"
                         >
                             <Users className="h-4 w-4 text-textSecondary" />

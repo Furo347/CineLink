@@ -1,11 +1,16 @@
 export interface UserLite {
-    _id: string;
+    _id?: string;
     id?: string;
     name?: string;
     email?: string;
+    avatar?: string;
 }
 
-export interface UserProfile extends UserLite {
+export interface UserProfile {
+    id: string;
+    email?: string;
+    name?: string;
+    avatar?: string;
     createdAt?: string;
     followersCount?: number;
     followingCount?: number;

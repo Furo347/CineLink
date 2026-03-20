@@ -1,16 +1,13 @@
 import { api } from "@/services/api";
-
-export type AuthResponse = { token: string };
-
-export type RegisterPayload = { username: string; email: string; password: string };
-export type LoginPayload = { email: string; password: string };
+import type { AuthResponse, LoginPayload, RegisterPayload } from "./auth.types";
 
 export const authApi = {
-    register: async (payload: RegisterPayload) => {
+    register: async (payload: RegisterPayload): Promise<AuthResponse> => {
         const { data } = await api.post<AuthResponse>("/api/auth/register", payload);
         return data;
     },
-    login: async (payload: LoginPayload) => {
+
+    login: async (payload: LoginPayload): Promise<AuthResponse> => {
         const { data } = await api.post<AuthResponse>("/api/auth/login", payload);
         return data;
     },

@@ -13,6 +13,9 @@ import { Card, CardContent } from "@/components/ui/card";
 
 import MovieRow from "@/features/users/components/MovieRow";
 import { getMovieMini, type MovieMini } from "@/features/movies/movies.cache";
+import AvatarPicker from "@/features/auth/components/AvatarPicker.tsx";
+import {Button} from "@/components/ui/button.tsx";
+import { getAvatarSrc } from "@/lib/avatar";
 
 export default function MePage() {
     const token = authStorage.get();
@@ -30,6 +33,10 @@ export default function MePage() {
     const [favMinis, setFavMinis] = useState<MovieMini[]>([]);
     const [commentMovieMap, setCommentMovieMap] = useState<Map<number, MovieMini>>(new Map());
     const [enriching, setEnriching] = useState(false);
+
+    const [editingAvatar, setEditingAvatar] = useState(false);
+    const [avatarValue, setAvatarValue] = useState<string>(profile?.avatar ?? "");
+    const [savingAvatar, setSavingAvatar] = useState(false);
 
     useEffect(() => {
         const load = async () => {
@@ -103,8 +110,13 @@ export default function MePage() {
         enrich();
     }, [profile, favorites, comments]);
 
+    useEffect(() => {
+        setAvatarValue(profile?.avatar ?? "");
+    }, [profile?.avatar]);
+
     const displayName = profile?.name ?? nameFromJwt ?? profile?.email ?? emailFromJwt ?? "Compte";
     const displayEmail = profile?.email ?? emailFromJwt ?? "";
+    const avatarSrc = getAvatarSrc(profile?.avatar);
 
     if (!token) {
         return (
@@ -154,8 +166,12 @@ export default function MePage() {
             <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6 sm:p-8">
                 <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4 min-w-0">
-                        <div className="h-14 w-14 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center shrink-0">
-                            <UserIcon className="h-6 w-6 text-textSecondary" />
+                        <div className="h-14 w-14 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center shrink-0 overflow-hidden">
+                            {avatarSrc ? (
+                                <img src={avatarSrc} alt="Avatar" className="h-full w-full object-cover" />
+                            ) : (
+                                <UserIcon className="h-6 w-6 text-textSecondary" />
+                            )}
                         </div>
 
                         <div className="min-w-0">
@@ -181,6 +197,41 @@ export default function MePage() {
                                 ) : null}
                                 {enriching ? <Badge>Chargement films…</Badge> : null}
                             </div>
+                        </div>
+                        <div className="mt-4 space-y-3">
+                            {editingAvatar ? (
+                                <>
+                                    <AvatarPicker value={avatarValue} onChange={setAvatarValue} />
+                                    <div className="flex gap-2">
+                                        <Button
+                                            disabled={savingAvatar}
+                                            onClick={async () => {
+                                                try {
+                                                    setSavingAvatar(true);
+                                                    await usersApi.updateMyAvatar(avatarValue);
+                                                    setProfile((prev) => (prev ? { ...prev, avatar: avatarValue } : prev));
+                                                    toast.success("Avatar mis à jour");
+                                                    setEditingAvatar(false);
+                                                } catch (e: any) {
+                                                    toast.error(e?.response?.data?.message || "Impossible de mettre à jour l’avatar");
+                                                } finally {
+                                                    setSavingAvatar(false);
+                                                }
+                                            }}
+                                        >
+                                            {savingAvatar ? "Enregistrement..." : "Enregistrer"}
+                                        </Button>
+
+                                        <Button variant="secondary" onClick={() => setEditingAvatar(false)}>
+                                            Annuler
+                                        </Button>
+                                    </div>
+                                </>
+                            ) : (
+                                <Button variant="secondary" onClick={() => setEditingAvatar(true)}>
+                                    Modifier mon avatar
+                                </Button>
+                            )}
                         </div>
                     </div>
                 </div>

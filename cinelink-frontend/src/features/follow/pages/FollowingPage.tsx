@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { Users } from "lucide-react";
-import type { FollowRelation } from "../follow.types";
+import { User as UserIcon, Users } from "lucide-react";
+
 import { followApi } from "../follow.api";
+import type { FollowRelation } from "../follow.types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { getAvatarSrc } from "@/lib/avatar";
 
 export default function FollowingPage() {
     const [items, setItems] = useState<FollowRelation[]>([]);
@@ -41,8 +44,8 @@ export default function FollowingPage() {
             <div className="flex items-end justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-semibold tracking-tight">Abonnements</h1>
-                    <p className="mt-1 text-sm text-text-secondary">
-                        Les utilisateurs que tu suis. Ils alimentent ton feed.
+                    <p className="mt-1 text-sm text-textSecondary">
+                        Les utilisateurs que tu suis.
                     </p>
                 </div>
 
@@ -52,41 +55,62 @@ export default function FollowingPage() {
             </div>
 
             {loading ? (
-                <div className="text-text-secondary">Chargement…</div>
+                <div className="text-textSecondary">Chargement…</div>
             ) : items.length === 0 ? (
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-10 text-center">
                     <div className="mx-auto mb-3 h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center">
-                        <Users className="h-5 w-5 text-text-secondary" />
+                        <Users className="h-5 w-5 text-textSecondary" />
                     </div>
-                    <p className="text-text-primary text-lg font-semibold">Tu ne suis personne</p>
-                    <p className="mt-2 text-sm text-text-secondary">
-                        Tu pourras suivre des gens depuis leurs profils (V2) ou depuis le feed (prochain sprint).
+                    <p className="text-textPrimary text-lg font-semibold">Tu ne suis personne</p>
+                    <p className="mt-2 text-sm text-textSecondary">
+                        Découvre des utilisateurs depuis l’onglet Découvrir.
                     </p>
                 </div>
             ) : (
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {items.map((r) => (
-                        <Card key={r._id} className="bg-white/5">
-                            <CardContent className="space-y-3">
-                                <div className="min-w-0">
-                                    <div className="text-lg font-semibold truncate">{r.following.name}</div>
-                                    {r.following.email ? (
-                                        <div className="text-sm text-text-secondary truncate">{r.following.email}</div>
-                                    ) : null}
-
-                                    {r.createdAt ? (
-                                        <div className="mt-2 text-xs text-text-secondary">
-                                            Abonné depuis {new Date(r.createdAt).toLocaleDateString()}
+                    {items.map((r) => {
+                        const avatarSrc = getAvatarSrc(r.following.avatar);
+                        return (
+                            <Card key={r._id} className="bg-white/5">
+                                <CardContent className="space-y-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-12 w-12 rounded-2xl overflow-hidden bg-white/10 shrink-0">
+                                            {avatarSrc ? (
+                                                <img src={avatarSrc} alt="" className="h-full w-full object-cover" />
+                                            ) : (
+                                                <div className="h-full w-full flex items-center justify-center">
+                                                    <UserIcon className="h-5 w-5 text-textSecondary" />
+                                                </div>
+                                            )}
                                         </div>
-                                    ) : null}
-                                </div>
 
-                                <Button variant="secondary" onClick={() => unfollow(r.following._id)}>
-                                    Ne plus suivre
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    ))}
+                                        <div className="min-w-0">
+                                            <div className="text-lg font-semibold truncate text-textPrimary">
+                                                {r.following.name ?? r.following.email ?? "Utilisateur"}
+                                            </div>
+                                            {r.following.email ? (
+                                                <div className="text-sm text-textSecondary truncate">
+                                                    {r.following.email}
+                                                </div>
+                                            ) : null}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-2">
+                                        <Link to={`/app/users/${r.following._id}`} className="flex-1">
+                                            <Button variant="secondary" className="w-full">
+                                                Voir le profil
+                                            </Button>
+                                        </Link>
+
+                                        <Button variant="secondary" onClick={() => unfollow(r.following._id)}>
+                                            Ne plus suivre
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        );
+                    })}
                 </div>
             )}
         </div>

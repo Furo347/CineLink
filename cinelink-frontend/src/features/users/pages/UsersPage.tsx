@@ -8,6 +8,8 @@ import type { UserLite } from "@/features/users/users.types";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {getAvatarSrc} from "@/lib/avatar.ts";
+import FollowButton from "@/features/follow/components/FollowButton.tsx";
 
 type UserAny = UserLite & { id?: string };
 
@@ -102,23 +104,34 @@ export default function UsersPage() {
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {safeItems.map((u) => {
                         const uid = getUserId(u)!;
+                        const avatarSrc = getAvatarSrc(u.avatar);
                         return (
                             <Card key={uid} className="bg-white/5">
-                                <CardContent className="space-y-3">
-                                    <div className="min-w-0">
-                                        <div className="text-lg font-semibold truncate text-textPrimary">
-                                            {u.name ?? u.email ?? "Utilisateur"}
+                                <CardContent className="space-y-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-12 w-12 rounded-2xl overflow-hidden bg-white/10 shrink-0">
+                                            {avatarSrc ? (
+                                                <img src={avatarSrc} alt="" className="h-full w-full object-cover" />
+                                            ) : null}
                                         </div>
-                                        {u.email ? (
-                                            <div className="text-sm text-textSecondary truncate">
-                                                {u.email}
+
+                                        <div className="min-w-0">
+                                            <div className="text-lg font-semibold truncate text-textPrimary">
+                                                {u.name ?? u.email ?? "Utilisateur"}
                                             </div>
-                                        ) : null}
+                                            {u.email ? (
+                                                <div className="text-sm text-textSecondary truncate">{u.email}</div>
+                                            ) : null}
+                                        </div>
                                     </div>
 
-                                    <Button onClick={() => nav(`/app/users/${uid}`)}>
-                                        Voir le profil
-                                    </Button>
+                                    <div className="flex gap-2">
+                                        <Button onClick={() => nav(`/app/users/${uid}`)} variant="secondary" className="flex-1">
+                                            Voir le profil
+                                        </Button>
+
+                                        <FollowButton userId={uid} initialFollowing={false} />
+                                    </div>
                                 </CardContent>
                             </Card>
                         );

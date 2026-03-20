@@ -29,4 +29,8 @@ export const usersApi = {
         const { data } = await api.get<UserComment[]>(`/api/users/${id}/comments`);
         return data;
     },
+
+    updateMyAvatar: async (avatar: string): Promise<void> => {
+        await api.put("/api/users/me/avatar", { avatar });
+    },
 };

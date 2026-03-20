@@ -61,7 +61,7 @@ export const getFollowing = async (req: AuthRequest, res: Response) => {
         const userId = new mongoose.Types.ObjectId(req.userId);
 
         const following = await Follow.find({ follower: userId })
-            .populate("following", "name email");
+            .populate("following", "name email avatar");
 
         res.json(following);
     } catch (error) {

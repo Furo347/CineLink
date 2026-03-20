@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 
 import MovieRow from "@/features/users/components/MovieRow";
 import { getMovieMini, type MovieMini } from "@/features/movies/movies.cache";
+import { getAvatarSrc } from "@/lib/avatar";
 
 export default function UserProfilePage() {
     const params = useParams<{ id: string }>();
@@ -45,6 +46,7 @@ export default function UserProfilePage() {
     const displayName = useMemo(() => {
         return profile?.name ?? profile?.email ?? "Utilisateur";
     }, [profile]);
+    const avatarSrc = getAvatarSrc(profile?.avatar);
 
     useEffect(() => {
         const load = async () => {
@@ -132,8 +134,12 @@ export default function UserProfilePage() {
             <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-6 sm:p-8">
                 <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4">
-                        <div className="h-14 w-14 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center">
-                            <UserIcon className="h-6 w-6 text-textSecondary" />
+                        <div className="h-14 w-14 rounded-2xl bg-white/10 border border-white/10 flex items-center justify-center overflow-hidden">
+                            {avatarSrc ? (
+                                <img src={avatarSrc} alt="Avatar" className="h-full w-full object-cover" />
+                            ) : (
+                                <UserIcon className="h-6 w-6 text-textSecondary" />
+                            )}
                         </div>
 
                         <div>
