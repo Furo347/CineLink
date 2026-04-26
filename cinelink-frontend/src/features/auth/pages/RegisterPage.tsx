@@ -66,7 +66,7 @@ export default function RegisterPage() {
                         <Input
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            placeholder="Florentin"
+                            placeholder="Jean"
                         />
                     </div>
 
@@ -87,6 +87,7 @@ export default function RegisterPage() {
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="••••••••"
                         />
+                        <p className="mt-1 text-sm text-textSecondary">8 caractères minimum, majuscule, minuscule, chiffre, caractère spécial</p>
                     </div>
 
                     <div className="space-y-3">
@@ -101,7 +102,7 @@ export default function RegisterPage() {
 
                 <p className="text-sm text-textSecondary">
                     Déjà un compte ?{" "}
-                    <Link to="/auth/login" className="text-textPrimary hover:underline">
+                    <Link to="/login" className="text-textPrimary hover:underline">
                         Se connecter
                     </Link>
                 </p>

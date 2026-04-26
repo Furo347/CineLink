@@ -127,7 +127,7 @@ export default function MePage() {
                 </p>
                 <div className="mt-6">
                     <Link
-                        to="/auth/login"
+                        to="/login"
                         className="h-11 px-4 rounded-xl bg-primary text-white font-medium hover:opacity-90 transition inline-flex items-center"
                     >
                         Aller au login
@@ -150,7 +150,7 @@ export default function MePage() {
                 </p>
                 <div className="mt-6">
                     <Link
-                        to="/auth/login"
+                        to="/login"
                         className="h-11 px-4 rounded-xl bg-primary text-white font-medium hover:opacity-90 transition inline-flex items-center"
                     >
                         Se reconnecter
