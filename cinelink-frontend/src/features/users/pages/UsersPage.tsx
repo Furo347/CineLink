@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {getAvatarSrc} from "@/lib/avatar.ts";
 import FollowButton from "@/features/follow/components/FollowButton.tsx";
+import { followApi } from "@/features/follow/follow.api";
 
 type UserAny = UserLite & { id?: string };
 
@@ -23,12 +24,26 @@ export default function UsersPage() {
     const [q, setQ] = useState("");
     const [items, setItems] = useState<UserAny[]>([]);
     const [loading, setLoading] = useState(false);
+    const [followedIds, setFollowedIds] = useState<Set<string>>(new Set());
 
     const loadDefaultUsers = async () => {
         setLoading(true);
         try {
-            const res = await usersApi.getAll();
-            setItems(res as UserAny[]);
+            const [users, follows] = await Promise.all([
+                usersApi.getAll(),
+                followApi.list(),
+            ]);
+
+            setItems(users as UserAny[]);
+            setFollowedIds(
+                new Set(
+                    follows
+                        .map((r) =>
+                            typeof r.following === "string" ? r.following : r.following._id
+                        )
+                        .filter(Boolean)
+                )
+            );
         } catch {
             setItems([]);
         } finally {
@@ -130,7 +145,18 @@ export default function UsersPage() {
                                             Voir le profil
                                         </Button>
 
-                                        <FollowButton userId={uid} initialFollowing={false} />
+                                        <FollowButton
+                                            userId={uid}
+                                            initialFollowing={followedIds.has(uid)}
+                                            onChange={(next) => {
+                                                setFollowedIds((prev) => {
+                                                    const copy = new Set(prev);
+                                                    if (next) copy.add(uid);
+                                                    else copy.delete(uid);
+                                                    return copy;
+                                                });
+                                            }}
+                                        />
                                     </div>
                                 </CardContent>
                             </Card>
