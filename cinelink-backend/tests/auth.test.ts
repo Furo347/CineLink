@@ -21,7 +21,7 @@ describe("Auth routes", () => {
                 .send({
                     name: "Default Avatar",
                     email: "defaultavatar@mail.com",
-                    password: "password123",
+                    password: "Password123!",
                 });
 
             expect(res.status).toBe(201);
@@ -33,7 +33,7 @@ describe("Auth routes", () => {
                 .post("/api/auth/register")
                 .send({
                     email: "missingname@mail.com",
-                    password: "password123",
+                    password: "Password123!",
                     avatar: "avatar1",
                 });
 
@@ -46,8 +46,21 @@ describe("Auth routes", () => {
                 .send({
                     name: "Bad Avatar",
                     email: "badavatar@mail.com",
-                    password: "password123",
+                    password: "Password123!",
                     avatar: "avatar999",
+                });
+
+            expect(res.status).toBe(400);
+        });
+
+        it("should return 400 when password is too weak", async () => {
+            const res = await request(app)
+                .post("/api/auth/register")
+                .send({
+                    name: "Weak Password User",
+                    email: "weak@mail.com",
+                    password: "password123",
+                    avatar: "avatar1",
                 });
 
             expect(res.status).toBe(400);
@@ -71,6 +84,7 @@ describe("Auth routes", () => {
             expect(res.body.token).toBeDefined();
             expect(res.body.user).toBeDefined();
             expect(res.body.user.name).toBe("Test User");
+            expect(res.body.user.email).toBe("testuser@mail.com");
             expect(res.body.user.avatar).toBe("avatar1");
         });
 

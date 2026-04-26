@@ -18,13 +18,13 @@ async function getAuthToken() {
     await request(app).post("/api/auth/register").send({
         name: "Test User",
         email: "testuser@mail.com",
-        password: "password123",
+        password: "Password123!",
         avatar: "avatar1",
     });
 
     const loginRes = await request(app).post("/api/auth/login").send({
         email: "testuser@mail.com",
-        password: "password123",
+        password: "Password123!",
     });
 
     return loginRes.body.token as string;

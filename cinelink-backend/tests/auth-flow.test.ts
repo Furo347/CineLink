@@ -8,7 +8,7 @@ describe("Authenticated flow", () => {
             .send({
                 name: "Test User",
                 email: "testuser@mail.com",
-                password: "password123",
+                password: "Password123!",
                 avatar: "avatar1",
             });
 
@@ -22,7 +22,7 @@ describe("Authenticated flow", () => {
             .post("/api/auth/login")
             .send({
                 email: "testuser@mail.com",
-                password: "password123",
+                password: "Password123!",
             });
 
         expect(loginRes.status).toBe(200);

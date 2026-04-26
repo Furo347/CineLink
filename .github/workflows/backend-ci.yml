@@ -23,6 +23,7 @@ jobs:
       JWT_EXPIRES_IN: 1h
       MONGO_URI: mongodb://localhost:27017/cinelink_test
       TMDB_API_KEY: dummy
+      FRONTEND_URL: http://localhost:5173
 
     steps:
       - name: Checkout repository

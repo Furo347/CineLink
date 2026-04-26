@@ -14,7 +14,7 @@ export async function registerUser(overrides: RegisterOverrides = {}) {
         .send({
             name: "Test User",
             email: "testuser@mail.com",
-            password: "password123",
+            password: "Password123!",
             avatar: "avatar1",
             ...overrides,
         });
@@ -27,7 +27,7 @@ export async function loginUser(
         .post("/api/auth/login")
         .send({
             email: "testuser@mail.com",
-            password: "password123",
+            password: "Password123!",
             ...overrides,
         });
 }
