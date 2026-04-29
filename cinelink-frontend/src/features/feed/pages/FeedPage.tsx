@@ -15,11 +15,11 @@ function getEventLabel(event: FeedEvent) {
         case "ADD_FAVORITE":
             return "a ajouté un film à ses favoris";
         case "RATE_MOVIE":
-            return `a noté ce film ${event.payload?.rating ?? "-"} / 10`;
+            return `a donné une note de ${event.payload?.rating ?? "-"} / 10`;
         case "COMMENT_MOVIE":
-            return "a commenté ce film";
+            return "a partagé un commentaire";
         default:
-            return "a interagi avec un film";
+            return "a publié une activité";
     }
 }
 
@@ -34,6 +34,15 @@ function getEventIcon(event: FeedEvent) {
         default:
             return <Heart className="h-4 w-4 text-primary" />;
     }
+}
+
+function formatDate(date: string) {
+    return new Date(date).toLocaleString("fr-FR", {
+        day: "2-digit",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
 }
 
 export default function FeedPage() {
@@ -57,10 +66,12 @@ export default function FeedPage() {
     }, []);
 
     return (
-        <div className="space-y-6">
+        <div className="mx-auto max-w-3xl space-y-6">
             <div className="flex items-end justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-semibold tracking-tight">Fil d’actualité</h1>
+                    <h1 className="text-3xl font-semibold tracking-tight">
+                        Fil d’actualité
+                    </h1>
                     <p className="mt-1 text-sm text-textSecondary">
                         Les dernières activités des utilisateurs que tu suis.
                     </p>
@@ -96,16 +107,19 @@ export default function FeedPage() {
                         const actorName = actor?.name ?? "Utilisateur";
                         const actorId = actor?._id;
                         const avatarSrc = getAvatarSrc(actor?.avatar);
-
-                        const comment = event.payload?.comment?.content;
                         const movie = event.movie;
+                        const comment = event.payload?.comment?.content;
 
-                        if (!movie) {
-                            return (
-                                <Card key={event.id} className="bg-white/5">
-                                    <CardContent className="p-5">
-                                        <div className="flex items-start gap-3">
-                                            <div className="h-11 w-11 rounded-2xl overflow-hidden bg-white/10 border border-white/10">
+                        return (
+                            <Card key={event.id} className="bg-white/5 border-white/10">
+                                <CardContent className="p-5">
+                                    {/* Header social */}
+                                    <div className="flex items-start gap-4">
+                                        <Link
+                                            to={actorId ? `/app/users/${actorId}` : "/app/users"}
+                                            className="shrink-0"
+                                        >
+                                            <div className="h-13 w-13 overflow-hidden rounded-2xl border border-white/10 bg-white/10">
                                                 {avatarSrc ? (
                                                     <img
                                                         src={avatarSrc}
@@ -114,131 +128,95 @@ export default function FeedPage() {
                                                     />
                                                 ) : null}
                                             </div>
+                                        </Link>
 
-                                            <div>
-                                                <div className="text-textPrimary font-semibold">
-                                                    {actorName}
-                                                </div>
-                                                <div className="text-sm text-textSecondary">
-                                                    a réalisé une activité, mais le film associé est indisponible.
-                                                </div>
-                                                <div className="mt-1 text-xs text-textSecondary">
-                                                    {new Date(event.createdAt).toLocaleString()}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            );
-                        }
-
-                        return (
-                            <Card key={event.id} className="bg-white/5 overflow-hidden">
-                                <CardContent className="p-0">
-                                    <div className="grid gap-0 md:grid-cols-[1fr_220px]">
-                                        {/* LEFT */}
-                                        <div className="p-5 space-y-4">
-                                            <div className="flex items-start gap-3">
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex flex-wrap items-center gap-2">
                                                 <Link
                                                     to={actorId ? `/app/users/${actorId}` : "/app/users"}
-                                                    className="shrink-0"
+                                                    className="font-semibold text-textPrimary hover:underline"
                                                 >
-                                                    <div className="h-11 w-11 rounded-2xl overflow-hidden bg-white/10 border border-white/10">
-                                                        {avatarSrc ? (
-                                                            <img
-                                                                src={avatarSrc}
-                                                                alt={actorName}
-                                                                className="h-full w-full object-cover"
-                                                            />
-                                                        ) : null}
-                                                    </div>
+                                                    {actorName}
                                                 </Link>
 
-                                                <div className="min-w-0 flex-1">
-                                                    <div className="flex flex-wrap items-center gap-2">
-                                                        <Link
-                                                            to={actorId ? `/app/users/${actorId}` : "/app/users"}
-                                                            className="font-semibold text-textPrimary hover:underline"
-                                                        >
-                                                            {actorName}
-                                                        </Link>
-
-                                                        <span className="text-sm text-textSecondary">
-                              {getEventLabel(event)}
-                            </span>
-                                                    </div>
-
-                                                    <div className="mt-1 text-xs text-textSecondary">
-                                                        {new Date(event.createdAt).toLocaleString()}
-                                                    </div>
-                                                </div>
-
-                                                <div className="h-9 w-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                                                    {getEventIcon(event)}
-                                                </div>
+                                                <span className="text-sm text-textSecondary">
+                                                    {getEventLabel(event)}
+                                                </span>
                                             </div>
 
-                                            <div>
-                                                <Link
-                                                    to={`/app/movies/${movie.tmdbId}`}
-                                                    className="text-xl font-semibold text-textPrimary hover:underline"
-                                                >
-                                                    {movie.title}
-                                                </Link>
+                                            <div className="mt-1 text-xs text-textSecondary">
+                                                {formatDate(event.createdAt)}
+                                            </div>
+                                        </div>
 
-                                                <div className="mt-2 flex flex-wrap gap-2">
+                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/10">
+                                            {getEventIcon(event)}
+                                        </div>
+                                    </div>
+
+                                    {/* Commentaire utilisateur */}
+                                    {comment && (
+                                        <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4">
+                                            <p className="text-sm leading-relaxed text-textPrimary">
+                                                “{comment}”
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {/* Film comme contenu attaché */}
+                                    {movie ? (
+                                        <Link
+                                            to={`/app/movies/${movie.tmdbId}`}
+                                            className="mt-5 flex gap-4 rounded-2xl border border-white/10 bg-background/40 p-3 transition hover:bg-white/10"
+                                        >
+                                            <div className="h-28 w-20 shrink-0 overflow-hidden rounded-xl bg-white/10">
+                                                {movie.poster ? (
+                                                    <img
+                                                        src={movie.poster}
+                                                        alt={movie.title}
+                                                        className="h-full w-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="h-full w-full bg-gradient-to-br from-white/10 to-white/0" />
+                                                )}
+                                            </div>
+
+                                            <div className="min-w-0 flex-1">
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    <h2 className="truncate text-base font-semibold text-textPrimary">
+                                                        {movie.title}
+                                                    </h2>
+
                                                     {movie.release_date && (
                                                         <Badge>{movie.release_date.slice(0, 4)}</Badge>
                                                     )}
+                                                </div>
 
+                                                <div className="mt-2 flex flex-wrap gap-2">
                                                     {typeof movie.vote_average === "number" && (
-                                                        <Badge>⭐ {movie.vote_average.toFixed(1)}</Badge>
+                                                        <Badge>⭐ TMDB {movie.vote_average.toFixed(1)}</Badge>
                                                     )}
 
                                                     {event.type === "RATE_MOVIE" &&
                                                         typeof event.payload?.rating === "number" && (
                                                             <Badge>
-                                                                Note utilisateur : {event.payload.rating}/10
+                                                                Note de {actorName} : {event.payload.rating}/10
                                                             </Badge>
                                                         )}
                                                 </div>
 
                                                 {movie.overview && (
-                                                    <p className="mt-3 text-sm text-textSecondary line-clamp-3">
+                                                    <p className="mt-3 line-clamp-2 text-sm text-textSecondary">
                                                         {movie.overview}
                                                     </p>
                                                 )}
-
-                                                {comment && (
-                                                    <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
-                                                        <div className="text-xs text-textSecondary mb-1">
-                                                            Commentaire
-                                                        </div>
-                                                        <p className="text-sm text-textPrimary">
-                                                            “{comment}”
-                                                        </p>
-                                                    </div>
-                                                )}
                                             </div>
-                                        </div>
-
-                                        {/* RIGHT */}
-                                        <Link
-                                            to={`/app/movies/${movie.tmdbId}`}
-                                            className="hidden md:block relative min-h-[260px] bg-white/5 overflow-hidden"
-                                        >
-                                            {movie.poster ? (
-                                                <img
-                                                    src={movie.poster}
-                                                    alt={movie.title}
-                                                    className="h-full w-full object-cover hover:scale-[1.03] transition"
-                                                />
-                                            ) : (
-                                                <div className="h-full w-full bg-gradient-to-br from-white/10 to-white/0" />
-                                            )}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                                         </Link>
-                                    </div>
+                                    ) : (
+                                        <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-textSecondary">
+                                            Aucun film associé à cette activité.
+                                        </div>
+                                    )}
                                 </CardContent>
                             </Card>
                         );
