@@ -4,9 +4,11 @@ on:
   push:
     paths:
       - "cinelink-frontend/**"
+      - ".github/workflows/frontend-ci.yml"
   pull_request:
     paths:
       - "cinelink-frontend/**"
+      - ".github/workflows/frontend-ci.yml"
 
 jobs:
   frontend-ci:
@@ -26,6 +28,14 @@ jobs:
       - name: Install dependencies
         working-directory: cinelink-frontend
         run: npm ci
+
+      - name: Run lint
+        working-directory: cinelink-frontend
+        run: npm run lint
+
+      - name: Run tests
+        working-directory: cinelink-frontend
+        run: npm test
 
       - name: Build project
         working-directory: cinelink-frontend
