@@ -198,12 +198,12 @@ Les routes protégées nécessitent un en-tête `Authorization: Bearer <token>`.
 | Méthode | Endpoint | Description | Auth |
 |---------|----------|-------------|------|
 | GET | `/api/users/all` | Liste des utilisateurs (query `limit`, max 100) | ✅ |
-| GET | `/api/users?query=` | Recherche d’utilisateurs (query `query`, `limit`) | ✅ |
-| GET | `/api/users/:id` | Profil public d’un utilisateur | ✅ |
-| GET | `/api/users/:id/favorites` | Favoris d’un utilisateur | ✅ |
-| GET | `/api/users/:id/comments` | Commentaires d’un utilisateur | ✅ |
-| PUT | `/api/users/me/avatar` | Mise à jour de l’avatar (body: `avatar`) | ✅ |
-| PUT | `/api/users/me` | Mise à jour du profil (body: `name?`, `avatar?`) | ✅ |
+| GET | `/api/users?query=` | Recherche d'utilisateurs (query `query`, `limit`) | ✅ |
+| GET | `/api/users/:id` | Profil public d'un utilisateur | ✅ |
+| GET | `/api/users/:id/favorites` | Favoris d'un utilisateur | ✅ |
+| GET | `/api/users/:id/comments` | Commentaires d'un utilisateur | ✅ |
+| PUT | `/api/users/me/avatar` | Mise à jour de l'avatar (body: `avatar` parmi avatar1-5) | ✅ |
+| PUT | `/api/users/me` | Mise à jour du profil (body: `name?`, `avatar?`) — *non consommé actuellement* | ✅ |
 
 ### Fil d'actualité
 
