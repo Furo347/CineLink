@@ -94,6 +94,56 @@ L'API est accessible sur : `http://localhost:3000`
 
 ---
 
+## Seeding – Données de démo
+
+Pour poppler rapidement la base de données avec des données de démo (utilisateurs, favoris, commentaires, relations), un script de seed est disponible.
+
+### Lancer le seed
+
+**En développement (recommandé)** – Lance le seed directement avec ts-node :
+
+```bash
+npm run seed:dev
+```
+
+**En production** – Compile TypeScript puis lance le seed :
+
+```bash
+npm run build
+npm run seed
+```
+
+### Données créées
+
+Le script crée automatiquement :
+
+- **4 utilisateurs de démo** avec avatars et relations
+- **6 favoris** répartis entre les utilisateurs (avec notes)
+- **3 commentaires** sur des films
+- **3 relations follow** entre utilisateurs
+
+### Comptes de démo disponibles
+
+Une fois le seed exécuté, ces comptes sont disponibles pour se connecter :
+
+| Email | Mot de passe | Avatar |
+|-------|-------------|--------|
+| `florentin.demo@cinelink.fr` | `CineLink2026!` | avatar1 |
+| `alice.demo@cinelink.fr` | `CineLink2026!` | avatar2 |
+| `lucas.demo@cinelink.fr` | `CineLink2026!` | avatar3 |
+| `emma.demo@cinelink.fr` | `CineLink2026!` | avatar4 |
+
+### Film démo utilisés
+
+- **Inception** (tmdbId: 27205)
+- **The Dark Knight** (tmdbId: 155)
+- **Interstellar** (tmdbId: 157336)
+- **Fight Club** (tmdbId: 550)
+
+Chaque utilisateur de démo a des favoris, des notes, des commentaires et des abonnements pour explorer les fonctionnalités sociales et le fil d'actualité.
+
+---
+
 ## API Endpoints
 
 Les routes protégées nécessitent un en-tête `Authorization: Bearer <token>`.
