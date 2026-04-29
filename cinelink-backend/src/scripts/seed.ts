@@ -8,7 +8,11 @@ import Comment from "../models/Comment";
 import Follow from "../models/Follow";
 import Activity from "../models/Activity";
 
-dotenv.config();
+dotenv.config({
+    path: process.env.NODE_ENV === "production"
+        ? ".env.production"
+        : ".env"
+});
 
 const MONGO_URI = process.env.MONGO_URI;
 
