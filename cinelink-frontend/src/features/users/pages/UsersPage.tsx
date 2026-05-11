@@ -4,7 +4,6 @@ import { Search } from "lucide-react";
 import { toast } from "sonner";
 
 import { usersApi } from "@/features/users/users.api";
-import type { UserLite } from "@/features/users/users.types";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,10 +11,16 @@ import {getAvatarSrc} from "@/lib/avatar.ts";
 import FollowButton from "@/features/follow/components/FollowButton.tsx";
 import { followApi } from "@/features/follow/follow.api";
 
-type UserAny = UserLite & { id?: string };
+type UserAny = {
+    id?: string;
+    _id?: string;
+    name: string;
+    email: string;
+    avatar?: string;
+};
 
 function getUserId(u: UserAny): string | undefined {
-    return (u as any)._id ?? u.id;
+    return u._id ?? u.id;
 }
 
 export default function UsersPage() {

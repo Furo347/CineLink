@@ -7,6 +7,7 @@ import type { Comment } from "../comments.types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {getApiErrorMessage} from "@/lib/api-error.ts";
 
 export type CommentsSectionRef = { focus: () => void };
 
@@ -61,10 +62,14 @@ const CommentsSection = forwardRef<CommentsSectionRef, { movieId: number }>(
                 await commentsApi.remove(id);
                 setItems((prev) => prev.filter((c) => c._id !== id));
                 toast.success("Commentaire supprimé");
-            } catch (e: any) {
-                const msg = e?.response?.data?.message;
-                if (msg?.includes("Non autorisé")) toast.error("Tu ne peux supprimer que tes commentaires.");
-                else toast.error("Suppression impossible");
+            } catch (e: unknown) {
+                const msg = getApiErrorMessage(e, "Suppression impossible");
+
+                if (msg.includes("Non autorisé")) {
+                    toast.error("Tu ne peux supprimer que tes commentaires.");
+                } else {
+                    toast.error(msg);
+                }
             }
         };
 

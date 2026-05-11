@@ -32,12 +32,31 @@ export default function MoviesPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setLoading(true);
-        moviesApi
-            .getPopular()
-            .then(setMovies)
-            .catch(() => toast.error("Impossible de charger le catalogue"))
-            .finally(() => setLoading(false));
+        let ignore = false;
+
+        async function loadMovies() {
+            try {
+                const data = await moviesApi.getPopular();
+
+                if (!ignore) {
+                    setMovies(data);
+                }
+            } catch {
+                if (!ignore) {
+                    toast.error("Impossible de charger le catalogue");
+                }
+            } finally {
+                if (!ignore) {
+                    setLoading(false);
+                }
+            }
+        }
+
+        loadMovies();
+
+        return () => {
+            ignore = true;
+        };
     }, []);
 
     const filtered = useMemo(() => {

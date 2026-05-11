@@ -14,6 +14,7 @@ import CommentsSection from "@/features/comments/components/CommentsSection";
 
 import { useRef } from "react";
 import type { CommentsSectionRef } from "@/features/comments/components/CommentsSection";
+import {getApiErrorMessage} from "@/lib/api-error.ts";
 
 
 
@@ -144,13 +145,14 @@ export default function MovieDetailsPage() {
                                         });
                                         setIsFavorite(true);
                                         toast.success("Ajouté aux favoris");
-                                    } catch (e: any) {
-                                        const msg = e?.response?.data?.message;
-                                        if (msg?.includes("déjà")) {
+                                    } catch (e: unknown) {
+                                        const msg = getApiErrorMessage(e, "Impossible d’ajouter aux favoris");
+
+                                        if (msg.includes("déjà")) {
                                             setIsFavorite(true);
                                             toast.info("Déjà dans tes favoris");
                                         } else {
-                                            toast.error("Impossible d’ajouter aux favoris");
+                                            toast.error(msg);
                                         }
                                     } finally {
                                         setFavoriteLoading(false);

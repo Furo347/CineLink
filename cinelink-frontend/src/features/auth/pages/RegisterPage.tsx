@@ -5,9 +5,12 @@ import { toast } from "sonner";
 import AuthShell from "@/features/auth/components/AuthShell";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import AvatarPicker, { AVATARS } from "@/features/auth/components/AvatarPicker";
+import AvatarPicker from "@/features/auth/components/AvatarPicker";
+
 import { authApi } from "@/features/auth/auth.api";
 import { authStorage } from "@/services/auth.storage";
+import {AVATARS} from "@/lib/avatars.ts";
+import {getApiErrorMessage} from "@/lib/api-error.ts";
 
 export default function RegisterPage() {
     const nav = useNavigate();
@@ -15,7 +18,7 @@ export default function RegisterPage() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [avatar, setAvatar] = useState(AVATARS[0].key);
+    const [avatar, setAvatar] = useState<string>(AVATARS[0].key);
     const [loading, setLoading] = useState(false);
 
     const submit = async (e: React.FormEvent) => {
@@ -43,8 +46,8 @@ export default function RegisterPage() {
             authStorage.set(token);
             toast.success("Compte créé");
             nav("/app/me");
-        } catch (e: any) {
-            toast.error(e?.response?.data?.message || "Inscription impossible");
+        } catch (e: unknown) {
+            toast.error(getApiErrorMessage(e, "Inscription impossible"));
         } finally {
             setLoading(false);
         }

@@ -8,6 +8,7 @@ import type { FollowRelation } from "../follow.types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getAvatarSrc } from "@/lib/avatar";
+import {getApiErrorMessage} from "@/lib/api-error.ts";
 
 export default function FollowingPage() {
     const [items, setItems] = useState<FollowRelation[]>([]);
@@ -34,8 +35,8 @@ export default function FollowingPage() {
             await followApi.unfollow(userId);
             setItems((prev) => prev.filter((r) => r.following._id !== userId));
             toast.success("Utilisateur désuivi");
-        } catch (e: any) {
-            toast.error(e?.response?.data?.message || "Action impossible");
+        } catch (e: unknown) {
+            toast.error(getApiErrorMessage(e, "Action impossible"));
         }
     };
 

@@ -16,6 +16,7 @@ import { getMovieMini, type MovieMini } from "@/features/movies/movies.cache";
 import AvatarPicker from "@/features/auth/components/AvatarPicker.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import { getAvatarSrc } from "@/lib/avatar";
+import {getApiErrorMessage} from "@/lib/api-error.ts";
 
 export default function MePage() {
     const token = authStorage.get();
@@ -212,9 +213,9 @@ export default function MePage() {
                                                     setProfile((prev) => (prev ? { ...prev, avatar: avatarValue } : prev));
                                                     toast.success("Avatar mis à jour");
                                                     setEditingAvatar(false);
-                                                } catch (e: any) {
-                                                    toast.error(e?.response?.data?.message || "Impossible de mettre à jour l’avatar");
-                                                } finally {
+                                                } catch (e: unknown) {
+                                                    toast.error(getApiErrorMessage(e, "Impossible de mettre à jour l’avatar"));
+                                                }finally {
                                                     setSavingAvatar(false);
                                                 }
                                             }}

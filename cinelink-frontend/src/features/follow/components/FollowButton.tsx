@@ -3,6 +3,7 @@ import { toast } from "sonner";
 
 import { followApi } from "@/features/follow/follow.api";
 import { Button } from "@/components/ui/button";
+import {getApiErrorMessage} from "@/lib/api-error.ts";
 
 export default function FollowButton({
                                          userId,
@@ -41,11 +42,8 @@ export default function FollowButton({
                 onChange?.(true);
                 toast.success("Abonné");
             }
-        } catch (e: any) {
-            const msg =
-                e?.response?.data?.message ||
-                "Action impossible pour le moment";
-            toast.error(msg);
+        } catch (e: unknown) {
+            toast.error(getApiErrorMessage(e, "Action impossible pour le moment"));
         } finally {
             setLoading(false);
         }
