@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {getApiErrorMessage} from "@/lib/api-error.ts";
+import { authStorage } from "@/services/auth.storage";
+import { decodeToken, getJwtUserId } from "@/lib/jwt";
 
 export type CommentsSectionRef = { focus: () => void };
 
@@ -73,6 +75,15 @@ const CommentsSection = forwardRef<CommentsSectionRef, { movieId: number }>(
             }
         };
 
+        const getCurrentUserId = (): string | null => {
+            const token = authStorage.get();
+            if (!token) return null;
+            const decoded = decodeToken(token);
+            return getJwtUserId(decoded);
+        };
+
+        const currentUserId = getCurrentUserId();
+
         return (
             <div className="space-y-4">
                 <div>
@@ -105,6 +116,8 @@ const CommentsSection = forwardRef<CommentsSectionRef, { movieId: number }>(
                     <div className="space-y-3">
                         {items.map((c) => {
                             const author = typeof c.user === "string" ? "Utilisateur" : (c.user?.name ?? "Utilisateur");
+                            const authorId = typeof c.user === "string" ? null : c.user?._id;
+                            const canDelete = currentUserId && authorId === currentUserId;
 
                             return (
                                 <Card key={c._id} className="bg-white/5">
@@ -117,9 +130,11 @@ const CommentsSection = forwardRef<CommentsSectionRef, { movieId: number }>(
                                             <div className="mt-2 text-text-primary">{c.content}</div>
                                         </div>
 
-                                        <Button variant="secondary" size="sm" onClick={() => remove(c._id)}>
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
+                                        {canDelete && (
+                                            <Button variant="secondary" size="sm" onClick={() => remove(c._id)}>
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        )}
                                     </CardContent>
                                 </Card>
                             );
@@ -132,4 +147,3 @@ const CommentsSection = forwardRef<CommentsSectionRef, { movieId: number }>(
 );
 
 export default CommentsSection;
-
