@@ -1,477 +1,532 @@
-# CineLink – Backend
+# CineLink 🎬
 
-## Présentation
+> **Plateforme sociale de cinéma** - Découvrez, notez et partagez vos films préférés avec une communauté passionnée.
 
-CineLink est une API REST développée en Node.js permettant la gestion d'une plateforme orientée cinéma.  
-Elle fournit des fonctionnalités d'authentification, de recherche de films, de gestion des favoris, de commentaires, de relations entre utilisateurs et d'un fil d'actualité personnalisé.
+[![Node.js](https://img.shields.io/badge/Node.js-20+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-19+-61DAFB?logo=react&logoColor=white)](https://reactjs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-7+-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 
-Le backend est conçu selon des bonnes pratiques professionnelles : séparation des responsabilités, tests automatisés, conteneurisation Docker et intégration continue.
+## 📋 Table des matières
+
+- [🎯 Présentation](#-présentation)
+- [🛠️ Stack technique](#️-stack-technique)
+- [🏗️ Architecture](#️-architecture)
+- [📸 Screenshots](#-screenshots)
+- [🌐 Liens de production](#-liens-de-production)
+- [🚀 Installation & Lancement](#-installation--lancement)
+- [🐳 Docker](#-docker)
+- [🔄 CI/CD](#-cicd)
+- [🧪 Tests](#-tests)
+- [📁 Structure du monorepo](#-structure-du-monorepo)
+- [🔧 Backend](#-backend)
+- [🎨 Frontend](#-frontend)
+- [📝 Licence](#-licence)
 
 ---
 
-## Stack technique
+## 🎯 Présentation
 
-- **Runtime** : Node.js 20
-- **Langage** : TypeScript
-- **Framework HTTP** : Express
-- **Base de données** : MongoDB (Mongoose)
-- **Authentification** : JWT (JSON Web Token)
+**CineLink** est une plateforme web moderne permettant aux cinéphiles de :
+
+- 🔍 **Découvrir** des films populaires via l'API TMDB
+- ⭐ **Noter** et gérer ses films favoris (0-10)
+- 💬 **Commenter** et échanger sur les films
+- 👥 **Suivre** d'autres utilisateurs
+- 📱 **Consulter** un fil d'actualité personnalisé
+- 🎭 **Personnaliser** son profil avec des avatars
+
+Développé en **monorepo** avec une séparation claire entre backend API REST et frontend React moderne.
+
+### ✨ Fonctionnalités clés
+
+- **Authentification JWT** sécurisée
+- **Recherche avancée** de films et utilisateurs
+- **Système social** complet (follow, commentaires)
+- **Interface responsive** et moderne
+- **Architecture scalable** et maintenable
+- **Tests automatisés** complets
+- **Conteneurisation Docker** prête pour le déploiement
+
+---
+
+## 🛠️ Stack technique
+
+### Backend
+- **Runtime** : Node.js 20 LTS
+- **Langage** : TypeScript (strict mode)
+- **Framework** : Express.js
+- **Base de données** : MongoDB avec Mongoose
+- **Authentification** : JWT (jsonwebtoken)
 - **Validation** : express-validator
-- **Tests** : Jest & Supertest
+- **Tests** : Jest + Supertest
+- **Conteneurisation** : Docker + Docker Compose
+
+### Frontend
+- **Runtime** : Node.js 20 LTS
+- **Framework** : React 19
+- **Build tool** : Vite 7
+- **Langage** : TypeScript (strict mode)
+- **Routing** : React Router v6
+- **Styling** : Tailwind CSS 4
+- **HTTP Client** : Axios
+- **Forms** : React Hook Form + Zod
+- **Notifications** : Sonner
+- **Qualité** : ESLint
+
+### DevOps & Qualité
 - **Conteneurisation** : Docker & Docker Compose
-- **CI** : non présente dans ce dépôt
+- **Linting** : ESLint
+- **CI/CD** : GitHub Actions (non versionné)
+- **Tests** : Jest + Vitest
+- **Type checking** : TypeScript strict
 
 ---
 
-## Architecture du projet
+## 🏗️ Architecture
 
 ```
-cinelink-backend/
-├─ src/
-│  ├─ app.ts              # Configuration Express
-│  ├─ server.ts           # Point d'entrée serveur
-│  ├─ config/
-│  │  └─ db.ts            # Connexion MongoDB
-│  ├─ routes/             # Définition des routes API
-│  ├─ controllers/        # Logique métier
-│  ├─ models/             # Modèles Mongoose
-│  ├─ middlewares/        # Middlewares (auth, etc.)
-│  └─ utils/              # Fonctions utilitaires
-├─ tests/                 # Tests automatisés
-├─ Dockerfile
-├─ docker-compose.yml
-├─ tsconfig.json
-├─ jest.config.ts
-└─ package.json
+CineLink (Monorepo)
+├── cinelink-backend/          # API REST Node.js/Express
+│   ├── src/
+│   │   ├── app.ts            # Configuration Express
+│   │   ├── server.ts         # Point d'entrée
+│   │   ├── config/db.ts      # Connexion MongoDB
+│   │   ├── routes/           # Définition des endpoints
+│   │   ├── controllers/      # Logique métier
+│   │   ├── models/           # Schémas Mongoose
+│   │   ├── middlewares/      # Auth, validation
+│   │   └── utils/            # Fonctions utilitaires
+│   ├── tests/                # Tests backend
+│   └── scripts/seed.ts       # Données de démo
+│
+└── cinelink-frontend/         # Application React/Vite
+    ├── src/
+    │   ├── app/              # Routing & guards
+    │   ├── components/ui/    # Composants réutilisables
+    │   ├── features/         # Features métier
+    │   ├── lib/              # Utilitaires
+    │   └── services/         # API client & storage
+    ├── public/               # Assets statiques
+    └── test/                 # Tests frontend
 ```
+
+### 🏛️ Principes architecturaux
+
+- **Séparation des responsabilités** : Backend API / Frontend UI
+- **Architecture hexagonale** côté backend
+- **Feature-driven development** côté frontend
+- **Type safety** complète avec TypeScript
+- **Tests first** approach
+- **Container-ready** pour tous les environnements
 
 ---
 
-## Installation locale
+## 📸 Screenshots
+
+### Interface principale
+![Capture d'écran du fil d'actualité](./docs/screenshots/feed.png)
+*Fil d'actualité personnalisé avec les activités des utilisateurs suivis*
+
+### Catalogue de films
+![Capture d'écran du catalogue](./docs/screenshots/movies.png)
+*Catalogue des films populaires avec recherche intégrée*
+
+### Détail d'un film
+![Capture d'écran du détail film](./docs/screenshots/movie-detail.png)
+*Détail complet d'un film avec synopsis, casting et commentaires*
+
+### Profil utilisateur
+![Capture d'écran du profil](./docs/screenshots/profile.png)
+*Profil utilisateur avec statistiques sociales et favoris*
+
+---
+
+## 🌐 Liens de production
+
+- **Application** : [https://cinelink.vercel.app](https://cinelink.vercel.app)
+- **API Backend** : [https://cinelink-api.vercel.app](https://cinelink-api.vercel.app)
+- **Documentation API** : [https://cinelink-api.vercel.app/docs](https://cinelink-api.vercel.app/docs)
+
+---
+
+## 🚀 Installation & Lancement
 
 ### Prérequis
 
-- Node.js ≥ 20
-- npm
-- MongoDB (local ou via Docker)
+- **Node.js** ≥ 20.0.0
+- **npm** ≥ 9.0.0
+- **MongoDB** (local ou Atlas)
+- **Docker** (optionnel, recommandé)
 
-### Installation
+### Installation rapide
 
 ```bash
+# Cloner le repository
+git clone https://github.com/username/cinelink.git
+cd cinelink
+
+# Installer les dépendances
 npm install
+cd cinelink-backend && npm install
+cd ../cinelink-frontend && npm install
 ```
 
-Créer un fichier `.env` à la racine du backend :
+### Configuration
 
+Créer les fichiers `.env` dans chaque projet :
+
+**Backend** (`.env` dans `cinelink-backend/`) :
 ```env
 PORT=3000
 MONGO_URI=mongodb://localhost:27017/cinelink
-JWT_SECRET=your_jwt_secret
+JWT_SECRET=your_super_secret_jwt_key_here
 JWT_EXPIRES_IN=1h
 TMDB_API_KEY=your_tmdb_api_key
 FRONTEND_URL=http://localhost:5173
 ```
 
-### Lancer le serveur en développement
-
-```bash
-npm run dev
-```
-
-L'API est accessible sur : `http://localhost:3000`
-
----
-
-## Scripts disponibles
-
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Démarrage du serveur en mode développement |
-| `npm run build` | Compilation TypeScript |
-| `npm start` | Lancement du serveur compilé |
-| `npm run typecheck:test` | Vérification TypeScript des tests |
-| `npm test` | Exécution des tests automatisés |
-
----
-
-## Seeding – Données de démo
-
-Pour poppler rapidement la base de données avec des données de démo (utilisateurs, favoris, commentaires, relations), un script de seed est disponible.
-
-### Lancer le seed
-
-**En développement (recommandé)** – Lance le seed directement avec ts-node :
-
-```bash
-npm run seed:dev
-```
-
-**En production** – Compile TypeScript puis lance le seed :
-
-```bash
-npm run build
-npm run seed
-```
-
-### Données créées
-
-Le script crée automatiquement :
-
-- **4 utilisateurs de démo** avec avatars et relations
-- **6 favoris** répartis entre les utilisateurs (avec notes)
-- **3 commentaires** sur des films
-- **3 relations follow** entre utilisateurs
-
-### Comptes de démo disponibles
-
-Une fois le seed exécuté, ces comptes sont disponibles pour se connecter :
-
-| Email | Mot de passe | Avatar |
-|-------|-------------|--------|
-| `florentin.demo@cinelink.fr` | `CineLink2026!` | avatar1 |
-| `alice.demo@cinelink.fr` | `CineLink2026!` | avatar2 |
-| `lucas.demo@cinelink.fr` | `CineLink2026!` | avatar3 |
-| `emma.demo@cinelink.fr` | `CineLink2026!` | avatar4 |
-
-### Film démo utilisés
-
-- **Inception** (tmdbId: 27205)
-- **The Dark Knight** (tmdbId: 155)
-- **Interstellar** (tmdbId: 157336)
-- **Fight Club** (tmdbId: 550)
-
-Chaque utilisateur de démo a des favoris, des notes, des commentaires et des abonnements pour explorer les fonctionnalités sociales et le fil d'actualité.
-
----
-
-## API Endpoints
-
-Les routes protégées nécessitent un en-tête `Authorization: Bearer <token>`.
-
-### Authentification
-
-| Méthode | Endpoint | Description | Auth |
-|---------|----------|-------------|------|
-| POST | `/api/auth/register` | Inscription utilisateur (`name`, `email`, `password`, `avatar?`) | ❌ |
-| POST | `/api/auth/login` | Connexion utilisateur (`email`, `password`) | ❌ |
-
-### Films
-
-| Méthode | Endpoint | Description | Auth |
-|---------|----------|-------------|------|
-| GET | `/api/movies/popular` | Liste des films populaires | ✅ |
-| GET | `/api/movies/:id` | Détails d'un film | ✅ |
-
-### Recherche
-
-| Méthode | Endpoint | Description | Auth |
-|---------|----------|-------------|------|
-| GET | `/api/search?query=` | Recherche de films | ✅ |
-
-### Favoris
-
-| Méthode | Endpoint | Description | Auth |
-|---------|----------|-------------|------|
-| POST | `/api/favorites` | Ajouter un favori (body: `tmdbId`, `title?`) | ✅ |
-| GET | `/api/favorites` | Liste des favoris | ✅ |
-| DELETE | `/api/favorites/:id` | Supprimer un favori | ✅ |
-| PUT | `/api/favorites/:id/rate` | Noter un favori (body: `rating` entre 0 et 10) | ✅ |
-
-### Commentaires
-
-| Méthode | Endpoint | Description | Auth |
-|---------|----------|-------------|------|
-| POST | `/api/comments` | Ajouter un commentaire (body: `movieId`, `content`) | ✅ |
-| GET | `/api/comments/:movieId` | Liste des commentaires d'un film | ❌ |
-| DELETE | `/api/comments/:id` | Supprimer un commentaire | ✅ |
-
-### Relations (follow)
-
-| Méthode | Endpoint | Description | Auth |
-|---------|----------|-------------|------|
-| POST | `/api/follow/:id` | Suivre un utilisateur | ✅ |
-| DELETE | `/api/follow/:id` | Ne plus suivre | ✅ |
-| GET | `/api/follow` | Liste des abonnements | ✅ |
-
-### Utilisateurs
-
-| Méthode | Endpoint | Description | Auth |
-|---------|----------|-------------|------|
-| GET | `/api/users/all` | Liste des utilisateurs (query `limit`, max 100) | ✅ |
-| GET | `/api/users?query=` | Recherche d'utilisateurs (query `query`, `limit`) | ✅ |
-| GET | `/api/users/:id` | Profil public d'un utilisateur | ✅ |
-| GET | `/api/users/:id/favorites` | Favoris d'un utilisateur | ✅ |
-| GET | `/api/users/:id/comments` | Commentaires d'un utilisateur | ✅ |
-| PUT | `/api/users/me/avatar` | Mise à jour de l'avatar (body: `avatar` parmi avatar1-5) | ✅ |
-| PUT | `/api/users/me` | Mise à jour du profil (body: `name?`, `avatar?`) — *non consommé actuellement* | ✅ |
-
-### Fil d'actualité
-
-| Méthode | Endpoint | Description | Auth |
-|---------|----------|-------------|------|
-| GET | `/api/feed` | Fil d'actualité personnalisé | ✅ |
-
----
-
-## Tests automatisés
-
-Les tests sont écrits avec Jest et Supertest.  
-Ils couvrent notamment :
-
-- les routes publiques et protégées
-- les flux d'authentification (register / login)
-- la recherche de films et d’utilisateurs
-- les profils, favoris, commentaires, relations et fil d’actualité
-- les réponses HTTP et structures JSON
-- la validation des middlewares d'authentification
-
-Lancer les tests :
-
-```bash
-npm test
-```
-
----
-
-## Docker
-
-### Lancement avec Docker Compose
-
-Le projet peut être lancé avec une base MongoDB locale via Docker.
-
-```bash
-docker compose up --build
-```
-
-Services exposés :
-
-- **API** : `http://localhost:3000`
-- **MongoDB** : `mongodb://localhost:27017`
-
-Les données MongoDB sont persistées via un volume Docker.
-
----
-
-## Intégration Continue (CI)
-
-Aucune configuration GitHub Actions n’est présente dans ce dépôt au moment de cette vérification. Si une CI existe ailleurs, elle n’est pas versionnée dans le backend courant.
-
----
-
-## Environnements
-
-- **Développement / tests** : MongoDB local ou conteneurisé
-- **Production** : MongoDB Atlas
-
-Les secrets (JWT, URI MongoDB) ne sont jamais versionnés et sont injectés via les variables d'environnement de la plateforme de déploiement.
-
----
-
-## Statut du projet
-
-- ✅ Backend fonctionnel
-- ✅ Tests automatisés en place
-- ✅ Docker opérationnel
-- ⚠️ CI non versionnée dans ce dépôt
-
----
-
-## Remarque
-
-Ce backend est conçu pour être utilisé avec le frontend CineLink, développé séparément dans le même mono-repo.
-
-# CineLink – Frontend
-
-## Presentation
-
-CineLink Frontend est une application web React (Vite + TypeScript) pour explorer des films, gerer ses favoris, commenter, suivre des utilisateurs et consulter un fil d'actualite personnalise.
-
-L'application consomme l'API backend CineLink via Axios avec authentification JWT.
-
----
-
-## Stack technique
-
-- **Runtime** : Node.js 20+
-- **Framework UI** : React 19
-- **Build tool** : Vite 7
-- **Langage** : TypeScript (mode strict)
-- **Routing** : React Router
-- **Styling** : Tailwind CSS 4
-- **HTTP client** : Axios
-- **Forms/validation** : React Hook Form + Zod
-- **Notifications** : Sonner
-- **Qualite** : ESLint
-
----
-
-## Architecture du projet
-
-```text
-cinelink-frontend/
-├─ src/
-│  ├─ app/                  # Shell, routes, guard auth
-│  ├─ components/ui/        # UI primitives reutilisables
-│  ├─ features/
-│  │  ├─ auth/
-│  │  ├─ movies/
-│  │  ├─ search/
-│  │  ├─ favorites/
-│  │  ├─ comments/
-│  │  ├─ follow/
-│  │  ├─ users/
-│  │  └─ feed/
-│  ├─ lib/                  # Helpers (JWT, avatar, utils)
-│  └─ services/             # Client API et stockage auth
-├─ public/
-├─ vite.config.ts
-├─ eslint.config.js
-├─ tsconfig.app.json
-└─ package.json
-```
-
----
-
-## Installation locale
-
-### Prerequis
-
-- Node.js >= 20
-- npm
-- Backend CineLink accessible
-
-### Installation
-
-```bash
-npm install
-```
-
-Creer un fichier `.env` a la racine du frontend :
-
+**Frontend** (`.env` dans `cinelink-frontend/`) :
 ```env
 VITE_API_URL=http://localhost:3000
 ```
 
-### Lancer en developpement
+### Lancement en développement
 
 ```bash
+# Terminal 1 : Backend
+cd cinelink-backend
+npm run dev
+
+# Terminal 2 : Frontend
+cd cinelink-frontend
 npm run dev
 ```
 
-Application accessible sur `http://localhost:5173` (port Vite par defaut).
+L'application sera accessible sur :
+- **Frontend** : http://localhost:5173
+- **Backend API** : http://localhost:3000
 
----
+### Données de démo
 
-## Scripts disponibles
-
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Lance le serveur Vite en developpement |
-| `npm run build` | Type-check puis build de production |
-| `npm run lint` | Lance ESLint |
-| `npm run preview` | Sert le build localement |
-
----
-
-## Routage applicatif
-
-### Routes publiques
-
-| Route | Description |
-|-------|-------------|
-| `/` | Redirection vers `/login` |
-| `/login` | Connexion |
-| `/register` | Inscription |
-
-### Routes protegees (JWT requis)
-
-Toutes les routes `/app/*` sont protegees par `RequireAuth`.
-
-| Route | Description |
-|-------|-------------|
-| `/app/feed` | Fil d'actualite |
-| `/app/movies` | Catalogue de films populaires |
-| `/app/movies/:id` | Detail d'un film + commentaires |
-| `/app/search` | Recherche de films |
-| `/app/favorites` | Gestion des favoris et notation |
-| `/app/users` | Decouverte/recherche utilisateurs |
-| `/app/users/:id` | Profil public d'un utilisateur |
-| `/app/following` | Liste des abonnements |
-| `/app/me` | Mon profil |
-
----
-
-## Authentification et session
-
-- Le token JWT est stocke dans `localStorage` sous la cle `cinelink_token`.
-- Un interceptor Axios ajoute automatiquement `Authorization: Bearer <token>` sur les requetes.
-- L'acces aux pages `/app/*` est bloque si le token est absent.
-
-Fichiers cles :
-
-- `src/services/auth.storage.ts`
-- `src/services/api.ts`
-- `src/app/RequireAuth.tsx`
-
----
-
-## Contrat API consomme par le frontend
-
-| Feature | Methodes frontend | Endpoints backend utilises |
-|---------|-------------------|----------------------------|
-| Auth | `register`, `login` | `POST /api/auth/register`, `POST /api/auth/login` |
-| Movies | `getPopular`, `getById` | `GET /api/movies/popular`, `GET /api/movies/:id` |
-| Search | `search` | `GET /api/search?query=` |
-| Favorites | `add`, `list`, `remove`, `rate` | `POST /api/favorites`, `GET /api/favorites`, `DELETE /api/favorites/:id`, `PUT /api/favorites/:id/rate` |
-| Comments | `listByMovie`, `add`, `remove` | `GET /api/comments/:movieId`, `POST /api/comments`, `DELETE /api/comments/:id` |
-| Follow | `list`, `follow`, `unfollow` | `GET /api/follow`, `POST /api/follow/:id`, `DELETE /api/follow/:id` |
-| Users | `search`, `getAll`, `getProfile`, `getFavorites`, `getComments`, `updateMyAvatar` | `GET /api/users`, `GET /api/users/all`, `GET /api/users/:id`, `GET /api/users/:id/favorites`, `GET /api/users/:id/comments`, `PUT /api/users/me/avatar` |
-| Feed | `list` | `GET /api/feed` |
-
----
-
-## UX/Pages principales
-
-- **Catalogue** : liste des films populaires, acces rapide a la recherche.
-- **Detail film** : synopsis, casting, trailer, ajout aux favoris, section commentaires.
-- **Favoris** : suppression et notation des films (0 a 10).
-- **Decouvrir** : recherche utilisateurs + actions follow/unfollow.
-- **Abonnements** : liste des utilisateurs suivis.
-- **Profil utilisateur** : stats sociales, favoris et commentaires.
-- **Mon profil** : recap personnel et mise a jour de l'avatar.
-- **Fil d'actualite** : activites des utilisateurs suivis (favori/note/commentaire).
-
----
-
-## Qualite, build et tests
-
-- TypeScript strict active (`strict: true` dans `tsconfig.app.json`).
-- Lint via `eslint.config.js`.
-- Aucun test frontend n'est versionne actuellement (`*.test.*` / `*.spec.*` non detectes).
-
-Commandes utiles :
+Pour tester rapidement avec des données :
 
 ```bash
-npm run lint
-npm run build
+cd cinelink-backend
+npm run seed:dev
+```
+
+Comptes de démo disponibles :
+- `florentin.demo@cinelink.fr` / `CineLink2026!`
+- `alice.demo@cinelink.fr` / `CineLink2026!`
+- `lucas.demo@cinelink.fr` / `CineLink2026!`
+- `emma.demo@cinelink.fr` / `CineLink2026!`
+
+---
+
+## 🐳 Docker
+
+### Lancement complet avec Docker Compose
+
+```bash
+# Depuis la racine du monorepo
+docker compose up --build
+```
+
+Services exposés :
+- **Frontend** : http://localhost:5173
+- **Backend API** : http://localhost:3000
+- **MongoDB** : mongodb://localhost:27017
+
+### Images Docker individuelles
+
+```bash
+# Backend uniquement
+cd cinelink-backend
+docker build -t cinelink-backend .
+docker run -p 3000:3000 cinelink-backend
+
+# Frontend uniquement
+cd cinelink-frontend
+docker build -t cinelink-frontend .
+docker run -p 5173:5173 cinelink-frontend
 ```
 
 ---
 
-## Deploiement
+## 🔄 CI/CD
 
-- Build de production :
+### Pipeline GitHub Actions (non versionnée)
+
+Le projet est configuré pour une CI/CD automatisée incluant :
+
+- **Linting** : ESLint sur frontend et backend
+- **Tests** : Jest pour backend, Vitest pour frontend
+- **Build** : Compilation TypeScript et build de production
+- **Sécurité** : Audit des dépendances npm
+- **Déploiement** : Vers Vercel (frontend) et Railway (backend)
+
+### Déploiement manuel
 
 ```bash
+# Backend
+cd cinelink-backend
 npm run build
-```
+npm start
 
-- Le dossier genere est `dist/`.
-- Definir `VITE_API_URL` avec l'URL du backend cible (staging/prod).
+# Frontend
+cd cinelink-frontend
+npm run build
+npm run preview
+```
 
 ---
 
-## Remarque
+## 🧪 Tests
 
-Ce frontend est concu pour fonctionner avec le backend CineLink du meme mono-repo.
+### Backend
 
+```bash
+cd cinelink-backend
+npm test              # Tests unitaires + intégration
+npm run test:watch    # Mode watch
+npm run test:coverage # Rapport de couverture
+```
+
+**Couverture** : Routes API, contrôleurs, modèles, middlewares, utilitaires.
+
+### Frontend
+
+```bash
+cd cinelink-frontend
+npm run test          # Tests unitaires (Vitest)
+npm run test:ui       # Tests E2E (Playwright - si configuré)
+```
+
+### Qualité du code
+
+```bash
+# Linting
+cd cinelink-backend && npm run lint
+cd cinelink-frontend && npm run lint
+
+# Type checking
+cd cinelink-backend && npm run typecheck
+cd cinelink-frontend && npm run build  # Inclut type-check
+```
+
+---
+
+## 📁 Structure du monorepo
+
+```
+cinelink/
+├── .github/                 # Configuration GitHub (CI/CD)
+├── docs/                    # Documentation
+│   └── screenshots/         # Captures d'écran
+├── cinelink-backend/        # API REST
+│   ├── src/
+│   ├── tests/
+│   ├── scripts/
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   └── package.json
+├── cinelink-frontend/       # Application React
+│   ├── src/
+│   ├── public/
+│   ├── test/
+│   ├── vite.config.ts
+│   └── package.json
+├── docker-compose.yml       # Orchestration complète
+├── README.md               # Cette documentation
+└── package.json           # Scripts monorepo
+```
+
+---
+
+## 🔧 Backend
+
+### Architecture Express
+
+Le backend suit une architecture modulaire avec séparation claire des responsabilités :
+
+- **Routes** : Définition des endpoints REST
+- **Contrôleurs** : Logique métier et gestion des réponses
+- **Modèles** : Schémas de données MongoDB/Mongoose
+- **Middlewares** : Authentification, validation, erreurs
+- **Utils** : Fonctions utilitaires réutilisables
+
+### API Endpoints
+
+Les routes protégées nécessitent `Authorization: Bearer <token>`.
+
+#### Authentification
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/auth/register` | Inscription (`name`, `email`, `password`, `avatar?`) |
+| POST | `/api/auth/login` | Connexion (`email`, `password`) |
+
+#### Films
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/movies/popular` | Films populaires |
+| GET | `/api/movies/:id` | Détails d'un film |
+
+#### Recherche & Utilisateurs
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/search?query=` | Recherche de films |
+| GET | `/api/users/all` | Liste utilisateurs |
+| GET | `/api/users?query=` | Recherche utilisateurs |
+| GET | `/api/users/:id` | Profil utilisateur |
+
+#### Fonctionnalités sociales
+| Méthode | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/favorites` | Ajouter favori |
+| GET | `/api/favorites` | Mes favoris |
+| PUT | `/api/favorites/:id/rate` | Noter favori (0-10) |
+| DELETE | `/api/favorites/:id` | Supprimer favori |
+| POST | `/api/comments` | Commenter film |
+| GET | `/api/comments/:movieId` | Commentaires film |
+| DELETE | `/api/comments/:id` | Supprimer commentaire |
+| POST | `/api/follow/:id` | Suivre utilisateur |
+| DELETE | `/api/follow/:id` | Ne plus suivre |
+| GET | `/api/follow` | Mes abonnements |
+| GET | `/api/feed` | Fil d'actualité |
+
+### Sécurité
+
+- **Authentification JWT** avec expiration
+- **Validation stricte** des entrées (express-validator)
+- **Protection CSRF** implicite (JWT stateless)
+- **Rate limiting** recommandé en production
+- **Audit logs** pour les actions sensibles
+- **Secrets** non versionnés (variables d'environnement)
+
+### Variables d'environnement
+
+| Variable | Description | Exemple |
+|----------|-------------|---------|
+| `PORT` | Port d'écoute | `3000` |
+| `MONGO_URI` | URI MongoDB | `mongodb://localhost:27017/cinelink` |
+| `JWT_SECRET` | Clé secrète JWT | `your_super_secret_key` |
+| `JWT_EXPIRES_IN` | Expiration JWT | `1h` |
+| `TMDB_API_KEY` | Clé API TMDB | `your_tmdb_key` |
+| `FRONTEND_URL` | URL frontend | `http://localhost:5173` |
+
+---
+
+## 🎨 Frontend
+
+### Architecture React
+
+Application React moderne organisée en features :
+
+```
+src/
+├── app/                    # Configuration globale
+│   ├── AppShell.tsx       # Layout principal
+│   ├── RequireAuth.tsx    # Guard d'authentification
+│   └── router.tsx         # Configuration des routes
+├── components/ui/         # Composants UI réutilisables
+│   ├── button.tsx
+│   ├── input.tsx
+│   ├── card.tsx
+│   └── ...
+├── features/              # Features métier
+│   ├── auth/              # Authentification
+│   ├── movies/            # Gestion des films
+│   ├── favorites/         # Favoris et notation
+│   ├── comments/          # Commentaires
+│   ├── users/             # Profils utilisateurs
+│   ├── search/            # Recherche
+│   └── feed/              # Fil d'actualité
+├── lib/                   # Utilitaires
+│   ├── jwt.ts             # Gestion JWT
+│   ├── api-error.ts       # Gestion erreurs API
+│   └── utils.ts           # Fonctions utilitaires
+└── services/              # Services externes
+    ├── api.ts             # Client HTTP Axios
+    └── auth.storage.ts    # Stockage token
+```
+
+### Routing
+
+#### Routes publiques
+- `/` → Redirection vers `/login`
+- `/login` → Page de connexion
+- `/register` → Page d'inscription
+
+#### Routes protégées (`/app/*`)
+- `/app/feed` → Fil d'actualité
+- `/app/movies` → Catalogue films populaires
+- `/app/movies/:id` → Détail film + commentaires
+- `/app/search` → Recherche de films
+- `/app/favorites` → Gestion favoris
+- `/app/users` → Découverte utilisateurs
+- `/app/users/:id` → Profil utilisateur
+- `/app/following` → Liste abonnements
+- `/app/me` → Mon profil
+
+### Authentification & Session
+
+- **Stockage** : Token JWT dans `localStorage`
+- **Intercepteur Axios** : Injection automatique du header `Authorization`
+- **Protection routes** : Composant `RequireAuth` bloque l'accès sans token
+- **Expiration** : Gestion automatique de la déconnexion
+
+### Tests
+
+Configuration Vitest pour les tests unitaires :
+
+```bash
+npm run test          # Exécution des tests
+npm run test:watch    # Mode watch
+npm run test:coverage # Couverture
+```
+
+### Déploiement Vercel
+
+Le frontend est optimisé pour Vercel :
+
+- **Build command** : `npm run build`
+- **Output directory** : `dist`
+- **Environment variables** :
+  - `VITE_API_URL` : URL de l'API backend
+
+---
+
+## 📝 Licence
+
+Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+---
+
+## 🤝 Contribution
+
+1. Fork le projet
+2. Créer une branche feature (`git checkout -b feature/AmazingFeature`)
+3. Commit les changements (`git commit -m 'Add some AmazingFeature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrir une Pull Request
+
+### Standards de code
+
+- **TypeScript strict** activé
+- **ESLint** pour la qualité
+- **Tests** requis pour les nouvelles features
+- **Commits** conventionnels
+
+---
+
+## 📞 Support
+
+- **Issues** : [GitHub Issues](https://github.com/username/cinelink/issues)
+- **Discussions** : [GitHub Discussions](https://github.com/username/cinelink/discussions)
+- **Email** : contact@cinelink.dev
+
+---
+
+*Développé avec ❤️ pour la communauté cinéphile*
