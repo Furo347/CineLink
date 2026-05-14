@@ -165,4 +165,4 @@ Si vous rencontrez un problème non résolu :
 
 ---
 
-*Ce manuel est régulièrement mis à jour. Dernière révision : Mai 2024*
+*Ce manuel est régulièrement mis à jour. Dernière révision : Mai 2026*

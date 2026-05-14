@@ -69,7 +69,7 @@ Développé en **monorepo** avec une séparation claire entre backend API REST e
 - **Framework** : React 19
 - **Build tool** : Vite 7
 - **Langage** : TypeScript (strict mode)
-- **Routing** : React Router v6
+- **Routing** : React Router v7
 - **Styling** : Tailwind CSS 4
 - **HTTP Client** : Axios
 - **Forms** : React Hook Form + Zod
@@ -79,7 +79,7 @@ Développé en **monorepo** avec une séparation claire entre backend API REST e
 ### DevOps & Qualité
 - **Conteneurisation** : Docker & Docker Compose
 - **Linting** : ESLint
-- **CI/CD** : GitHub Actions (non versionné)
+- **CI/CD** : GitHub Actions versionné dans `.github/workflows`
 - **Tests** : Jest + Vitest
 - **Type checking** : TypeScript strict
 
@@ -116,10 +116,10 @@ CineLink (Monorepo)
 ### 🏛️ Principes architecturaux
 
 - **Séparation des responsabilités** : Backend API / Frontend UI
-- **Architecture hexagonale** côté backend
+- **Architecture modulaire inspirée MVC** côté backend avec séparation routes / contrôleurs / modèles / middlewares
 - **Feature-driven development** côté frontend
 - **Type safety** complète avec TypeScript
-- **Tests first** approach
+- **Tests automatisés de non-régression** pour la validité
 - **Container-ready** pour tous les environnements
 
 ---
@@ -176,8 +176,8 @@ L'application est actuellement déployée sur des plans gratuits :
 
 ```bash
 # Cloner le repository
-git clone https://github.com/username/cinelink.git
-cd cinelink
+git clone https://github.com/Furo347/CineLink.git
+cd CineLink
 
 # Installer les dépendances
 npm install
@@ -239,37 +239,34 @@ Comptes de démo disponibles :
 
 ## 🐳 Docker
 
-### Lancement complet avec Docker Compose
+### Lancement avec Docker Compose
+
+Docker est configuré pour le backend et la base de données :
 
 ```bash
-# Depuis la racine du monorepo
+# Depuis le répertoire backend
+cd cinelink-backend
 docker compose up --build
 ```
 
 Services exposés :
-- **Frontend** : http://localhost:5173
 - **Backend API** : http://localhost:3000
 - **MongoDB** : mongodb://localhost:27017
 
-### Images Docker individuelles
+### Frontend (Vercel)
+
+Le frontend est déployé sur Vercel et n'a pas besoin d'être dockerisé localement. Pour le développement :
 
 ```bash
-# Backend uniquement
-cd cinelink-backend
-docker build -t cinelink-backend .
-docker run -p 3000:3000 cinelink-backend
-
-# Frontend uniquement
 cd cinelink-frontend
-docker build -t cinelink-frontend .
-docker run -p 5173:5173 cinelink-frontend
+npm run dev
 ```
 
 ---
 
 ## 🔄 CI/CD
 
-### Pipeline GitHub Actions (non versionnée)
+### Pipeline GitHub Actions versionné
 
 Le projet est configuré pour une CI/CD automatisée incluant :
 
@@ -312,8 +309,7 @@ npm run preview
 ```bash
 cd cinelink-backend
 npm test              # Tests unitaires + intégration
-npm run test:watch    # Mode watch
-npm run test:coverage # Rapport de couverture
+npm run build         # Compilation TypeScript
 ```
 
 **Couverture** : Routes API, contrôleurs, modèles, middlewares, utilitaires.
@@ -322,8 +318,8 @@ npm run test:coverage # Rapport de couverture
 
 ```bash
 cd cinelink-frontend
-npm run test          # Tests unitaires (Vitest)
-npm run test:ui       # Tests E2E (Playwright - si configuré)
+npm test              # Tests unitaires (Vitest) - mode run
+npm run test:watch    # Mode watch pour développement
 ```
 
 ### Qualité du code
@@ -334,7 +330,7 @@ cd cinelink-backend && npm run lint
 cd cinelink-frontend && npm run lint
 
 # Type checking
-cd cinelink-backend && npm run typecheck
+cd cinelink-backend && npm run typecheck:test
 cd cinelink-frontend && npm run build  # Inclut type-check
 ```
 
@@ -545,8 +541,8 @@ Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de
 
 ## 📞 Support
 
-- **Issues** : [GitHub Issues](https://github.com/username/cinelink/issues)
-- **Discussions** : [GitHub Discussions](https://github.com/username/cinelink/discussions)
+- **Issues** : [GitHub Issues](https://github.com/Furo347/CineLink/issues)
+- **Discussions** : [GitHub Discussions](https://github.com/Furo347/CineLink/discussions)
 - **Email** : contact@cinelink.dev
 
 ---

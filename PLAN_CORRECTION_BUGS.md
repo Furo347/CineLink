@@ -67,17 +67,17 @@ Sévérité : [Bloquante/Fonctionnelle/Cosmétique]
 ### 4. Prévention
 
 #### Mesures proactives
-- **Tests automatisés** : Couverture >80%
-- **Code review** : Minimum 2 approbations
-- **Linting** : ESLint + Prettier
-- **TypeScript strict** : Prévention erreurs types
+- **Tests automatisés** : Couverture des fonctionnalités critiques (authentification, users, feed, commentaires, favoris)
+- **Code review** : Révision des changements avant merge
+- **Linting** : ESLint + Prettier pour la qualité du code
+- **TypeScript strict** : Prévention erreurs de types à la compilation
 - **Audit sécurité** : npm audit régulier
 
-#### Monitoring continu
-- **Logs structurés** : Winston pour backend
-- **Métriques** : Response time, error rate
-- **Alertes** : Seuils configurés
-- **Health checks** : Endpoints dédiés
+#### Monitoring et observabilité
+- **Logs structurés** : Gestion des logs applicatifs
+- **Métriques** : Suivi des performances en development
+- **Alertes** : À mettre en place en production (Bloc 3)
+- **Health checks** : Endpoints de santé disponibles
 
 ## Bogues Connus et Corrections
 
@@ -120,49 +120,47 @@ Sévérité : [Bloquante/Fonctionnelle/Cosmétique]
 
 ### Bogues Potentiels Identifiés
 
-#### PERF-001 : Cache TMDB non optimisé
-**Description** : Requêtes répétées vers TMDB
-**Impact** : Performance dégradée
-**Solution proposée** : Implémentation cache Redis
-**Priorité** : P2
+#### PERF-001 : Cache TMDB
+**Description** : Optimisation possible des requêtes vers TMDB
+**Impact** : Performance
+**Solution proposée** : Implémentation d'une couche de cache
+**Priorité** : P3 (amélioration future)
 
-#### SEC-001 : Rate limiting manquant
-**Description** : Pas de protection contre les attaques par déni de service
-**Impact** : Vulnérabilité sécurité
-**Solution proposée** : Middleware express-rate-limit
-**Priorité** : P1
+#### SEC-001 : Rate limiting
+**Description** : Renforcement de la protection contre les attaques
+**Impact** : Sécurité
+**Solution proposée** : Middleware express-rate-limit pour la production
+**Priorité** : P2 (recommandé pour production)
 
-#### UI-001 : Accessibilité incomplète
-**Description** : Attributs ARIA manquants
-**Impact** : Non-conformité WCAG
-**Solution proposée** : Ajout labels, rôles, skip links
-**Priorité** : P2
+#### ACC-001 : Amélioration accessibilité
+**Description** : Audit accessibilité complet
+**Impact** : Conformité WCAG
+**Solution proposée** : Tests avec outils automatisés et manuels
+**Priorité** : P2 (continué)
 
 ## Outils de Gestion
 
 ### Tracking
-- **GitHub Issues** : Bug reports et feature requests
-- **Labels** : bug, enhancement, security, performance
-- **Milestones** : Versions et sprints
-- **Projects** : Kanban board
+- **GitHub Issues** : Bug reports, feature requests et discussions
+- **Labels** : bug, enhancement, security, performance pour la classification
+- **Milestones** : Regroupement par versions
 
 ### Communication
-- **Slack/Discord** : Notifications temps réel
-- **Email** : Rapports hebdomadaires
-- **Wiki** : Documentation des processus
+- **Email** : Notifications importantes
+- **Documentation** : Processus documentés dans ce plan
 
 ## Métriques de Qualité
 
 ### Indicateurs à suivre
-- **Mean Time To Resolution (MTTR)** : < 24h pour P0/P1
-- **Bug reopen rate** : < 5%
-- **Test coverage** : > 80%
-- **Production incidents** : < 1/mois
+- **Stabilité** : Tous les tests passent avant production
+- **Bug reopen rate** : Minimiser les regressions
+- **Test coverage** : Objectif de couvrir les parcours critiques
+- **Production availability** : Objectif > 99.5%
 
 ### Rapports
-- **Hebdomadaire** : Status des bogues actifs
-- **Mensuel** : Tendances et métriques
-- **Trimestriel** : Analyse rétrospective
+- **Après chaque release** : Validation de la stabilité
+- **Mensuel** : Revue des bugs résolus et tendances
+- **Trimestriel** : Analyse rétrospective et améliorations
 
 ## Escalade
 

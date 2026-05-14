@@ -306,4 +306,4 @@ npm run test:e2e
 
 ---
 
-*Ce manuel est mis à jour à chaque release. Dernière révision : Mai 2024*
+*Ce manuel est mis à jour à chaque release. Dernière révision : Mai 2026*

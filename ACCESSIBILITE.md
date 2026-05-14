@@ -27,10 +27,10 @@ Ce document présente les mesures mises en œuvre pour garantir l'accessibilité
 ## Technologies Assistives Supportées
 
 ### Lecteurs d'écran
-- **NVDA** (Windows) : Testé et compatible
-- **JAWS** (Windows) : Compatible via standards web
-- **VoiceOver** (macOS/iOS) : Compatible
-- **TalkBack** (Android) : Compatible via standards web
+- **NVDA** (Windows) : Compatible selon les standards web
+- **JAWS** (Windows) : Compatible selon les standards web
+- **VoiceOver** (macOS/iOS) : Compatible selon les standards web
+- **TalkBack** (Android) : Compatible selon les standards web
 
 ### Technologies d'agrandissement
 - **Zoom navigateur** : Support jusqu'à 200%
@@ -62,9 +62,9 @@ Ce document présente les mesures mises en œuvre pour garantir l'accessibilité
 ## Tests d'Accessibilité
 
 ### Outils Automatisés
-- **axe-core** : Intégré dans les tests (préparé)
-- **Lighthouse** : Audit accessibilité inclus
-- **WAVE** : Outil de validation manuel
+- **axe-core** : Préparé pour intégration dans les tests
+- **Lighthouse** : Audit accessibilité disponible via DevTools navigateur
+- **WAVE** : Outil de validation manuel disponible
 
 ### Tests Manuels
 - Navigation au clavier uniquement

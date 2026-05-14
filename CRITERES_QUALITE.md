@@ -6,7 +6,7 @@ Ce document définit les critères de qualité et de performance appliqués au p
 ## Critères de Qualité
 
 ### Code Quality
-- **Couverture de tests** : Minimum 80% de couverture pour le code critique (authentification, API, composants UI)
+- **Tests automatisés** : Couverture des parcours critiques (authentification, utilisateurs, feed, commentaires, favoris)
 - **Linting** : Conformité ESLint et Prettier pour le style de code
 - **TypeScript strict** : Mode strict activé, pas de `any`, types explicites
 - **Audit sécurité** : Audit npm régulier, pas de vulnérabilités critiques
@@ -14,19 +14,19 @@ Ce document définit les critères de qualité et de performance appliqués au p
 ### Architecture
 - **Modularité** : Séparation claire des responsabilités (routes, contrôleurs, modèles)
 - **DRY Principle** : Pas de duplication de code
-- **SOLID Principles** : Interfaces claires, responsabilité unique par classe
+- **Principes SOLID** : Interfaces claires, responsabilité unique par module
 - **Documentation** : Code commenté, README complet
 
 ### Performance
-- **Temps de réponse API** : < 500ms pour les requêtes standard
-- **Temps de chargement frontend** : < 3 secondes pour la page principale
-- **Bundle size** : < 500KB pour le JavaScript compressé
+- **Temps de réponse API** : Objectif < 500ms pour les requêtes standard
+- **Temps de chargement frontend** : Objectif < 3 secondes pour la page principale
+- **Bundle size** : Objectif < 500KB pour le JavaScript compressé
 - **Optimisation images** : Images optimisées, lazy loading
 
 ### Accessibilité
 - **Conformité WCAG 2.1 AA** : Support clavier, contraste, labels ARIA
 - **Navigation** : Focus visible, ordre logique de tabulation
-- **Contenu alternatif** : Alt-texts pour les images, transcripts pour médias
+- **Contenu alternatif** : Alt-texts pour les images, préparation pour transcripts
 
 ## Métriques de Performance
 
@@ -64,19 +64,19 @@ Ce document définit les critères de qualité et de performance appliqués au p
 ## Seuils d'Acceptation
 
 ### Tests
-- ✅ Tous les tests passent
-- ✅ Couverture > 80%
+- ✅ Tous les tests unitaires passent
+- ✅ Tests couvrant les parcours critiques de l'application
 - ✅ Pas d'erreurs ESLint
 
 ### Performance
-- ✅ Temps de réponse < 500ms
-- ✅ Score Lighthouse > 90
-- ✅ Bundle size < 500KB
+- ✅ Temps de réponse optimal pour les requêtes API
+- ✅ Application déployée et accessible en production
+- ✅ Bundle optimisé par Vite
 
 ### Sécurité
-- ✅ Audit npm propre
-- ✅ Headers de sécurité présents
-- ✅ Validation des entrées
+- ✅ Audit npm régulier effectué
+- ✅ Validation des entrées implémentée
+- ✅ Variables d'environnement sécurisées
 
 ## Plan d'Amélioration Continue
 
