@@ -23,6 +23,7 @@
 - [🔧 Backend](#-backend)
 - [🎨 Frontend](#-frontend)
 - [📝 Licence](#-licence)
+- [📋 Documentation de certification](#-documentation-de-certification)
 
 ---
 
@@ -126,28 +127,39 @@ CineLink (Monorepo)
 ## 📸 Screenshots
 
 ### Interface principale
-![Capture d'écran du fil d'actualité](./docs/screenshots/feed.png)
+![img_1.png](public/img_1.png)
 *Fil d'actualité personnalisé avec les activités des utilisateurs suivis*
 
 ### Catalogue de films
-![Capture d'écran du catalogue](./docs/screenshots/movies.png)
+![img.png](public/img.png)
 *Catalogue des films populaires avec recherche intégrée*
 
 ### Détail d'un film
-![Capture d'écran du détail film](./docs/screenshots/movie-detail.png)
+![img_2.png](public/img_2.png)
+![img_3.png](public/img_3.png)
 *Détail complet d'un film avec synopsis, casting et commentaires*
 
 ### Profil utilisateur
-![Capture d'écran du profil](./docs/screenshots/profile.png)
+![img_4.png](public/img_4.png)
 *Profil utilisateur avec statistiques sociales et favoris*
 
 ---
 
 ## 🌐 Liens de production
 
-- **Application** : [https://cinelink.vercel.app](https://cinelink.vercel.app)
-- **API Backend** : [https://cinelink-api.vercel.app](https://cinelink-api.vercel.app)
-- **Documentation API** : [https://cinelink-api.vercel.app/docs](https://cinelink-api.vercel.app/docs)
+- **Application** : [https://cine-link-lemon.vercel.app/](https://cine-link-lemon.vercel.app/)
+- **API Backend** : [https://cinelink-backend.onrender.com](https://cinelink-backend.onrender.com)
+
+### ⚠️ Note sur les plans gratuits
+
+L'application est actuellement déployée sur des plans gratuits :
+- **Frontend** : Vercel (plan gratuit)
+- **Backend** : Render (plan gratuit)
+- **Base de données** : MongoDB Atlas (tier gratuit)
+
+**Impact** : En raison de ces plans gratuits, les ressources sont suspendues après 15 minutes d'inactivité. La première requête après inactivité peut donc faire prendre du temps (10-15 secondes) pour réactiver l'ensemble des services.
+
+**Recommandation pour la production** : Pour une application en production, utiliser des plans payants avec instances toujours actives pour garantir des temps de réponse optimaux.
 
 ---
 
@@ -265,7 +277,17 @@ Le projet est configuré pour une CI/CD automatisée incluant :
 - **Tests** : Jest pour backend, Vitest pour frontend
 - **Build** : Compilation TypeScript et build de production
 - **Sécurité** : Audit des dépendances npm
-- **Déploiement** : Vers Vercel (frontend) et Railway (backend)
+- **Déploiement** : Vers Vercel (frontend) et Render (backend)
+
+### Monitoring et observabilité
+
+**Note** : Le monitoring et l'observabilité en production seront implémentés lors du **Bloc 3 (Assurer la continuité de service)** de cette formation. 
+
+Les outils suivants sont prévus pour améliorer la visibilité en production :
+- Application Performance Monitoring (APM)
+- Logs centralisés
+- Alertes et métriques
+- Dashboard de suivi
 
 ### Déploiement manuel
 
@@ -530,3 +552,41 @@ Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de
 ---
 
 *Développé avec ❤️ pour la communauté cinéphile*
+
+---
+
+## 📋 Documentation de certification
+
+Ce projet CineLink est développé dans le cadre de la certification Bloc 2. La documentation complète comprend les livrables suivants :
+
+### 📊 Critères de qualité et de performance
+**[CRITERES_QUALITE.md](./CRITERES_QUALITE.md)** - Définition des critères de qualité, métriques de performance, seuils d'acceptation et plan d'amélioration continue.
+
+### ♿ Actions d'accessibilité
+**[ACCESSIBILITE.md](./ACCESSIBILITE.md)** - Mesures mises en œuvre pour l'accessibilité WCAG 2.1 AA, technologies supportées et plan d'amélioration.
+
+### 📝 Historique des versions
+**[CHANGELOG.md](./CHANGELOG.md)** - Historique complet des versions avec description des changements, ajouts et corrections.
+
+### 🧪 Cahier de recettes
+**[CAHIER_RECETTES.md](./CAHIER_RECETTES.md)** - Scénarios de tests détaillés, méthodologie de test et matrice de traçabilité pour valider les fonctionnalités.
+
+### 🐛 Plan de correction des bogues
+**[PLAN_CORRECTION_BUGS.md](./PLAN_CORRECTION_BUGS.md)** - Stratégie de gestion des bogues, processus de résolution et métriques de suivi.
+
+### 👤 Manuel d'utilisation
+**[MANUEL_UTILISATEUR.md](./MANUEL_UTILISATEUR.md)** - Guide complet pour les utilisateurs finaux avec tutoriels, bonnes pratiques et dépannage.
+
+### 🔄 Manuel de mise à jour
+**[MANUEL_MISE_A_JOUR.md](./MANUEL_MISE_A_JOUR.md)** - Procédures de déploiement, migrations de base de données et gestion des versions.
+
+### ✅ Conformité Bloc 2
+
+Le projet respecte tous les critères éliminatoires de certification :
+
+- **C2.2.1** ✅ Prototype fonctionnel avec interface ergonomique
+- **C2.2.2** ✅ Harnais de tests unitaires complet (Jest/Vitest)
+- **C2.2.3** ✅ Code évolutif, sécurisé et accessible
+- **C2.3.1** ✅ Cahier de recettes avec scénarios détaillés
+
+---
