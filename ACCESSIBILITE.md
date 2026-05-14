@@ -27,17 +27,17 @@ Ce document présente les mesures mises en œuvre pour garantir l'accessibilité
 ## Technologies Assistives Supportées
 
 ### Lecteurs d'écran
-- **NVDA** (Windows) : Compatible selon les standards web
-- **JAWS** (Windows) : Compatible selon les standards web
-- **VoiceOver** (macOS/iOS) : Compatible selon les standards web
-- **TalkBack** (Android) : Compatible selon les standards web
+- **NVDA** (Windows) : Compatibilité partielle visée selon WCAG 2.1 AA
+- **JAWS** (Windows) : Compatibilité partielle visée selon WCAG 2.1 AA
+- **VoiceOver** (macOS/iOS) : Compatibilité partielle visée selon WCAG 2.1 AA
+- **TalkBack** (Android) : Compatibilité partielle visée selon WCAG 2.1 AA
 
 ### Technologies d'agrandissement
 - **Zoom navigateur** : Support jusqu'à 200%
 - **Loupes d'écran** : Compatible avec le contenu textuel
 
 ### Contrôle par la voix
-- **Dragon NaturallySpeaking** : Compatible via labels et rôles ARIA
+- **Dragon NaturallySpeaking** : Support via labels et rôles ARIA
 
 ## Actions Spécifiques Implémentées
 

@@ -162,27 +162,28 @@ Sévérité : [Bloquante/Fonctionnelle/Cosmétique]
 - **Mensuel** : Revue des bugs résolus et tendances
 - **Trimestriel** : Analyse rétrospective et améliorations
 
-## Escalade
+## Escalade et Communication
 
-### Seuils d'escalade
-- **P0 non résolu** : < 4h → Escalade manager
-- **Plusieurs P1 ouverts** : > 5 → Revue équipe
-- **Tendance négative** : +20% bugs/mois → Audit processus
+### Processus simple
+- **Bugs critiques** : Priorité immédiate, correction et redéploiement
+- **Bugs majeurs** : Planification dans la prochaine release
+- **Bugs mineurs** : Backlog ou améliorations futures
 
-### Contacts d'urgence
-- **Sécurité** : Équipe sécurité (urgence)
-- **Performance** : DevOps lead
-- **Fonctionnel** : Product owner
+### Communication des incidents
+- **GitHub Issues** : Tracking transparent de tous les problèmes
+- **Notifications** : Via les outils de développement
 
 ## Amélioration Continue
 
 ### Retrospectives
-- **Après chaque release** : Qu'est-ce qui a bien marché ?
-- **Mensuelle** : Analyse des métriques
-- **Trimestrielle** : Revue des processus
+- **Après chaque release** : Validation de la stabilité
+- **Mensuelle** : Revue des bugs résolus et tendances
+- **Trimestrielle** : Analyse du processus et optimisations
 
-### Actions d'amélioration
-- Formation équipe sur bonnes pratiques
-- Automatisation des tests de régression
-- Mise à jour des outils et frameworks
-- Refactoring du code legacy
+### Pistes d'amélioration futures
+- **Monitoring en production** : Application Insights, DataDog ou similaire
+- **Alertes automatisées** : Slack, Discord ou email pour les incidents
+- **Cache optimisé** : Redis pour les requêtes TMDB fréquentes
+- **Rate limiting avancé** : Protection renforcée en production
+- **Tests E2E** : Playwright ou Cypress pour scénarios complets
+- **Observabilité complète** : Métriques détaillées et logs centralisés

@@ -322,7 +322,12 @@ npm test              # Tests unitaires (Vitest) - mode run
 npm run test:watch    # Mode watch pour développement
 ```
 
-### Qualité du code
+**Couverture** : Tests Vitest + React Testing Library sur les composants et pages critiques :
+- Composants UI (Button, Input, Card, etc.)
+- AvatarPicker
+- LoginPage
+- RegisterPage
+- Smoke tests pour les flows principaux
 
 ```bash
 # Linting
@@ -330,7 +335,7 @@ cd cinelink-backend && npm run lint
 cd cinelink-frontend && npm run lint
 
 # Type checking
-cd cinelink-backend && npm run typecheck:test
+cd cinelink-backend && npm run typecheck
 cd cinelink-frontend && npm run build  # Inclut type-check
 ```
 
@@ -548,6 +553,36 @@ Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de
 ---
 
 *Développé avec ❤️ pour la communauté cinéphile*
+
+---
+
+## 🚢 Déploiement production
+
+L'application CineLink est déployée en production sur l'architecture suivante :
+
+### Infrastructure
+
+| Composant | Plateforme | URL |
+|-----------|-----------|-----|
+| **Frontend** | Vercel | [https://cine-link-lemon.vercel.app/](https://cine-link-lemon.vercel.app/) |
+| **Backend API** | Render | [https://cinelink-backend.onrender.com](https://cinelink-backend.onrender.com) |
+| **Base de données** | MongoDB Atlas | Cloud (URI sécurisée en .env) |
+| **CI/CD** | GitHub Actions | Workflows automatisés |
+
+### Processus de déploiement
+
+1. **Développement** : Branches feature avec PR
+2. **Review** : Code review et tests automatisés
+3. **Merge** : Fusion sur `main` 
+4. **CI/CD** : GitHub Actions déclenche les builds
+5. **Déploiement** :
+   - **Frontend** : Build Vercel automatique
+   - **Backend** : Redéploiement Render automatique
+6. **Validation** : Smoke tests en production
+
+### Monitoring et observabilité
+
+Production monitoring sera implémenté au **Bloc 3 (Assurer la continuité de service)**
 
 ---
 
