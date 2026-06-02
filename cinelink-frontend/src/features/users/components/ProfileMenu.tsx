@@ -39,7 +39,7 @@ export default function ProfileMenu() {
     const logout = () => {
         authStorage.clear();
         setOpen(false);
-        nav("/auth/login");
+        nav("/login");
     };
 
     return (
