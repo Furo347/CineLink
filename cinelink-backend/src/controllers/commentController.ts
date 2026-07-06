@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import Comment from "../models/Comment";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import {logActivity} from "../utils/activityLogger";
+import { logger } from "../config/logger";
 
 export const addComment = async (req: AuthRequest, res: Response) => {
     try {
@@ -34,7 +35,7 @@ export const addComment = async (req: AuthRequest, res: Response) => {
             comment,
         });
     } catch (err) {
-        console.error("Erreur serveur:", err);
+        logger.error("Erreur serveur addComment", { error: err });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -53,7 +54,7 @@ export const getCommentsByMovie = async (req: any, res: Response) => {
 
         res.json(comments);
     } catch (err) {
-        console.error("Erreur serveur:", err);
+        logger.error("Erreur serveur getCommentsByMovie", { error: err });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -77,7 +78,7 @@ export const deleteComment = async (req: any, res: Response) => {
 
         res.json({ message: "Commentaire supprimé" });
     } catch (err) {
-        console.error("Erreur serveur:", err);
+        logger.error("Erreur serveur deleteComment", { error: err });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };

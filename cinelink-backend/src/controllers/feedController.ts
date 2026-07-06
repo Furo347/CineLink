@@ -3,6 +3,7 @@ import axios from "axios";
 import Activity from "../models/Activity";
 import Follow from "../models/Follow";
 import { AuthRequest } from "../middlewares/authMiddleware";
+import { logger } from "../config/logger";
 
 async function fetchMovieDetails(tmdbId: number) {
     try {
@@ -29,7 +30,7 @@ async function fetchMovieDetails(tmdbId: number) {
             release_date: movie.release_date,
         };
     } catch (err) {
-        console.error(`Erreur TMDB feed pour ${tmdbId}:`, err);
+        logger.error(`Erreur TMDB feed pour ${tmdbId}`, { error: err });
         return null;
     }
 }
@@ -75,7 +76,7 @@ export const getFeed = async (req: AuthRequest, res: Response) => {
 
         res.json(enrichedActivities);
     } catch (error) {
-        console.error("Erreur getFeed:", error);
+        logger.error("Erreur getFeed", { error });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };

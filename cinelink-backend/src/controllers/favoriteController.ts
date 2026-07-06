@@ -4,6 +4,7 @@ import { AuthRequest } from "../middlewares/authMiddleware";
 import mongoose from "mongoose";
 import axios from "axios";
 import {logActivity} from "../utils/activityLogger";
+import { logger } from "../config/logger";
 
 async function fetchMovieDetails(tmdbId: number) {
     try {
@@ -12,7 +13,7 @@ async function fetchMovieDetails(tmdbId: number) {
         );
         return response.data;
     } catch (err) {
-        console.error(`Erreur TMDB pour le film ${tmdbId}:`, err);
+        logger.error(`Erreur TMDB pour le film ${tmdbId}`, { error: err });
         return null;
     }
 }
@@ -46,7 +47,7 @@ export const getFavorites = async (req: any, res: Response) => {
 
         res.json(enrichedFavorites);
     } catch (err) {
-        console.error("Erreur serveur:", err);
+        logger.error("Erreur serveur getFavorites", { error: err });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -76,7 +77,7 @@ export const addFavorite = async (req: AuthRequest, res: Response) => {
 
         res.status(201).json({ message: "Favori ajouté", favorite });
     } catch (err) {
-        console.error(err);
+        logger.error("Erreur addFavorite", { error: err });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -95,7 +96,7 @@ export const deleteFavorite = async (req: any, res: Response) => {
         await Favorite.deleteOne({ _id: favoriteId });
         res.json({ message: "Favori supprimé avec succès" });
     } catch (err) {
-        console.error(err);
+        logger.error("Erreur deleteFavorite", { error: err });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -127,7 +128,7 @@ export const rateFavorite = async (req: any, res: Response) => {
 
         res.json({ message: "Note enregistrée avec succès.", favorite });
     } catch (err) {
-        console.error(err);
+        logger.error("Erreur rateFavorite", { error: err });
         res.status(500).json({ message: "Erreur serveur." });
     }
 };

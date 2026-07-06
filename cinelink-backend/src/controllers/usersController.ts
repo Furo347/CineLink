@@ -6,6 +6,7 @@ import Comment from "../models/Comment";
 import Follow from "../models/Follow";
 import axios from "axios";
 import { validationResult } from "express-validator";
+import { logger } from "../config/logger";
 
 async function fetchMovieDetails(tmdbId: number) {
     try {
@@ -14,7 +15,7 @@ async function fetchMovieDetails(tmdbId: number) {
         });
         return response.data;
     } catch (err) {
-        console.error(`Erreur TMDB pour ${tmdbId}:`, err);
+        logger.error(`Erreur TMDB pour ${tmdbId}`, { error: err });
         return null;
     }
 }
@@ -40,7 +41,7 @@ export const getAllUsers = async (req: any, res: Response) => {
             }))
         );
     } catch (err) {
-        console.error("Erreur getAllUsers:", err);
+        logger.error("Erreur getAllUsers", { error: err });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -69,7 +70,7 @@ export const searchUsers = async (req: Request, res: Response) => {
             }))
         );
     } catch (err) {
-        console.error("Erreur searchUsers:", err);
+        logger.error("Erreur searchUsers", { error: err });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -102,7 +103,7 @@ export const getUserProfile = async (req: any, res: Response) => {
             isFollowing,
         });
     } catch (err) {
-        console.error("Erreur getUserProfile:", err);
+        logger.error("Erreur getUserProfile", { error: err });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -137,7 +138,7 @@ export const getUserFavorites = async (req: Request, res: Response) => {
 
         res.json(enriched);
     } catch (err) {
-        console.error("Erreur getUserFavorites:", err);
+        logger.error("Erreur getUserFavorites", { error: err });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -163,7 +164,7 @@ export const getUserComments = async (req: Request, res: Response) => {
             }))
         );
     } catch (err) {
-        console.error("Erreur getUserComments:", err);
+        logger.error("Erreur getUserComments", { error: err });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -198,7 +199,7 @@ export const updateMyAvatar = async (req: any, res: Response) => {
             },
         });
     } catch (err) {
-        console.error("Erreur updateMyAvatar:", err);
+        logger.error("Erreur updateMyAvatar", { error: err });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -237,7 +238,7 @@ export const updateMyProfile = async (req: any, res: Response) => {
             },
         });
     } catch (err) {
-        console.error("Erreur updateMyProfile:", err);
+        logger.error("Erreur updateMyProfile", { error: err });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };

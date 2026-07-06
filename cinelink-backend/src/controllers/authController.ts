@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { validationResult } from "express-validator";
+import { logger } from "../config/logger";
 
 dotenv.config();
 
@@ -40,7 +41,7 @@ export const register = async (req: Request, res: Response) => {
 
         res.status(201).json({ token, user: { id: user._id, email: user.email, name: user.name, avatar: user.avatar } });
     } catch (err) {
-        console.error(err);
+        logger.error("Erreur register", { error: err });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -65,7 +66,7 @@ export const login = async (req: Request, res: Response) => {
 
         res.json({ token, user: { id: user._id, email: user.email, name: user.name, avatar: user.avatar } });
     } catch (err) {
-        console.error(err);
+        logger.error("Erreur login", { error: err });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };

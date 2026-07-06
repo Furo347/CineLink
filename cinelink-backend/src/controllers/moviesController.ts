@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import axios from "axios";
+import { logger } from "../config/logger";
 
 export const getPopularMovies = async (req: Request, res: Response) => {
     try {
@@ -27,7 +28,7 @@ export const getPopularMovies = async (req: Request, res: Response) => {
 
         res.json(movies);
     } catch (err) {
-        console.error("Erreur lors de la récupération des films populaires:", err);
+        logger.error("Erreur lors de la récupération des films populaires", { error: err });
         res.status(500).json({ message: "Erreur lors de la récupération des films populaires" });
     }
 };
@@ -77,7 +78,7 @@ export const getMovieDetails = async (req: Request, res: Response) => {
             videos: movie.videos ? movie.videos.results.filter((v: any) => v.type === "Trailer") : [],
         });
     } catch (err) {
-        console.error("Erreur lors de la récupération du film:", err);
+        logger.error("Erreur lors de la récupération du film", { error: err });
         res.status(500).json({ message: "Erreur lors de la récupération du film" });
     }
 };

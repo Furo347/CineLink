@@ -3,6 +3,7 @@ import Follow from "../models/Follow";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import mongoose from "mongoose";
 import {logActivity} from "../utils/activityLogger";
+import { logger } from "../config/logger";
 
 export const followUser = async (req: AuthRequest, res: Response) => {
     try {
@@ -30,7 +31,7 @@ export const followUser = async (req: AuthRequest, res: Response) => {
 
         res.status(201).json({ message: "Utilisateur suivi" });
     } catch (error) {
-        console.error(error);
+        logger.error("Erreur followUser", { error });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -51,7 +52,7 @@ export const unfollowUser = async (req: AuthRequest, res: Response) => {
 
         res.json({ message: "Utilisateur désuivi" });
     } catch (error) {
-        console.error(error);
+        logger.error("Erreur unfollowUser", { error });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };
@@ -65,7 +66,7 @@ export const getFollowing = async (req: AuthRequest, res: Response) => {
 
         res.json(following);
     } catch (error) {
-        console.error(error);
+        logger.error("Erreur getFollowing", { error });
         res.status(500).json({ message: "Erreur serveur" });
     }
 };

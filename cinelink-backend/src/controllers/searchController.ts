@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import axios from "axios";
+import { logger } from "../config/logger";
 
 export const searchMovies = async (req: Request, res: Response) => {
     const query = req.query.query as string;
@@ -33,7 +34,7 @@ export const searchMovies = async (req: Request, res: Response) => {
 
         res.json(movies);
     } catch (err) {
-        console.error("Erreur TMDB:", err);
+        logger.error("Erreur TMDB searchMovies", { error: err });
         res.status(500).json({ message: "Erreur lors de la recherche de films" });
     }
 };

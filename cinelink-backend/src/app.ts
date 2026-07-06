@@ -1,5 +1,7 @@
 import express from "express";
 import cors from "cors";
+import morgan from "morgan";
+import helmet from "helmet";
 
 import authRoutes from "./routes/auth";
 import moviesRoutes from "./routes/movies";
@@ -9,7 +11,8 @@ import commentRoutes from "./routes/comments";
 import followRoutes from "./routes/follow";
 import feedRoutes from "./routes/feed";
 import usersRoutes from "./routes/users";
-import helmet from "helmet";
+import healthRoutes from "./routes/health";
+import { logger } from "./config/logger";
 
 
 const app = express();
@@ -22,8 +25,16 @@ app.use(
 );
 app.use(express.json());
 app.use(helmet());
+app.use(
+    morgan("combined", {
+        stream: {
+            write: (message) => logger.info(message.trim()),
+        },
+    })
+);
 
 // routes
+app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/movies", moviesRoutes);
 app.use("/api/favorites", favoriteRoutes);
