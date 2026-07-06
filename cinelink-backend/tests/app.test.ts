@@ -2,6 +2,16 @@ import request = require("supertest");
 import app from "../src/app";
 
 describe("App basic test", () => {
+    it("should expose a public root status endpoint", async () => {
+        const res = await request(app).get("/");
+
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual({
+            name: "CineLink API",
+            status: "UP",
+        });
+    });
+
     it("should expose the health endpoint", async () => {
         const res = await request(app).get("/api/health");
 

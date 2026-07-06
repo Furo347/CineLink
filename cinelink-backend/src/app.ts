@@ -34,6 +34,13 @@ app.use(
 );
 
 // routes
+app.get("/", (_req, res) => {
+    res.json({
+        name: "CineLink API",
+        status: "UP",
+    });
+});
+
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/movies", moviesRoutes);
