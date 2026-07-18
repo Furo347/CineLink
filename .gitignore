@@ -9,5 +9,6 @@
 
 # Coverage
 coverage
+**/coverage/
 
 .idea

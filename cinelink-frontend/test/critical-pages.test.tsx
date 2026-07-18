@@ -239,6 +239,67 @@ describe("MovieDetailsPage", () => {
     });
     expect(toast.success).toHaveBeenCalledWith("Ajouté aux favoris");
   });
+
+  it("marks the movie as already favorite when it exists in the user list", async () => {
+    vi.mocked(moviesApi.getById).mockResolvedValue(movie);
+    vi.mocked(favoritesApi.list).mockResolvedValue([
+      { _id: "fav1", tmdbId: 42, title: "Inception" } as never,
+    ]);
+
+    renderWithRouter(
+      <Routes>
+        <Route path="/app/movies/:id" element={<MovieDetailsPage />} />
+      </Routes>,
+      ["/app/movies/42"],
+    );
+
+    expect(await screen.findByRole("button", { name: /déjà en favoris/i })).toBeDisabled();
+  });
+
+  it("notifies with API error message when adding favorite fails", async () => {
+    const user = userEvent.setup();
+    vi.mocked(moviesApi.getById).mockResolvedValue(movie);
+    vi.mocked(favoritesApi.list).mockResolvedValue([]);
+    vi.mocked(favoritesApi.add).mockRejectedValue({
+      response: { data: { message: "Quota atteint" } },
+    });
+
+    renderWithRouter(
+      <Routes>
+        <Route path="/app/movies/:id" element={<MovieDetailsPage />} />
+      </Routes>,
+      ["/app/movies/42"],
+    );
+
+    await user.click(await screen.findByRole("button", { name: /ajouter aux favoris/i }));
+
+    await waitFor(() => {
+      expect(toast.error).toHaveBeenCalledWith("Quota atteint");
+    });
+  });
+
+  it("treats duplicate favorite API errors as an already favorite state", async () => {
+    const user = userEvent.setup();
+    vi.mocked(moviesApi.getById).mockResolvedValue(movie);
+    vi.mocked(favoritesApi.list).mockResolvedValue([]);
+    vi.mocked(favoritesApi.add).mockRejectedValue({
+      response: { data: { message: "Ce film est déjà dans tes favoris" } },
+    });
+
+    renderWithRouter(
+      <Routes>
+        <Route path="/app/movies/:id" element={<MovieDetailsPage />} />
+      </Routes>,
+      ["/app/movies/42"],
+    );
+
+    await user.click(await screen.findByRole("button", { name: /ajouter aux favoris/i }));
+
+    await waitFor(() => {
+      expect(toast.info).toHaveBeenCalledWith("Déjà dans tes favoris");
+    });
+    expect(screen.getByRole("button", { name: /déjà en favoris/i })).toBeDisabled();
+  });
 });
 
 describe("FeedPage", () => {
@@ -296,6 +357,60 @@ describe("FeedPage", () => {
     expect(screen.getByText("Inception")).toBeInTheDocument();
   });
 
+  it("renders rating events without actor, poster or attached movie", async () => {
+    vi.mocked(feedApi.list).mockResolvedValue([
+      {
+        id: "event2",
+        type: "RATE_MOVIE",
+        actor: null,
+        targetUser: null,
+        targetMovie: 99,
+        movie: null,
+        payload: { rating: 7 },
+        createdAt: "2026-01-01T10:00:00.000Z",
+      } as never,
+    ]);
+
+    renderWithRouter(<FeedPage />);
+
+    expect(await screen.findByText("Utilisateur")).toBeInTheDocument();
+    expect(screen.getByText(/a donné une note de 7 \/ 10/i)).toBeInTheDocument();
+    expect(screen.getByText(/aucun film associé/i)).toBeInTheDocument();
+  });
+
+  it("reloads feed items when the user clicks refresh", async () => {
+    const user = userEvent.setup();
+    vi.mocked(feedApi.list)
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([
+        {
+          id: "event3",
+          type: "ADD_FAVORITE",
+          actor: { _id: "user1", name: "Alice", email: "alice@mail.com" },
+          targetUser: null,
+          targetMovie: 42,
+          movie: {
+            tmdbId: 42,
+            title: "Inception",
+            poster: null,
+            overview: "",
+            vote_average: 8.8,
+            release_date: "",
+          },
+          payload: null,
+          createdAt: "2026-01-01T10:00:00.000Z",
+        },
+      ]);
+
+    renderWithRouter(<FeedPage />);
+
+    expect(await screen.findByText(/ton fil est vide/i)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: /recharger/i }));
+
+    expect(await screen.findByText("Inception")).toBeInTheDocument();
+    expect(feedApi.list).toHaveBeenCalledTimes(2);
+  });
+
   it("notifies when feed loading fails", async () => {
     vi.mocked(feedApi.list).mockRejectedValue(new Error("network"));
 
@@ -346,6 +461,28 @@ describe("UserProfilePage", () => {
     expect(await screen.findByRole("heading", { name: "Alice" })).toBeInTheDocument();
     expect(screen.getByText(/aucun favori/i)).toBeInTheDocument();
     expect(screen.getByText(/aucun commentaire/i)).toBeInTheDocument();
+  });
+
+  it("shows follow action for another user when JWT contains current user id", async () => {
+    vi.mocked(authStorage.get).mockReturnValue("token");
+    vi.spyOn(await import("@/lib/jwt"), "decodeToken").mockReturnValue({ userId: "me" });
+    vi.mocked(usersApi.getProfile).mockResolvedValue({
+      id: "user1",
+      name: "Alice",
+      followersCount: 2,
+      isFollowing: true,
+    });
+    vi.mocked(usersApi.getFavorites).mockResolvedValue([]);
+    vi.mocked(usersApi.getComments).mockResolvedValue([]);
+
+    renderWithRouter(
+      <Routes>
+        <Route path="/app/users/:id" element={<UserProfilePage />} />
+      </Routes>,
+      ["/app/users/user1"],
+    );
+
+    expect(await screen.findByRole("button", { name: /déjà suivi/i })).toBeInTheDocument();
   });
 
   it("renders favorites and comments when profile data exists", async () => {

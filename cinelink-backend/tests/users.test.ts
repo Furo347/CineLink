@@ -1,6 +1,10 @@
 import request = require("supertest");
+import axios from "axios";
 import app from "../src/app";
+import Comment from "../src/models/Comment";
 import Favorite from "../src/models/Favorite";
+import Follow from "../src/models/Follow";
+import User from "../src/models/User";
 
 // Mock axios pour éviter les appels réseau TMDB
 jest.mock("axios", () => ({
@@ -13,6 +17,8 @@ jest.mock("axios", () => ({
         },
     })),
 }));
+
+const mockedAxiosGet = axios.get as jest.Mock;
 
 async function getAuthToken() {
     await request(app).post("/api/auth/register").send({
@@ -42,7 +48,39 @@ async function getFirstUserId(token: string) {
     return res.body[0].id as string;
 }
 
+async function registerAndLogin(email: string, name: string) {
+    await request(app).post("/api/auth/register").send({
+        name,
+        email,
+        password: "Password123!",
+        avatar: "avatar1",
+    });
+
+    const loginRes = await request(app).post("/api/auth/login").send({
+        email,
+        password: "Password123!",
+    });
+
+    const user = await User.findOne({ email });
+    if (!user) {
+        throw new Error("Expected user to exist");
+    }
+
+    return { token: loginRes.body.token as string, user };
+}
+
 describe("Users routes", () => {
+    beforeEach(() => {
+        mockedAxiosGet.mockImplementation(async () => ({
+            data: {
+                title: "Mock Movie",
+                poster_path: "/mock.jpg",
+                overview: "Mock overview",
+                vote_average: 8.2,
+            },
+        }));
+    });
+
     it("GET /api/users/all should return 401 without token", async () => {
         const res = await request(app).get("/api/users/all");
         expect(res.status).toBe(401);
@@ -131,6 +169,43 @@ describe("Users routes", () => {
         expect(res.body).toHaveProperty("isFollowing");
     });
 
+    it("GET /api/users/:id should indicate when viewer follows the profile", async () => {
+        const viewer = await registerAndLogin("viewer@mail.com", "Viewer");
+        const target = await registerAndLogin("target@mail.com", "Target");
+
+        await Follow.create({ follower: viewer.user._id, following: target.user._id });
+
+        const res = await request(app)
+            .get(`/api/users/${target.user._id}`)
+            .set("Authorization", `Bearer ${viewer.token}`);
+
+        expect(res.status).toBe(200);
+        expect(res.body.followersCount).toBe(1);
+        expect(res.body.isFollowing).toBe(true);
+    });
+
+    it("GET /api/users/:id/favorites should return 400 for invalid user id", async () => {
+        const token = await getAuthToken();
+
+        const res = await request(app)
+            .get("/api/users/not-an-objectid/favorites")
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(res.status).toBe(400);
+        expect(res.body.message).toMatch(/invalide/i);
+    });
+
+    it("GET /api/users/:id/comments should return 400 for invalid user id", async () => {
+        const token = await getAuthToken();
+
+        const res = await request(app)
+            .get("/api/users/not-an-objectid/comments")
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(res.status).toBe(400);
+        expect(res.body.message).toMatch(/invalide/i);
+    });
+
     it("GET /api/users/:id/comments should return 200 and array (possibly empty)", async () => {
         const token = await getAuthToken();
         const userId = await getFirstUserId(token);
@@ -141,6 +216,27 @@ describe("Users routes", () => {
 
         expect(res.status).toBe(200);
         expect(Array.isArray(res.body)).toBe(true);
+    });
+
+    it("GET /api/users/:id/comments should return user comments", async () => {
+        const { token, user } = await registerAndLogin("commented@mail.com", "Commented");
+
+        await Comment.create({
+            user: user._id,
+            movieId: 42,
+            content: "Très bon",
+        });
+
+        const res = await request(app)
+            .get(`/api/users/${user._id}/comments`)
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveLength(1);
+        expect(res.body[0]).toMatchObject({
+            movieId: 42,
+            content: "Très bon",
+        });
     });
 
     it("GET /api/users/:id/favorites should return [] when no favorites", async () => {
@@ -181,6 +277,32 @@ describe("Users routes", () => {
         expect(fav).toHaveProperty("overview");
     });
 
+    it("GET /api/users/:id/favorites should fallback when TMDB enrichment fails", async () => {
+        const token = await getAuthToken();
+        const userId = await getFirstUserId(token);
+        mockedAxiosGet.mockRejectedValueOnce(new Error("tmdb down"));
+
+        await Favorite.create({
+            user: userId,
+            tmdbId: 123,
+            title: "Fallback title",
+        });
+
+        const res = await request(app)
+            .get(`/api/users/${userId}/favorites`)
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(res.status).toBe(200);
+        expect(res.body[0]).toMatchObject({
+            tmdbId: 123,
+            title: "Fallback title",
+            poster: null,
+            overview: "Aucune description disponible",
+            vote_average: null,
+            rating: null,
+        });
+    });
+
     it("PUT /api/users/me/avatar should return 400 for invalid avatar", async () => {
         const token = await getAuthToken();
 
@@ -190,6 +312,19 @@ describe("Users routes", () => {
             .send({ avatar: "avatar999" });
 
         expect(res.status).toBe(400);
+    });
+
+    it("PUT /api/users/me/avatar should update avatar", async () => {
+        const token = await getAuthToken();
+
+        const res = await request(app)
+            .put("/api/users/me/avatar")
+            .set("Authorization", `Bearer ${token}`)
+            .send({ avatar: "avatar2" });
+
+        expect(res.status).toBe(200);
+        expect(res.body.message).toMatch(/avatar/i);
+        expect(res.body.user.avatar).toBe("avatar2");
     });
 
     it("PUT /api/users/me should return 400 for invalid avatar", async () => {
@@ -212,5 +347,21 @@ describe("Users routes", () => {
             .send({ name: "a" });
 
         expect(res.status).toBe(400);
+    });
+
+    it("PUT /api/users/me should update name and avatar", async () => {
+        const token = await getAuthToken();
+
+        const res = await request(app)
+            .put("/api/users/me")
+            .set("Authorization", `Bearer ${token}`)
+            .send({ name: "Updated User", avatar: "avatar3" });
+
+        expect(res.status).toBe(200);
+        expect(res.body.message).toMatch(/profil/i);
+        expect(res.body.user).toMatchObject({
+            name: "Updated User",
+            avatar: "avatar3",
+        });
     });
 });
