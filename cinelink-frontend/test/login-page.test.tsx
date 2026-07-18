@@ -34,8 +34,20 @@ vi.mock("@/features/auth/auth.api", () => ({
 vi.mock("@/services/auth.storage", () => ({
     authStorage: {
         set: vi.fn(),
+        setUser: vi.fn(),
     },
 }));
+
+function deferred<T>() {
+    let resolve!: (value: T) => void;
+    let reject!: (reason?: unknown) => void;
+    const promise = new Promise<T>((res, rej) => {
+        resolve = res;
+        reject = rej;
+    });
+
+    return { promise, resolve, reject };
+}
 
 function renderLoginPage() {
     return render(
@@ -98,5 +110,48 @@ describe("LoginPage", () => {
 
         expect(await screen.findByText(/email invalide/i)).toBeInTheDocument();
         expect(authApi.login).not.toHaveBeenCalled();
+    });
+
+    it("should show a loading state, prevent double submit and display delayed wait message", async () => {
+        const user = userEvent.setup();
+        const login = deferred<{ token: string }>();
+        vi.mocked(authApi.login).mockReturnValue(login.promise);
+
+        renderLoginPage();
+
+        await user.type(screen.getByLabelText(/email/i), "test@mail.com");
+        await user.type(screen.getByLabelText(/mot de passe/i), "Password123!");
+        await user.click(screen.getByRole("button", { name: /se connecter/i }));
+
+        const loadingButton = await screen.findByRole("button", { name: /connexion en cours/i });
+        expect(loadingButton).toBeDisabled();
+        expect(loadingButton).toHaveAttribute("aria-busy", "true");
+
+        await user.click(loadingButton);
+        expect(authApi.login).toHaveBeenCalledTimes(1);
+
+        expect(
+            await screen.findByText(/le premier chargement peut prendre quelques instants/i, {}, { timeout: 1500 })
+        ).toBeInTheDocument();
+
+        login.resolve({ token: "fake-token" });
+
+        await waitFor(() => {
+            expect(mockNavigate).toHaveBeenCalledWith("/app/movies");
+        });
+    });
+
+    it("should restore the normal submit state after a login error", async () => {
+        const user = userEvent.setup();
+        vi.mocked(authApi.login).mockRejectedValue(new Error("invalid"));
+
+        renderLoginPage();
+
+        await user.type(screen.getByLabelText(/email/i), "test@mail.com");
+        await user.type(screen.getByLabelText(/mot de passe/i), "Password123!");
+        await user.click(screen.getByRole("button", { name: /se connecter/i }));
+
+        expect(await screen.findByRole("button", { name: /se connecter/i })).toBeEnabled();
+        expect(screen.queryByRole("button", { name: /connexion en cours/i })).not.toBeInTheDocument();
     });
 });

@@ -47,6 +47,17 @@ const comment = {
     },
 };
 
+function deferred<T>() {
+    let resolve!: (value: T) => void;
+    let reject!: (reason?: unknown) => void;
+    const promise = new Promise<T>((res, rej) => {
+        resolve = res;
+        reject = rej;
+    });
+
+    return { promise, resolve, reject };
+}
+
 describe("CommentsSection admin actions", () => {
     beforeEach(() => {
         vi.clearAllMocks();
@@ -102,5 +113,92 @@ describe("CommentsSection admin actions", () => {
             expect(toast.error).toHaveBeenCalledWith("Accès administrateur requis");
         });
         expect(screen.getByText("Très bon film")).toBeInTheDocument();
+    });
+
+    it("publishes a valid comment with Enter", async () => {
+        const user = userEvent.setup();
+        vi.mocked(commentsApi.listByMovie).mockResolvedValue([]);
+        vi.mocked(commentsApi.add).mockResolvedValue({
+            ...comment,
+            _id: "created1",
+            content: "Nouveau commentaire",
+        });
+
+        render(<CommentsSection movieId={42} />);
+
+        const input = await screen.findByPlaceholderText(/écrire un commentaire/i);
+        await user.type(input, "Nouveau commentaire");
+        await user.keyboard("{Enter}");
+
+        await waitFor(() => {
+            expect(commentsApi.add).toHaveBeenCalledWith({
+                movieId: 42,
+                content: "Nouveau commentaire",
+            });
+        });
+        expect(await screen.findByText("Nouveau commentaire")).toBeInTheDocument();
+    });
+
+    it("does not publish an empty comment", async () => {
+        const user = userEvent.setup();
+        vi.mocked(commentsApi.listByMovie).mockResolvedValue([]);
+
+        render(<CommentsSection movieId={42} />);
+
+        const input = await screen.findByPlaceholderText(/écrire un commentaire/i);
+        await user.type(input, "   ");
+        await user.keyboard("{Enter}");
+
+        expect(commentsApi.add).not.toHaveBeenCalled();
+    });
+
+    it("uses the same publish behavior from the button", async () => {
+        const user = userEvent.setup();
+        vi.mocked(commentsApi.listByMovie).mockResolvedValue([]);
+        vi.mocked(commentsApi.add).mockResolvedValue({
+            ...comment,
+            _id: "created2",
+            content: "Depuis le bouton",
+        });
+
+        render(<CommentsSection movieId={42} />);
+
+        await user.type(await screen.findByPlaceholderText(/écrire un commentaire/i), "Depuis le bouton");
+        await user.click(screen.getByRole("button", { name: /publier/i }));
+
+        await waitFor(() => {
+            expect(commentsApi.add).toHaveBeenCalledWith({
+                movieId: 42,
+                content: "Depuis le bouton",
+            });
+        });
+        expect(await screen.findByText("Depuis le bouton")).toBeInTheDocument();
+    });
+
+    it("does not publish twice while a comment request is pending", async () => {
+        const user = userEvent.setup();
+        const create = deferred<typeof comment>();
+        vi.mocked(commentsApi.listByMovie).mockResolvedValue([]);
+        vi.mocked(commentsApi.add).mockReturnValue(create.promise);
+
+        render(<CommentsSection movieId={42} />);
+
+        const input = await screen.findByPlaceholderText(/écrire un commentaire/i);
+        await user.type(input, "Un seul envoi");
+        await user.keyboard("{Enter}");
+
+        const pendingButton = await screen.findByRole("button", { name: /envoi/i });
+        expect(pendingButton).toBeDisabled();
+        await user.keyboard("{Enter}");
+
+        expect(commentsApi.add).toHaveBeenCalledTimes(1);
+
+        create.resolve({
+            ...comment,
+            _id: "created3",
+            content: "Un seul envoi",
+        });
+
+        expect(await screen.findByText("Un seul envoi")).toBeInTheDocument();
     });
 });

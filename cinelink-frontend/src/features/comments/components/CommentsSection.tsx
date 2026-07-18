@@ -45,7 +45,7 @@ const CommentsSection = forwardRef<CommentsSectionRef, { movieId: number }>(
 
         const send = async () => {
             const text = content.trim();
-            if (!text) return;
+            if (!text || sending) return;
 
             setSending(true);
             try {
@@ -104,16 +104,25 @@ const CommentsSection = forwardRef<CommentsSectionRef, { movieId: number }>(
                 </div>
 
                 <Card className="bg-white/5">
-                    <CardContent className="flex gap-3">
+                    <CardContent>
+                        <form
+                            className="flex gap-3"
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                void send();
+                            }}
+                            aria-busy={sending}
+                        >
                         <Input
                             placeholder="Écrire un commentaire…"
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             ref={inputRef}
                         />
-                        <Button onClick={send} disabled={sending}>
+                        <Button type="submit" disabled={sending} aria-busy={sending}>
                             {sending ? "Envoi..." : "Publier"}
                         </Button>
+                        </form>
                     </CardContent>
                 </Card>
 

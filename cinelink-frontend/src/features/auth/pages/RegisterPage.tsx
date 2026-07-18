@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 import AuthShell from "@/features/auth/components/AuthShell";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,9 @@ import { authApi } from "@/features/auth/auth.api";
 import { authStorage } from "@/services/auth.storage";
 import {AVATARS} from "@/lib/avatars.ts";
 import {getApiErrorMessage} from "@/lib/api-error.ts";
+
+const WAIT_MESSAGE_DELAY_MS = 500;
+const WAIT_MESSAGE = "Le premier chargement peut prendre quelques instants lorsque les services redémarrent.";
 
 export default function RegisterPage() {
     const nav = useNavigate();
@@ -23,6 +27,7 @@ export default function RegisterPage() {
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (loading) return;
 
         if (!name.trim()) {
             toast.error("Le nom est obligatoire");
@@ -34,6 +39,7 @@ export default function RegisterPage() {
             return;
         }
 
+        setShowWaitMessage(false);
         setLoading(true);
         try {
             const { token, user } = await authApi.register({
@@ -50,9 +56,21 @@ export default function RegisterPage() {
         } catch (e: unknown) {
             toast.error(getApiErrorMessage(e, "Inscription impossible"));
         } finally {
+            setShowWaitMessage(false);
             setLoading(false);
         }
     };
+
+    const [showWaitMessage, setShowWaitMessage] = useState(false);
+
+    useEffect(() => {
+        if (!loading) {
+            return;
+        }
+
+        const timer = window.setTimeout(() => setShowWaitMessage(true), WAIT_MESSAGE_DELAY_MS);
+        return () => window.clearTimeout(timer);
+    }, [loading]);
 
     return (
         <AuthShell>
@@ -64,7 +82,7 @@ export default function RegisterPage() {
                     </p>
                 </div>
 
-                <form onSubmit={submit} className="space-y-4">
+                <form onSubmit={submit} className="space-y-4" aria-busy={loading}>
                     <div className="space-y-2">
                         <label className="text-sm text-textSecondary">Nom</label>
                         <Input
@@ -99,9 +117,20 @@ export default function RegisterPage() {
                         <AvatarPicker value={avatar} onChange={setAvatar} />
                     </div>
 
-                    <Button type="submit" className="w-full" disabled={loading}>
-                        {loading ? "Création..." : "Créer mon compte"}
+                    <Button type="submit" className="w-full" disabled={loading} aria-busy={loading}>
+                        {loading ? (
+                            <>
+                                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                                Création du compte…
+                            </>
+                        ) : (
+                            "Créer mon compte"
+                        )}
                     </Button>
+
+                    <p className="min-h-5 text-center text-xs text-textSecondary" aria-live="polite">
+                        {showWaitMessage ? WAIT_MESSAGE : ""}
+                    </p>
                 </form>
 
                 <p className="text-sm text-textSecondary">
