@@ -16,6 +16,7 @@ import UsersPage from "@/features/users/pages/UsersPage.tsx";
 import UserProfilePage from "@/features/users/pages/UserProfilePage.tsx";
 import MePage from "@/features/users/pages/MePage.tsx";
 import FeedPage from "@/features/feed/pages/FeedPage.tsx";
+import AdminPage from "@/features/admin/pages/AdminPage.tsx";
 
 
 
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
                     { path: "users/:id", element: <UserProfilePage /> },
                     { path: "me", element: <MePage /> },
                     { path: "feed", element: <FeedPage /> },
+                    { path: "admin", element: <AdminPage /> },
                 ],
             },
         ],

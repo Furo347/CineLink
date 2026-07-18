@@ -103,6 +103,12 @@ describe("RBAC and admin routes", () => {
             movieId: 42,
             content: "A supprimer",
         });
+        await Activity.create({
+            actor: owner.user._id,
+            type: "COMMENT_MOVIE",
+            targetMovie: 42,
+            payload: { comment },
+        });
 
         const res = await request(app)
             .delete(`/api/admin/comments/${comment._id}`)
@@ -110,6 +116,30 @@ describe("RBAC and admin routes", () => {
 
         expect(res.status).toBe(204);
         expect(await Comment.findById(comment._id)).toBeNull();
+        expect(await Activity.countDocuments({ type: "COMMENT_MOVIE" })).toBe(0);
+    });
+
+    it("deletes legacy comment activities matched by content", async () => {
+        const { token } = await createUser("legacy-comment-admin@mail.com", "ADMIN");
+        const owner = await createUser("legacy-comment-owner@mail.com");
+        const comment = await Comment.create({
+            user: owner.user._id,
+            movieId: 43,
+            content: "Ancienne activité",
+        });
+        await Activity.create({
+            actor: owner.user._id,
+            type: "COMMENT_MOVIE",
+            targetMovie: 43,
+            payload: { comment: "Ancienne activité" },
+        });
+
+        const res = await request(app)
+            .delete(`/api/admin/comments/${comment._id}`)
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(res.status).toBe(204);
+        expect(await Activity.countDocuments({ type: "COMMENT_MOVIE" })).toBe(0);
     });
 
     it("validates comment ids and returns 404 for missing comments", async () => {

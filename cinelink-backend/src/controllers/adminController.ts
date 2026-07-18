@@ -37,6 +37,18 @@ export const deleteAnyComment = async (req: Request, res: Response) => {
             return res.status(404).json({ message: "Commentaire introuvable" });
         }
 
+        await Activity.deleteMany({
+            type: "COMMENT_MOVIE",
+            actor: deleted.user,
+            targetMovie: deleted.movieId,
+            $or: [
+                { "payload.comment._id": deleted._id },
+                { "payload.comment": deleted._id },
+                { "payload.comment.content": deleted.content },
+                { "payload.comment": deleted.content },
+            ],
+        });
+
         return res.status(204).send();
     } catch (error) {
         logger.error("Erreur deleteAnyComment", { error });
