@@ -1,40 +1,48 @@
 # Monitoring CineLink Backend
 
-## Endpoint de santé
-
-Le backend expose un endpoint de supervision :
+## Endpoint de sante
 
 ```http
 GET /api/health
 ```
 
-Réponse lorsque le service et MongoDB sont disponibles :
+Reponse lorsque le service et MongoDB sont disponibles :
 
 ```json
 {
   "status": "UP",
   "database": "UP",
-  "uptime": 123.45,
-  "timestamp": "2026-07-06T12:00:00.000Z",
-  "environment": "development",
+  "uptime": 12.34,
+  "timestamp": "2026-01-01T12:00:00.000Z",
+  "environment": "production",
   "version": "1.0.0",
   "memory": {
-    "rss": 12345678,
-    "heapTotal": 9876543,
-    "heapUsed": 4567890
+    "rss": 123456,
+    "heapTotal": 123456,
+    "heapUsed": 123456
   }
 }
 ```
 
-`database` est calculé à partir de `mongoose.connection.readyState`.
-Si MongoDB n'est pas connecté, `status` et `database` passent à `DOWN` et l'API répond avec un code HTTP `503`.
+Si MongoDB n'est pas connecte, `status` et `database` passent a `DOWN` et l'API repond avec un code HTTP `503`.
 
-## Logs applicatifs
+## Logs
 
-Les logs sont centralisés avec Winston :
+Le backend utilise Winston et Morgan. Le niveau peut etre ajuste avec `LOG_LEVEL`.
 
-- `logs/app.log` : logs applicatifs et requêtes HTTP.
-- `logs/error.log` : erreurs applicatives.
-- Console : activée uniquement lorsque `NODE_ENV=development`.
+Logs utiles a surveiller :
 
-Les requêtes HTTP Express sont journalisées avec Morgan au format `combined` et transmises au logger Winston.
+- demarrage de l'API ;
+- connexion MongoDB ;
+- erreurs TMDB ;
+- erreurs auth ;
+- erreurs admin ;
+- erreurs serveur `500`.
+
+## Alertes recommandees
+
+- Indisponibilite de `/api/health`.
+- Hausse des erreurs `500`.
+- Latence anormale sur les routes TMDB.
+- Echecs repetes de connexion.
+- Actions admin sensibles, surtout suppression utilisateur.

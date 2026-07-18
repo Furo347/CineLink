@@ -1,96 +1,66 @@
-# Critères de Qualité et de Performance
+# Criteres de qualite et de performance
 
-## Vue d'ensemble
-Ce document définit les critères de qualité et de performance appliqués au projet CineLink, plateforme sociale de cinéma développée en architecture monorepo avec backend Express.js et frontend React.
+Ce document synthetise les criteres suivis pour CineLink. La documentation technique detaillee est disponible dans [docs/QUALITY.md](docs/QUALITY.md).
 
-## Critères de Qualité
+## Qualite code
 
-### Code Quality
-- **Tests automatisés** : Couverture des parcours critiques (authentification, utilisateurs, feed, commentaires, favoris)
-- **Linting** : Conformité ESLint et Prettier pour le style de code
-- **TypeScript strict** : Mode strict activé, pas de `any`, types explicites
-- **Audit sécurité** : Audit npm régulier, pas de vulnérabilités critiques
+| Critere | Mise en oeuvre |
+| --- | --- |
+| TypeScript | Backend et frontend typés. |
+| Tests backend | Jest, Supertest, MongoDB Memory Server. |
+| Tests frontend | Vitest, React Testing Library, jsdom. |
+| Couverture | Rapports LCOV generes par `npm run test:coverage`. |
+| Lint | ESLint backend et frontend. |
+| Build | `tsc` backend, `tsc -b && vite build` frontend. |
+| Analyse statique | SonarQube Cloud via GitHub Actions. |
 
-### Architecture
-- **Modularité** : Séparation claire des responsabilités (routes, contrôleurs, modèles)
-- **DRY Principle** : Pas de duplication de code
-- **Principes SOLID** : Interfaces claires, responsabilité unique par module
-- **Documentation** : Code commenté, README complet
+## Criteres d'acceptation
 
-### Performance
-- **Temps de réponse API** : Objectif < 500ms pour les requêtes standard
-- **Temps de chargement frontend** : Objectif < 3 secondes pour la page principale
-- **Bundle size** : Objectif < 500KB pour le JavaScript compressé
-- **Optimisation images** : Images optimisées, lazy loading
+- Les parcours critiques doivent etre couverts : auth, films, favoris, commentaires, feed, profils, admin.
+- Les erreurs `400`, `401`, `403`, `404` et les erreurs serveur importantes doivent etre testees cote backend.
+- Les etats frontend importants doivent etre couverts : chargement, erreur, liste vide, redirection auth, actions echouees.
+- Les fichiers generes (`coverage`, `dist`, `build`) ne doivent pas etre analyses comme code source.
+- Les secrets ne doivent pas etre versionnes.
 
-### Accessibilité
-- **Conformité WCAG 2.1 AA** : Support clavier, contraste, labels ARIA
-- **Navigation** : Focus visible, ordre logique de tabulation
-- **Contenu alternatif** : Alt-texts pour les images, préparation pour transcripts
+## Couverture
 
-## Métriques de Performance
+Les dernieres valeurs communiquees pour SonarQube Cloud etaient environ :
 
-### Backend
-- **Throughput** : 1000 requêtes/minute minimum
-- **Latence moyenne** : < 200ms pour les endpoints critiques
-- **Utilisation CPU** : < 70% en charge normale
-- **Utilisation mémoire** : < 512MB par instance
+- global : 68,4 % ;
+- backend : 85,9 % ;
+- frontend : 55,1 %.
 
-### Frontend
-- **First Contentful Paint** : < 1.5 secondes
-- **Largest Contentful Paint** : < 2.5 secondes
-- **Cumulative Layout Shift** : < 0.1
-- **First Input Delay** : < 100ms
+Ces chiffres doivent etre verifies dans SonarQube Cloud ou en regenerant les rapports au moment de l'evaluation. Ils ne sont pas presentes comme des seuils figes.
 
-## Outils de Mesure
+## Performance
 
-### Automatisés (actuellement en place)
-- **Jest/Vitest** : Couverture de tests
-- **ESLint** : Qualité du code
-- **Lighthouse** : Performance web et accessibilité (via audit manuel)
+Points suivis :
 
-### Prévus pour le Bloc 3 (Assurer la continuité de service)
-- **Application Performance Monitoring (APM)** : New Relic, DataDog ou Sentry
-- **Logs centralisés** : ELK Stack, CloudWatch ou Graylog
-- **Monitoring en temps réel** : Métriques de performance et santé
-- **Alerting** : Notifications automatiques en cas d'anomalie
-- **SonarQube** : Analyse statique du code (optionnel)
+- temps de reponse de l'API ;
+- disponibilite MongoDB via `/api/health` ;
+- comportement en cas de latence TMDB ;
+- temps de chargement du frontend ;
+- UX de connexion/inscription lors d'une reponse backend lente.
 
-### Manuels disponibles
-- **Tests de charge** : Artillery ou k6 pour les API
-- **Audit accessibilité** : WAVE, axe-core
-- **Monitoring manuel** : Logs d'application et observabilité basique
+## Securite
 
-## Seuils d'Acceptation
+Voir [docs/SECURITY.md](docs/SECURITY.md).
 
-### Tests
-- ✅ Tous les tests unitaires passent
-- ✅ Tests couvrant les parcours critiques de l'application
-- ✅ Pas d'erreurs ESLint
+Points principaux :
 
-### Performance
-- ✅ Temps de réponse optimal pour les requêtes API
-- ✅ Application déployée et accessible en production
-- ✅ Bundle optimisé par Vite
+- JWT ;
+- mots de passe hashes ;
+- validation des entrees ;
+- CORS configure par `FRONTEND_URL` ;
+- rate limit sur l'authentification ;
+- roles `USER` / `ADMIN` controles cote backend.
 
-### Sécurité
-- ✅ Audit npm régulier effectué
-- ✅ Validation des entrées implémentée
-- ✅ Variables d'environnement sécurisées
+## Amelioration continue
 
-## Plan d'Amélioration Continue
+Pistes realistes :
 
-### Court terme (1-3 mois)
-- Implémentation monitoring production
-- Optimisation bundle frontend
-- Ajout tests d'intégration
-
-### Moyen terme (3-6 mois)
-- Mise en place CI/CD complet
-- Tests de performance automatisés
-- Audit sécurité trimestriel
-
-### Long terme (6+ mois)
-- Architecture microservices si nécessaire
-- Optimisation base de données
-- Mise à l'échelle horizontale
+- journal d'audit admin dedie ;
+- tests end-to-end sur les parcours principaux ;
+- monitoring applicatif plus complet ;
+- optimisation des appels TMDB et strategie de cache ;
+- politique de restauration ou archivage avant suppression admin.

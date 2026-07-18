@@ -1,309 +1,127 @@
-# Manuel de Mise à Jour - CineLink
+# Manuel de mise a jour
 
-## Vue d'ensemble
-Ce document décrit les procédures de mise à jour pour l'application CineLink, incluant les migrations de base de données, changements de configuration et déploiements.
+Ce manuel decrit une procedure simple de mise a jour pour CineLink. Il ne suppose pas de migration automatique non presente dans le code.
 
-## Prérequis
+## Prerequis
 
-### Compétences requises
-- Connaissance de Docker et Docker Compose
-- Familiarité avec MongoDB
-- Compréhension des commandes Git
-- Accès aux environnements de déploiement
+- Acces au depot Git.
+- Node.js 20 et npm.
+- Docker si la base MongoDB locale est lancee avec Docker Compose.
+- Acces aux tableaux de bord Render, Vercel, MongoDB Atlas et SonarQube Cloud si la mise a jour concerne la production.
 
-### Environnements
-- **Développement** : Tests des mises à jour
-- **Staging** : Validation avant production
-- **Production** : Environnement utilisateur final
+## Verification avant mise a jour
 
-## Types de Mises à Jour
-
-### 1. Mise à jour mineure (patch)
-- Corrections de bogues
-- Améliorations mineures
-- Pas de changements cassants
-
-### 2. Mise à jour majeure (minor)
-- Nouvelles fonctionnalités
-- Changements d'API backward-compatible
-- Migrations de base de données
-
-### 3. Mise à jour breaking (major)
-- Changements d'API incompatibles
-- Refonte d'architecture
-- Migrations complexes
-
-## Procédure Générale de Mise à Jour
-
-### Phase 1 : Préparation
-1. **Sauvegarde** : Backup complet de la base de données
-2. **Review du changelog** : Identifier les changements
-3. **Tests locaux** : Validation sur environnement de développement
-4. **Plan de rollback** : Préparer la procédure de retour arrière
-
-### Phase 2 : Déploiement
-1. **Arrêt des services** : Graceful shutdown
-2. **Mise à jour du code** : Pull des nouvelles images/conteneurs
-3. **Migration base de données** : Exécution des scripts de migration
-4. **Mise à jour configuration** : Variables d'environnement
-5. **Redémarrage des services** : Vérification du démarrage
-
-### Phase 3 : Validation
-1. **Tests de santé** : Health checks automatisés
-2. **Tests fonctionnels** : Scénarios critiques
-3. **Monitoring** : Surveillance des métriques
-4. **Communication** : Notification aux utilisateurs si nécessaire
-
-## Migrations de Base de Données
-
-### Outil de migration
 ```bash
-# Depuis le répertoire backend
-npm run migrate:up    # Appliquer les migrations
-npm run migrate:down  # Rollback
-npm run migrate:status # Voir le status
+git status --short
 ```
 
-### Exemples de migrations
+Verifier les changements applicatifs et documentaires, puis executer les controles adaptes :
 
-#### Migration 1.1.0 : Ajout champ bio utilisateurs
-```javascript
-// Migration script
-{
-  version: '1.1.0',
-  description: 'Add bio field to users',
-  up: async (db) => {
-    await db.collection('users').updateMany(
-      {},
-      { $set: { bio: '' } }
-    );
-  },
-  down: async (db) => {
-    await db.collection('users').updateMany(
-      {},
-      { $unset: { bio: '' } }
-    );
-  }
-}
-```
+Backend :
 
-#### Migration 1.2.0 : Index pour performance
-```javascript
-{
-  version: '1.2.0',
-  description: 'Add indexes for search performance',
-  up: async (db) => {
-    await db.collection('movies').createIndex({ title: 'text' });
-    await db.collection('users').createIndex({ username: 'text' });
-  },
-  down: async (db) => {
-    await db.collection('movies').dropIndex('title_text');
-    await db.collection('users').dropIndex('username_text');
-  }
-}
-```
-
-## Mises à Jour par Version
-
-### Version 1.1.0 (Mineure)
-**Date** : 2024-06-01
-**Type** : Feature release
-
-#### Changements
-- ✅ Ajout du champ bio dans les profils utilisateur
-- ✅ Amélioration de la recherche avec index texte
-- ✅ Nouveau système de notifications
-
-#### Migration requise
 ```bash
-# Exécuter la migration
-npm run migrate:up -- --version 1.1.0
-
-# Vérifier
-npm run migrate:status
+cd cinelink-backend
+npm ci
+npm test
+npm run test:coverage
+npm run typecheck
+npm run typecheck:test
+npm run lint
+npm run build
 ```
 
-#### Rollback
+Frontend :
+
 ```bash
-npm run migrate:down -- --version 1.1.0
+cd cinelink-frontend
+npm ci
+npm run lint
+npm test
+npm run test:coverage
+npm run build
 ```
 
-### Version 1.0.1 (Patch)
-**Date** : 2024-05-20
-**Type** : Bug fixes
+## Mise a jour locale
 
-#### Corrections
-- ✅ Fix bouton suppression commentaires
-- ✅ Correction types TypeScript
-- ✅ Amélioration performance recherche
+1. Recuperer la derniere version du code.
+2. Installer les dependances backend et frontend avec `npm ci`.
+3. Verifier les fichiers `.env` locaux.
+4. Lancer le backend puis le frontend.
+5. Rejouer les scenarios du [cahier de recette](docs/RECETTE.md).
 
-#### Migration
-Aucune migration de base requise.
+## Base de donnees
 
-### Version 1.0.0 (Majeure)
-**Date** : 2024-05-14
-**Type** : Release initiale
+Aucun systeme de migration versionne n'est present actuellement.
 
-#### Fonctionnalités
-- ✅ Authentification complète
-- ✅ Gestion films et favoris
-- ✅ Système de commentaires
-- ✅ Réseau social
+Si une evolution de modele necessite une migration, elle doit etre traitee explicitement :
 
-#### Configuration initiale
+- decrire le changement de schema ;
+- sauvegarder la base cible ;
+- preparer un script de migration relu ;
+- tester sur une base de copie ;
+- documenter le rollback.
+
+## Seed local
+
+Depuis le backend :
+
 ```bash
-# Cloner le repository
-git clone https://github.com/votre-repo/cinelink.git
-
-# Configuration environnement
-cp .env.example .env
-# Éditer les variables selon l'environnement
-
-# Installation
-npm install
-npm run seed  # Pour données de démo
+npm run seed:dev
 ```
 
-## Déploiement Docker
+Avec MongoDB lance par Docker mais script execute depuis le poste hote :
 
-### Mise à jour avec Docker Compose
 ```bash
-# Arrêt des services
-docker-compose down
-
-# Pull des nouvelles images
-docker-compose pull
-
-# Redémarrage
-docker-compose up -d
-
-# Vérification
-docker-compose ps
-docker-compose logs
+MONGO_URI=mongodb://localhost:27017/cinelink npm run seed:dev
 ```
 
-### Rollback Docker
-```bash
-# Retour à la version précédente
-docker-compose down
-docker tag cinelink-backend:latest cinelink-backend:rollback
-docker tag cinelink-frontend:latest cinelink-frontend:rollback
+Sous PowerShell :
 
-# Redéployer l'ancienne version
-docker-compose up -d
+```powershell
+$env:MONGO_URI="mongodb://localhost:27017/cinelink"
+npm run seed:dev
 ```
 
-## Déploiement Cloud
+Dans le conteneur API, l'URI Docker est :
 
-### Vercel (Frontend)
-```bash
-# Via CLI
-vercel --prod
-
-# Ou via dashboard : déclenchement automatique sur push main
-```
-
-### Railway (Backend)
-```bash
-# Via CLI
-railway up
-
-# Ou via dashboard : déploiement automatique
-```
-
-## Variables d'Environnement
-
-### Changements par version
-
-#### v1.1.0 : Nouvelles variables
 ```env
-# Notifications
-NOTIFICATION_EMAIL_ENABLED=true
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-
-# Recherche avancée
-SEARCH_INDEX_ENABLED=true
-ELASTICSEARCH_URL=http://localhost:9200
+MONGO_URI=mongodb://mongo:27017/cinelink
 ```
 
-#### Migration des variables
+## Promotion admin
+
 ```bash
-# Script de migration des variables
-node scripts/migrate-env.js
+cd cinelink-backend
+npm run admin:promote -- user@example.com
 ```
 
-## Tests Post-Mise à Jour
+Cette commande doit pointer vers la base cible via `MONGO_URI`. Verifier soigneusement l'environnement pour ne pas promouvoir le mauvais compte sur la mauvaise base.
 
-### Tests automatisés
-```bash
-# Backend
-npm test
-npm run test:e2e
+## Deploiement production
 
-# Frontend
-npm test
-npm run test:e2e
-```
+Production actuelle :
 
-### Tests manuels critiques
-1. ✅ Connexion utilisateur
-2. ✅ Recherche de films
-3. ✅ Ajout/suppression favoris
-4. ✅ Publication commentaires
-5. ✅ Navigation feed
+- frontend : Vercel ;
+- backend : Render ;
+- base : MongoDB Atlas.
 
-### Monitoring post-déploiement
-- Response time < 500ms
-- Error rate < 1%
-- Uptime > 99.9%
+Les deploiements automatiques dependent de la configuration Render/Vercel et des branches connectees. La CI GitHub Actions reste la verification versionnee dans le depot.
 
-## Gestion des Incidents
+## Validation post-deploiement
 
-### Signes de problème
-- Erreurs 5xx en augmentation
-- Temps de réponse > 2s
-- Utilisateurs ne peuvent pas se connecter
+- Ouvrir le frontend.
+- Creer ou connecter un utilisateur.
+- Verifier catalogue, detail film, favori, commentaire, follow, feed et profil.
+- Tester un compte `ADMIN` si la mise a jour touche l'administration.
+- Verifier `GET /api/health`.
+- Verifier SonarQube Cloud apres execution du workflow.
 
-### Procédure d'urgence
-1. **Arrêt immédiat** : `docker-compose down`
-2. **Rollback** : Déployer version précédente
-3. **Investigation** : Analyser les logs
-4. **Communication** : Informer les utilisateurs
-5. **Fix** : Corriger et re-déployer
+## Incident et rollback
 
-## Communication
+En cas d'incident :
 
-### Pré-déploiement
-- [ ] Notification équipe technique
-- [ ] Préparation email utilisateurs (si impact)
-- [ ] Mise à jour documentation
-
-### Post-déploiement
-- [ ] Confirmation déploiement réussi
-- [ ] Monitoring 24h
-- [ ] Feedback utilisateurs
-
-## Historique des Mises à Jour
-
-| Version | Date | Type | Migration | Statut |
-|---------|------|------|-----------|--------|
-| 1.1.0 | 2024-06-01 | Mineure | Oui | Planifiée |
-| 1.0.1 | 2024-05-20 | Patch | Non | Déployée |
-| 1.0.0 | 2024-05-14 | Majeure | Non | Déployée |
-
-## Contacts
-
-### Support technique
-- **Lead Dev** : dev@cinelink.com
-- **DevOps** : ops@cinelink.com
-- **Urgences** : +33 1 23 45 67 89
-
-### Documentation
-- [CHANGELOG.md](./CHANGELOG.md) - Historique détaillé
-- [README.md](./README.md) - Guide d'installation
-- [CAHIER_RECETTES.md](./CAHIER_RECETTES.md) - Tests de validation
-
----
-
-*Ce manuel est mis à jour à chaque release. Dernière révision : Mai 2026*
+1. Identifier si le probleme vient du frontend, backend, MongoDB Atlas, TMDB ou des variables d'environnement.
+2. Consulter les logs Render pour le backend.
+3. Consulter les logs Vercel pour le frontend.
+4. Restaurer la version precedente depuis la plateforme de deploiement si necessaire.
+5. Ne jamais exposer les secrets dans un ticket ou un rapport d'incident.

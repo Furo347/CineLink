@@ -1,168 +1,86 @@
-# Manuel d'Utilisation - CineLink
+# Manuel utilisateur CineLink
 
-## Vue d'ensemble
-CineLink est une plateforme sociale dédiée aux cinéphiles. Découvrez des films, partagez vos avis, suivez vos amis et créez votre collection personnelle de favoris.
+CineLink est une plateforme sociale pour decouvrir des films, conserver ses favoris, publier des commentaires et suivre l'activite d'autres utilisateurs.
 
-## Premiers Pas
+## Creation de compte
 
-### Création de compte
-1. Accédez à la page d'accueil
-2. Cliquez sur "S'inscrire"
-3. Remplissez le formulaire :
-   - Adresse email valide
-   - Mot de passe sécurisé (8 caractères minimum)
-4. Confirmez votre inscription via email (si activé)
-5. Connectez-vous avec vos identifiants
+1. Ouvrir la page d'inscription.
+2. Renseigner un nom, un email, un mot de passe valide et, si souhaite, un avatar.
+3. Soumettre le formulaire.
 
-### Navigation générale
-- **Feed** : Découvrez l'activité de vos amis
-- **Rechercher** : Trouvez des films ou des utilisateurs
-- **Mon Profil** : Gérez vos informations personnelles
-- **Menu** : Accédez aux différentes sections
+Pendant une reponse longue, le bouton est desactive et affiche un etat de chargement. Un message indique que le premier chargement peut prendre quelques instants lorsque les services redemarrent.
 
-## Fonctionnalités Principales
+## Connexion
 
-### 🔍 Recherche de films
-1. Utilisez la barre de recherche principale
-2. Saisissez un titre, un réalisateur ou un acteur
-3. Parcourez les résultats avec pagination
-4. Cliquez sur un film pour voir les détails
+1. Ouvrir la page de connexion.
+2. Renseigner email et mot de passe.
+3. Soumettre.
 
-**Astuce** : La recherche est alimentée par TMDB (The Movie Database) pour des informations complètes et à jour.
+En cas d'erreur, le message existant reste affiche et le formulaire redevient utilisable.
 
-### ⭐ Gestion des favoris
-1. Sur la page d'un film, cliquez sur le cœur
-2. Le film est ajouté à votre collection personnelle
-3. Accédez à vos favoris via "Mes films" dans le menu
-4. Retirez un film en cliquant à nouveau sur le cœur
+## Navigation
 
-### 💬 Commentaires et discussions
-1. Sur la page d'un film, faites défiler jusqu'aux commentaires
-2. Saisissez votre avis dans le champ prévu
-3. Cliquez sur "Publier" pour partager
-4. Vous pouvez supprimer vos propres commentaires via l'icône corbeille
+Apres connexion, l'utilisateur peut acceder a :
 
-**Note** : Seuls les auteurs peuvent supprimer leurs commentaires.
+- Films ;
+- Recherche ;
+- Favoris ;
+- Utilisateurs ;
+- Feed ;
+- Profil ;
+- Administration, uniquement si le compte a le role `ADMIN`.
 
-### 👥 Réseau social
-1. **Suivre des utilisateurs** :
-   - Visitez le profil d'un utilisateur
-   - Cliquez sur "Suivre"
-   - Leurs activités apparaîtront dans votre feed
+## Films
 
-2. **Voir les profils** :
-   - Cliquez sur un nom d'utilisateur
-   - Découvrez leurs favoris et commentaires
-   - Suivez-les pour voir leurs activités
+La page Films affiche les films populaires fournis par TMDB. Depuis une carte film, l'utilisateur peut ouvrir la page detail.
 
-3. **Feed d'activité** :
-   - Page d'accueil après connexion
-   - Chronologie des actions de vos abonnements
-   - Liens directs vers les films concernés
+La page detail affiche les informations principales du film, les actions de favori et les commentaires.
 
-### 🔍 Recherche d'utilisateurs
-1. Utilisez l'onglet "Utilisateurs" dans la recherche
-2. Saisissez un nom ou prénom
-3. Parcourez les profils correspondants
-4. Cliquez pour visiter un profil
+## Favoris
 
-## Gestion du Profil
+Un utilisateur connecte peut ajouter un film a ses favoris, le retirer et lui associer une note lorsque l'interface le propose.
 
-### Modification des informations
-1. Accédez à "Mon Profil"
-2. Cliquez sur "Modifier le profil"
-3. Changez votre avatar, nom ou bio
-4. Sauvegardez les modifications
+## Commentaires
 
-### Sécurité du compte
-- **Mot de passe** : Changez régulièrement votre mot de passe
-- **Déconnexion** : Utilisez le bouton "Se déconnecter" pour quitter
-- **Session** : Votre session reste active jusqu'à déconnexion manuelle
+Sur la page detail d'un film :
 
-## Bonnes Pratiques
+- le bouton de publication ajoute un commentaire valide ;
+- `Entree` publie le commentaire ;
+- `Maj + Entree` ajoute une nouvelle ligne dans le champ ;
+- un commentaire vide ou compose uniquement d'espaces n'est pas publie ;
+- pendant une requete en cours, une seconde soumission est bloquee.
 
-### Pour une meilleure expérience
-- **Photos de profil** : Utilisez des images carrées pour un meilleur rendu
-- **Commentaires** : Soyez respectueux et constructif
-- **Recherche** : Utilisez des termes précis pour de meilleurs résultats
-- **Favoris** : Organisez votre collection régulièrement
+Un utilisateur peut supprimer ses propres commentaires. Un administrateur peut supprimer un commentaire d'un autre utilisateur.
 
-### Conseils de sécurité
-- Ne partagez jamais vos identifiants
-- Utilisez un mot de passe unique et complexe
-- Déconnectez-vous sur les ordinateurs partagés
-- Signalez tout comportement suspect
+## Social
 
-## Dépannage
+L'utilisateur peut consulter les profils publics, suivre ou ne plus suivre d'autres utilisateurs et consulter un feed d'activites.
 
-### Problèmes courants
+## Profil
 
-#### "Impossible de se connecter"
-- Vérifiez vos identifiants
-- Assurez-vous que Caps Lock n'est pas activé
-- Essayez de réinitialiser votre mot de passe
+La page profil permet de consulter les informations du compte courant, ses favoris et ses commentaires. Les profils publics montrent les informations accessibles des autres utilisateurs.
 
-#### "Film non trouvé"
-- Vérifiez l'orthographe du titre
-- Essayez des termes alternatifs
-- Le film peut ne pas être dans notre base TMDB
+## Administration
 
-#### "Commentaire ne s'affiche pas"
-- Actualisez la page
-- Vérifiez votre connexion internet
-- Le commentaire peut être en cours de modération
+Les comptes `ADMIN` disposent d'une page d'administration avec :
 
-#### "Bouton favoris ne fonctionne pas"
-- Actualisez la page
-- Vérifiez que vous êtes connecté
-- Essayez de vous reconnecter
+- statistiques simples ;
+- liste des utilisateurs ;
+- suppression d'un utilisateur autre que soi ;
+- moderation des commentaires depuis les pages film.
 
-### Contact Support
-Si vous rencontrez un problème non résolu :
-- Vérifiez les [issues GitHub](https://github.com/votre-repo/issues) pour les bogues connus
-- Créez un nouveau ticket si nécessaire
-- Fournissez : description, étapes pour reproduire, navigateur/OS
+La creation d'un administrateur ne se fait pas depuis l'interface. Elle passe par le script backend documente dans [docs/SECURITY.md](docs/SECURITY.md).
 
-## Accessibilité
+## Depannage
 
-### Navigation clavier
-- Utilisez `Tab` pour naviguer entre les éléments
-- `Entrée` pour activer les boutons
-- `Échap` pour fermer les modales
+| Probleme | Verification |
+| --- | --- |
+| Connexion impossible en local | Verifier que `VITE_API_URL` pointe vers l'API locale et que `FRONTEND_URL` autorise `http://localhost:5173`. |
+| Erreur CORS | Verifier la variable backend `FRONTEND_URL`. |
+| Seed local impossible avec `mongo` introuvable | Utiliser `mongodb://localhost:27017/cinelink` depuis le poste hote. |
+| Films indisponibles | Verifier la cle `TMDB_API_KEY` et la disponibilite de TMDB. |
+| Bouton admin absent | Se reconnecter apres promotion et verifier que le compte est promu sur la bonne base MongoDB. |
 
-### Lecteurs d'écran
-- L'application est compatible avec NVDA, JAWS, VoiceOver
-- Tous les éléments interactifs ont des labels appropriés
+## Accessibilite
 
-### Préférences d'affichage
-- Mode sombre disponible (si implémenté)
-- Taille de texte ajustable dans les paramètres du navigateur
-
-## Mise à jour de l'application
-
-### Nouvelles versions
-- Les mises à jour sont transparentes pour l'utilisateur
-- Actualisez votre page pour bénéficier des dernières fonctionnalités
-- Videz le cache de votre navigateur si nécessaire
-
-### Changements majeurs
-- Consultez le CHANGELOG.md pour les nouvelles fonctionnalités
-- Les tutoriels sont mis à jour avec les nouvelles versions
-
-## Glossaire
-
-- **Feed** : Chronologie des activités de vos abonnements
-- **TMDB** : Base de données de films utilisée pour les informations
-- **Favoris** : Collection personnelle de films préférés
-- **Abonnements** : Utilisateurs que vous suivez
-- **Followers** : Utilisateurs qui vous suivent
-
-## Raccourcis Clavier
-
-- `Ctrl + K` : Focus sur la recherche (préparé)
-- `Ctrl + /` : Ouvrir l'aide
-- `Échap` : Fermer les fenêtres modales
-
----
-
-*Ce manuel est régulièrement mis à jour. Dernière révision : Mai 2026*
+L'application utilise des formulaires semantiques, des boutons reels, des libelles de chargement et des messages avec `aria-live` lorsque pertinent. Voir [ACCESSIBILITE.md](ACCESSIBILITE.md).
