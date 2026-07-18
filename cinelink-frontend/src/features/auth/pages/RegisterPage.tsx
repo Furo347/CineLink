@@ -36,7 +36,7 @@ export default function RegisterPage() {
 
         setLoading(true);
         try {
-            const { token } = await authApi.register({
+            const { token, user } = await authApi.register({
                 name: name.trim(),
                 email: email.trim(),
                 password,
@@ -44,6 +44,7 @@ export default function RegisterPage() {
             });
 
             authStorage.set(token);
+            if (user) authStorage.setUser(user);
             toast.success("Compte créé");
             nav("/app/me");
         } catch (e: unknown) {

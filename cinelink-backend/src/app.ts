@@ -12,6 +12,7 @@ import followRoutes from "./routes/follow";
 import feedRoutes from "./routes/feed";
 import usersRoutes from "./routes/users";
 import healthRoutes from "./routes/health";
+import adminRoutes from "./routes/admin";
 import { logger } from "./config/logger";
 
 
@@ -50,5 +51,6 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/follow", followRoutes);
 app.use("/api/feed", feedRoutes);
 app.use("/api/users", usersRoutes);
+app.use("/api/admin", adminRoutes);
 
 export default app;

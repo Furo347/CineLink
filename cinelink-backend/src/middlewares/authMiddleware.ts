@@ -16,14 +16,12 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
     const token = authHeader.split(" ")[1];
     if (!token) return res.status(401).json({ message: "Non authorisé" });
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as jwt.JwtPayload & { userId: string };
-    (req as any).user = { id: decoded.userId };
-
     try {
-        const payload = jwt.verify(token, jwtSecret) as any;
+        const payload = jwt.verify(token, jwtSecret) as jwt.JwtPayload & { userId: string };
+        (req as any).user = { id: payload.userId };
         req.userId = payload.userId;
         next();
-    } catch (err) {
+    } catch {
         return res.status(401).json({ message: "Token invalide" });
     }
 };

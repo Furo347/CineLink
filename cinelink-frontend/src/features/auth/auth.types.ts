@@ -12,4 +12,11 @@ export interface LoginPayload {
 
 export interface AuthResponse {
     token: string;
+    user?: {
+        id: string;
+        email: string;
+        name: string;
+        avatar: string;
+        role: "USER" | "ADMIN";
+    };
 }

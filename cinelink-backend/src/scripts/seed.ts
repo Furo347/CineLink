@@ -55,8 +55,6 @@ const demoMovies = [
 ];
 
 async function upsertUsers() {
-    const passwordHash = await bcrypt.hash("CineLink2026!", 10);
-
     const users: any[] = [];
 
     for (const demoUser of demoUsers) {
@@ -134,7 +132,7 @@ async function ensureFavorite(userId: mongoose.Types.ObjectId, movie: { tmdbId: 
 }
 
 async function ensureComment(userId: mongoose.Types.ObjectId, movieId: number, content: string) {
-    const comment = await Comment.findOneAndUpdate(
+    await Comment.findOneAndUpdate(
         { user: userId, movieId, content },
         {
             $setOnInsert: {

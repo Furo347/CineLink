@@ -1,12 +1,14 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export type AvatarKey = "avatar1" | "avatar2" | "avatar3" | "avatar4" | "avatar5";
+export type UserRole = "USER" | "ADMIN";
 
 export interface IUser extends Document {
     name: string;
     email: string;
     password: string;
     avatar: AvatarKey;
+    role: UserRole;
     createdAt: Date;
 }
 
@@ -33,6 +35,12 @@ const UserSchema: Schema = new Schema<IUser>({
         type: String,
         enum: ["avatar1", "avatar2", "avatar3", "avatar4", "avatar5"],
         default: "avatar1",
+        required: true,
+    },
+    role: {
+        type: String,
+        enum: ["USER", "ADMIN"],
+        default: "USER",
         required: true,
     },
     createdAt: {

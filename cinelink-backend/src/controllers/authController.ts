@@ -39,7 +39,7 @@ export const register = async (req: Request, res: Response) => {
             { expiresIn: jwtExpires } as jwt.SignOptions
         );
 
-        res.status(201).json({ token, user: { id: user._id, email: user.email, name: user.name, avatar: user.avatar } });
+        res.status(201).json({ token, user: { id: user._id, email: user.email, name: user.name, avatar: user.avatar, role: user.role } });
     } catch (err) {
         logger.error("Erreur register", { error: err });
         res.status(500).json({ message: "Erreur serveur" });
@@ -64,7 +64,7 @@ export const login = async (req: Request, res: Response) => {
             { expiresIn: jwtExpires } as jwt.SignOptions
         );
 
-        res.json({ token, user: { id: user._id, email: user.email, name: user.name, avatar: user.avatar } });
+        res.json({ token, user: { id: user._id, email: user.email, name: user.name, avatar: user.avatar, role: user.role } });
     } catch (err) {
         logger.error("Erreur login", { error: err });
         res.status(500).json({ message: "Erreur serveur" });

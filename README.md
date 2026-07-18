@@ -419,9 +419,52 @@ Les routes protégées nécessitent `Authorization: Bearer <token>`.
 | GET | `/api/follow` | Mes abonnements |
 | GET | `/api/feed` | Fil d'actualité |
 
+#### Administration
+Les routes d'administration nécessitent un JWT valide et un utilisateur avec le rôle `ADMIN`.
+
+| Méthode | Endpoint | Réponses principales | Description |
+|---------|----------|----------------------|-------------|
+| GET | `/api/admin/stats` | `200`, `401`, `403` | Statistiques simples : utilisateurs, commentaires, favoris, relations follow |
+| DELETE | `/api/admin/comments/:commentId` | `204`, `400`, `401`, `403`, `404` | Supprime n'importe quel commentaire |
+| DELETE | `/api/admin/users/:userId` | `200`, `400`, `401`, `403`, `404` | Supprime un utilisateur, sauf auto-suppression admin |
+
+Suppression utilisateur admin :
+- le compte utilisateur est supprimé ;
+- ses commentaires sont supprimés ;
+- ses favoris sont supprimés ;
+- ses relations de follow entrantes et sortantes sont supprimées ;
+- les activités où il est acteur ou cible utilisateur sont supprimées ;
+- les contenus des autres utilisateurs sont conservés.
+
+### Rôles et premier administrateur
+
+Les utilisateurs disposent d'un champ `role` avec deux valeurs possibles :
+- `USER` : rôle par défaut à l'inscription ;
+- `ADMIN` : accès aux routes `/api/admin`.
+
+Un utilisateur ne peut pas choisir son rôle à l'inscription : toute valeur `role` envoyée par le client est ignorée et le rôle créé reste `USER`.
+
+Pour promouvoir un utilisateur existant en administrateur, utiliser la commande backend :
+
+```bash
+cd cinelink-backend
+npm run admin:promote -- email@exemple.com
+```
+
+Alternative via variable d'environnement :
+
+```bash
+cd cinelink-backend
+ADMIN_EMAIL=email@exemple.com npm run admin:promote
+```
+
+Aucune route publique ne permet de devenir administrateur.
+
 ### Sécurité
 
 - **Authentification JWT** avec expiration
+- **RBAC minimal** : rôles `USER` / `ADMIN`
+- **Vérification admin côté backend** : le middleware admin recharge l'utilisateur en base et ne fait pas confiance au client
 - **Validation stricte** des entrées (express-validator)
 - **Protection CSRF** implicite (JWT stateless)
 - **Rate limiting** recommandé en production

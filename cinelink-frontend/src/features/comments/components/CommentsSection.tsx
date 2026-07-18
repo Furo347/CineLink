@@ -4,6 +4,7 @@ import { Trash2 } from "lucide-react";
 
 import { commentsApi } from "../comments.api";
 import type { Comment } from "../comments.types";
+import { adminApi } from "@/features/admin/admin.api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -75,6 +76,16 @@ const CommentsSection = forwardRef<CommentsSectionRef, { movieId: number }>(
             }
         };
 
+        const removeAsAdmin = async (id: string) => {
+            try {
+                await adminApi.removeComment(id);
+                setItems((prev) => prev.filter((c) => c._id !== id));
+                toast.success("Commentaire supprimé par l’administration");
+            } catch (e: unknown) {
+                toast.error(getApiErrorMessage(e, "Suppression admin impossible"));
+            }
+        };
+
         const getCurrentUserId = (): string | null => {
             const token = authStorage.get();
             if (!token) return null;
@@ -83,6 +94,7 @@ const CommentsSection = forwardRef<CommentsSectionRef, { movieId: number }>(
         };
 
         const currentUserId = getCurrentUserId();
+        const isAdmin = authStorage.getRole() === "ADMIN";
 
         return (
             <div className="space-y-4">
@@ -118,6 +130,7 @@ const CommentsSection = forwardRef<CommentsSectionRef, { movieId: number }>(
                             const author = typeof c.user === "string" ? "Utilisateur" : (c.user?.name ?? "Utilisateur");
                             const authorId = typeof c.user === "string" ? null : c.user?._id;
                             const canDelete = currentUserId && authorId === currentUserId;
+                            const canAdminDelete = isAdmin && !canDelete;
 
                             return (
                                 <Card key={c._id} className="bg-white/5">
@@ -130,8 +143,13 @@ const CommentsSection = forwardRef<CommentsSectionRef, { movieId: number }>(
                                             <div className="mt-2 text-text-primary">{c.content}</div>
                                         </div>
 
-                                        {canDelete && (
-                                            <Button variant="secondary" size="sm" onClick={() => remove(c._id)}>
+                                        {(canDelete || canAdminDelete) && (
+                                            <Button
+                                                aria-label={canAdminDelete ? "Supprimer le commentaire en admin" : "Supprimer mon commentaire"}
+                                                variant="secondary"
+                                                size="sm"
+                                                onClick={() => canAdminDelete ? removeAsAdmin(c._id) : remove(c._id)}
+                                            >
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
                                         )}

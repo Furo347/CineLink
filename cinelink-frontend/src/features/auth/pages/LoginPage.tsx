@@ -27,8 +27,9 @@ export default function LoginPage() {
 
     const onSubmit = async (values: FormValues) => {
         try {
-            const { token } = await authApi.login(values);
+            const { token, user } = await authApi.login(values);
             authStorage.set(token);
+            if (user) authStorage.setUser(user);
             toast.success("Connexion réussie.");
             nav("/app/movies");
         } catch {
