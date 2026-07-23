@@ -14,7 +14,8 @@ Reponses principales :
 
 - `401` si le token est absent.
 - `401` si le token est invalide.
-- `401` si l'utilisateur lie au token ne permet pas de continuer sur une route admin.
+- `401` si l'utilisateur associe au token est introuvable ou invalide.
+- `403` si l'utilisateur authentifie ne possede pas le role `ADMIN` sur une route admin.
 
 ## Mots de passe
 
@@ -122,6 +123,23 @@ L'API utilise :
 - `express.json()`.
 
 Le rate limit est desactive en environnement de test.
+
+## Prise en compte de l'OWASP Top 10 2021
+
+Cette correspondance recense les mesures de reduction du risque visibles dans le depot. Elle ne constitue pas un audit de securite externe.
+
+| Categorie OWASP | Mesures presentes dans CineLink | Limites ou vigilance |
+| --- | --- | --- |
+| A01:2021 - Broken Access Control | Routes protegees par `authMiddleware`; routes `/api/admin/*` protegees par `requireAdmin`; roles `USER` et `ADMIN` portes par le modele `User`; role recharge depuis MongoDB avant les actions admin; tests automatises sur l'injection de role, les refus `401` et `403`, et les suppressions admin. | Le frontend masque certaines actions selon le role stocke, mais n'est pas la source d'autorite; absence de journal d'audit administrateur dedie; absence de restauration automatique apres suppression admin. |
+| A02:2021 - Cryptographic Failures | Mots de passe hashes avec `bcryptjs`; JWT signe avec `JWT_SECRET`; duree de validite configuree par `JWT_EXPIRES_IN`; les secrets applicatifs sont attendus via variables d'environnement et non dans le code source. | Le token est conserve dans `localStorage` et non dans un cookie `HttpOnly`; la robustesse depend de secrets de production longs, non versionnes et correctement geres sur Render/Vercel. |
+| A03:2021 - Injection | Validation des entrees d'authentification et de profil avec `express-validator`; acces aux donnees via Mongoose; controles d'identifiants MongoDB sur les routes admin avant certaines operations sensibles. | Tous les champs applicatifs ne sont pas couverts par une validation centralisee; aucun test d'intrusion ou audit externe n'est documente. |
+| A04:2021 - Insecure Design | Separation backend/frontend des responsabilites; controle RBAC cote backend; inscription forcee en `USER`; script controle pour promouvoir un administrateur; tests de parcours critiques backend et frontend. | L'administration reste minimale; pas de mecanisme de restauration apres suppression; les choix de conception n'ont pas fait l'objet d'une revue de menace formelle documentee. |
+| A05:2021 - Security Misconfiguration | `helmet`; CORS limite par `FRONTEND_URL`; `express-rate-limit` sur les routes d'authentification; configuration via variables d'environnement; workflows GitHub Actions distincts pour backend, frontend et SonarQube Cloud. | Le rate limit est cible sur l'authentification seulement; le monitoring de securite reste limite aux logs applicatifs; l'absence d'audit externe laisse des erreurs de configuration possibles. |
+| A06:2021 - Vulnerable and Outdated Components | `package-lock.json` present pour backend et frontend; CI avec `npm ci`; Dependabot configure pour npm backend, npm frontend et GitHub Actions; analyse SonarQube Cloud configuree. | La reduction du risque depend de la revue et de l'application regulieres des mises a jour; aucune correction automatique de vulnerabilites n'est documentee. |
+| A07:2021 - Identification and Authentication Failures | Authentification par JWT; verification de signature dans `authMiddleware`; comparaison des mots de passe hashes avec bcrypt; rate limit sur `/register` et `/login`; `401` pour absence de token, token invalide ou utilisateur associe introuvable. | Pas de MFA; pas de rotation automatique des tokens documentee; stockage du token en `localStorage`. |
+| A08:2021 - Software and Data Integrity Failures | Installation reproductible via `package-lock.json` et `npm ci`; workflows GitHub Actions executant tests, typecheck/build et lint frontend; SonarQube Cloud avec rapports de couverture. | Pas de signature d'artefacts ni verification SCA avancee documentee; la protection depend de la securisation du depot, des secrets CI et des plateformes de deploiement. |
+| A09:2021 - Security Logging and Monitoring Failures | Logs applicatifs via `winston`; logs HTTP via `morgan`; erreurs serveur et erreurs TMDB journalisees cote backend. | Pas de journal d'audit admin dedie; pas de supervision externe de securite configuree dans le depot; alerting et correlation d'evenements non documentes. |
+| A10:2021 - Server-Side Request Forgery | Les appels serveur externes identifies ciblent l'API TMDB avec une base d'URL controlee par le code; les identifiants TMDB sont utilises comme parametres ou segments attendus, pas comme URL fournie par l'utilisateur. | Pas de filtrage reseau sortant documente; dependance a la disponibilite et au comportement de TMDB; vigilance a conserver si de nouvelles integrations externes acceptent des URL utilisateur. |
 
 ## Recommandations production
 

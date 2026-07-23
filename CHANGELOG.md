@@ -20,12 +20,15 @@
 - Documentation racine recentree sur l'installation, les variables, les scripts et les liens vers les docs detaillees.
 - Documentation de certification corrigee pour supprimer les references obsoletes ou non confirmees.
 - Clarification de l'usage MongoDB local, Docker et production.
+- Finalisation du cahier de recette apres la campagne manuelle du 23 juillet 2026.
+- Explicitation du RGAA comme referentiel d'accessibilite retenu, en coherence avec les WCAG.
 
 ### Security
 
 - Documentation du modele de roles `USER` / `ADMIN`.
 - Documentation du fait que le backend recharge le role depuis MongoDB pour les routes admin.
 - Clarification : aucun role admin ne peut etre choisi a l'inscription.
+- Ajout d'une matrice de correspondance entre les mesures de securite de CineLink et l'OWASP Top 10 2021.
 
 ## 1.0.0
 
