@@ -2,6 +2,14 @@
 
 Ce document liste les mesures d'accessibilite presentes ou recommandees pour CineLink.
 
+## Referentiel retenu
+
+Le RGAA est le referentiel principal retenu pour guider la demarche d'accessibilite de CineLink. Cette demarche s'inscrit egalement dans les principes internationaux des WCAG, le choix du RGAA etant coherent avec le contexte francais du projet.
+
+Les verifications portent notamment sur la navigation au clavier, l'ordre et la visibilite du focus, les contrastes, les formulaires et leurs libelles, les messages d'erreur, les etats de chargement, l'utilisation de `aria-live` et `aria-busy`, ainsi que les parcours de navigation et les actions realisables au clavier.
+
+Cette demarche constitue une auto-evaluation. Elle ne vaut pas audit RGAA officiel, ne constitue pas une declaration de conformite complete et certains controles restent manuels. Aucun niveau de conformite RGAA ou WCAG chiffre n'est annonce, faute de mesure officielle complete.
+
 ## Mesures en place
 
 - Formulaires d'authentification avec libelles et boutons explicites.
