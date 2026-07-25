@@ -465,7 +465,7 @@ mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
         "-F", "projectId=$($Project.Id)",
         "-F", "itemId=$($Item.id)",
         "-F", "fieldId=$($Project.StatusFieldId)",
-        "-F", "optionId=$($Project.DoneOptionId)"
+        "-f", "optionId=$($Project.DoneOptionId)"
     ) | Out-Null
 
     $Summary.StatusesSetDone++
