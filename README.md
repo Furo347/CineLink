@@ -1,6 +1,8 @@
 # CineLink
 
-CineLink est une application sociale autour du cinema. Elle permet a un utilisateur de creer un compte, parcourir des films via TMDB, gerer ses favoris, publier des commentaires, suivre d'autres utilisateurs et consulter un feed d'activite. Le projet contient aussi une administration minimale pour moderer les commentaires et supprimer des utilisateurs.
+[![Backend CI](https://github.com/Furo347/CineLink/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/Furo347/CineLink/actions/workflows/backend-ci.yml) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Furo347_CineLink&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Furo347_CineLink)
+
+CineLink est une application sociale autour du cinéma. Elle permet a un utilisateur de creer un compte, parcourir des films via TMDB, gerer ses favoris, publier des commentaires, suivre d'autres utilisateurs et consulter un feed d'activite. Le projet contient aussi une administration minimale pour moderer les commentaires et supprimer des utilisateurs.
 
 La documentation de reference est regroupee dans le dossier [docs](docs) :
 
