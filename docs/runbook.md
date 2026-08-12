@@ -17,7 +17,7 @@ Ce document concerne principalement :
 * l’API Node.js, Express et TypeScript ;
 * la base de données MongoDB Atlas ;
 * le déploiement de production ;
-* la supervision Better Stack ;
+* la supervision du backend ;
 * la chaîne d’intégration continue GitHub Actions.
 
 ---
@@ -33,7 +33,7 @@ Le projet CineLink repose sur les composants suivants :
 | API externe          | TMDB                         | Récupération des données cinématographiques                   |
 | Conteneurisation     | Docker                       | Exécution reproductible du backend                            |
 | Intégration continue | GitHub Actions               | Exécution des tests et compilation                            |
-| Supervision          | Better Stack                 | Contrôle de disponibilité de l’API                            |
+| Supervision          | Monitor HTTP                 | Contrôle de disponibilité de l’API via `/api/health`          |
 | Dépôt source         | GitHub                       | Versionnement et gestion du projet                            |
 
 ---
@@ -45,7 +45,7 @@ Avant toute intervention, vérifier la disponibilité des éléments suivants :
 * accès au dépôt GitHub CineLink ;
 * accès à la plateforme de déploiement ;
 * accès au projet MongoDB Atlas ;
-* accès au monitor Better Stack ;
+* accès au monitor de supervision ;
 * accès aux variables d’environnement de production ;
 * Node.js version 20 pour une exécution locale ;
 * Docker et Docker Compose pour une exécution conteneurisée.
@@ -117,20 +117,33 @@ La réponse attendue est un code HTTP `200` avec un corps similaire à celui-ci 
 
 ---
 
-## 6. Contrôle Better Stack
+## 6. Contrôle de supervision
 
-Better Stack surveille l’endpoint de santé du backend de production.
+Le backend de production est surveillé via l’endpoint de santé public.
+
+Paramètres réels du contrôle :
+
+| Paramètre | Valeur |
+| --------- | ------ |
+| URL surveillée | `https://cinelink-backend.onrender.com/api/health` |
+| Endpoint applicatif | `/api/health` |
+| Intervalle de contrôle | 3 minutes |
+| Timeout | 30s |
+| Condition de déclenchement | `URL becomes unavailable` |
+| Canal de notification | `flo.portets@free.fr` |
+
+Le contrôle porte sur la disponibilité HTTP du backend. Le corps JSON de `/api/health` permet ensuite de vérifier l’état de l’API, l’état MongoDB, l’environnement et la version exposée.
 
 ### Procédure
 
-1. Se connecter à Better Stack.
+1. Ouvrir l’outil de supervision.
 2. Ouvrir la section des monitors.
 3. Sélectionner le monitor du backend CineLink.
 4. Vérifier :
 
    * le statut du monitor ;
    * la date du dernier contrôle ;
-   * le temps de réponse ;
+   * le temps de réponse si l’outil l’expose ;
    * l’historique des incidents ;
    * le contenu de la dernière réponse HTTP.
 
@@ -144,7 +157,7 @@ Better Stack surveille l’endpoint de santé du backend de production.
 | Incident ouvert       | Une indisponibilité a été détectée                     |
 | Incident résolu       | Le service a de nouveau répondu correctement           |
 
-Un monitor temporaire sur un endpoint invalide a été utilisé afin de vérifier le fonctionnement de la détection d’incident et des alertes par e-mail.
+Le temps de réponse n’est pas documenté comme un indicateur avec seuil dédié. Le seul seuil temporel documenté pour ce contrôle est le timeout de 30s.
 
 ---
 
@@ -384,7 +397,7 @@ npm run build
 1. consulter les logs de démarrage ;
 2. vérifier la connexion MongoDB ;
 3. appeler `/api/health` ;
-4. vérifier Better Stack ;
+4. vérifier le monitor de supervision ;
 5. tester une fonctionnalité nécessitant MongoDB ;
 6. tester une fonctionnalité dépendant de TMDB ;
 7. surveiller les erreurs pendant les premières minutes.
@@ -410,7 +423,7 @@ Un redéploiement peut être nécessaire après :
 5. relancer le déploiement ;
 6. surveiller les logs ;
 7. contrôler `/api/health` ;
-8. vérifier le retour du monitor Better Stack à l’état opérationnel ;
+8. vérifier le retour du monitor de supervision à l’état opérationnel ;
 9. documenter l’action dans l’issue d’incident.
 
 ---
@@ -434,7 +447,7 @@ Un retour arrière doit être envisagé lorsqu’une nouvelle version entraîne 
 5. contrôler les logs ;
 6. tester `/api/health` ;
 7. contrôler les principales routes ;
-8. vérifier Better Stack ;
+8. vérifier le monitor de supervision ;
 9. créer ou compléter une issue d’incident ;
 10. ne réintroduire la version défaillante qu’après correction et validation.
 
@@ -513,16 +526,16 @@ Vérifier :
 * les limites d’utilisation ;
 * les logs du contrôleur de recherche.
 
-### 16.6 Better Stack signale une panne mais le service semble accessible
+### 16.6 Le monitor signale une panne mais le service semble accessible
 
 Vérifier :
 
-* l’URL exacte configurée ;
+* l’URL exacte configurée : `https://cinelink-backend.onrender.com/api/health` ;
 * le protocole HTTPS ;
 * le code HTTP renvoyé ;
-* la durée de réponse ;
+* la durée de réponse si elle est exposée par l’outil ;
 * une éventuelle indisponibilité transitoire ;
-* l’historique des contrôles Better Stack ;
+* l’historique des contrôles du monitor ;
 * les logs de la plateforme au moment précis de l’incident.
 
 ---
@@ -531,7 +544,19 @@ Vérifier :
 
 Lorsqu’un incident est détecté :
 
-### 17.1 Qualification
+### 17.1 Déroulement opérationnel
+
+1. Détection : le monitor contrôle `https://cinelink-backend.onrender.com/api/health` toutes les 3 minutes.
+2. Déclenchement : l’alerte est déclenchée lorsque la condition `URL becomes unavailable` est remplie, avec un timeout configuré à 30s.
+3. Réception : la notification est envoyée à `flo.portets@free.fr`.
+4. Vérification manuelle : appeler `https://cinelink-backend.onrender.com/api/health` et vérifier le code HTTP, `status`, `database`, `environment` et `version`.
+5. Consultation des logs : lire les logs du backend sur la plateforme de déploiement.
+6. Vérification de configuration : contrôler les variables d’environnement requises, notamment `MONGO_URI`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `TMDB_API_KEY`, `FRONTEND_URL` et `PORT` si utilisé.
+7. Vérification MongoDB : contrôler l’accessibilité du cluster, les droits de l’utilisateur et la validité de l’URI configurée.
+8. Correction ou redéploiement : corriger la cause identifiée, redémarrer ou redéployer le backend.
+9. Validation : confirmer le retour à HTTP `200`, `status: "UP"` et `database: "UP"` sur `/api/health`.
+
+### 17.2 Qualification
 
 Déterminer :
 
@@ -541,19 +566,20 @@ Déterminer :
 * le niveau de gravité ;
 * le caractère interne ou externe de la cause.
 
-### 17.2 Diagnostic
+### 17.3 Diagnostic
 
 Consulter :
 
-* Better Stack ;
+* le monitor de supervision ;
 * l’endpoint `/api/health` ;
 * les logs de déploiement ;
 * MongoDB Atlas ;
 * GitHub Actions ;
+* les variables d’environnement de production ;
 * les dernières modifications du dépôt ;
 * l’état de TMDB si nécessaire.
 
-### 17.3 Correction
+### 17.4 Correction
 
 Selon la cause :
 
@@ -564,17 +590,18 @@ Selon la cause :
 * corriger le code sur une branche dédiée ;
 * attendre le rétablissement d’un fournisseur externe.
 
-### 17.4 Validation
+### 17.5 Validation
 
 Après correction :
 
-* vérifier `/api/health` ;
-* tester les routes critiques ;
-* confirmer le retour à l’état `Up` dans Better Stack ;
-* vérifier la résolution de l’incident ;
+* appeler `https://cinelink-backend.onrender.com/api/health` ;
+* vérifier que le code HTTP est `200` ;
+* vérifier que `status` vaut `UP` ;
+* vérifier que `database` vaut `UP` ;
+* confirmer le retour à l’état opérationnel dans le monitor de supervision ;
 * surveiller le service après le rétablissement.
 
-### 17.5 Traçabilité
+### 17.6 Traçabilité
 
 Créer ou compléter une issue GitHub avec :
 
@@ -597,7 +624,7 @@ Créer ou compléter une issue GitHub avec :
 | Élevé    | Fonction importante indisponible | Connexion utilisateur impossible      | Haute     |
 | Critique | Service totalement indisponible  | API inaccessible ou base indisponible | Immédiate |
 
-Dans le cadre du projet CineLink, les alertes et incidents sont suivis à travers Better Stack, GitHub Issues et le GitHub Project.
+Dans le cadre du projet CineLink, les alertes du monitor sont envoyées à `flo.portets@free.fr`. Les incidents peuvent ensuite être tracés dans GitHub Issues et le GitHub Project.
 
 ---
 
@@ -608,7 +635,7 @@ Les actions suivantes doivent être réalisées régulièrement :
 * vérifier les alertes Dependabot ;
 * mettre à jour les dépendances après validation ;
 * contrôler l’état de GitHub Actions ;
-* vérifier Better Stack ;
+* vérifier le monitor de supervision ;
 * consulter les alertes MongoDB Atlas ;
 * contrôler les secrets et leurs dates de renouvellement ;
 * exécuter les tests ;
@@ -626,7 +653,7 @@ Les actions suivantes doivent être réalisées régulièrement :
 [ ] Endpoint /api/health accessible
 [ ] Backend déclaré UP
 [ ] Base MongoDB déclarée UP
-[ ] Monitor Better Stack opérationnel
+[ ] Monitor de supervision opérationnel
 [ ] Aucun incident actif
 [ ] Dernier workflow GitHub Actions réussi
 [ ] Aucun déploiement en échec
@@ -644,7 +671,7 @@ Les actions suivantes doivent être réalisées régulièrement :
 [ ] Déploiement réussi
 [ ] Healthcheck validé
 [ ] Fonctionnalités critiques testées
-[ ] Better Stack opérationnel
+[ ] Monitor de supervision opérationnel
 [ ] Documentation mise à jour
 ```
 
@@ -679,10 +706,11 @@ Mesure préventive :
 
 Les limites identifiées sont les suivantes :
 
-* l’offre gratuite Better Stack limite certaines fonctions avancées de politique d’escalade ;
-* les notifications mobiles nécessitent l’application Better Stack ;
-* la supervision actuelle contrôle principalement la disponibilité HTTP ;
-* la centralisation avancée des logs n’est pas encore mise en place ;
+* la supervision documentée contrôle principalement la disponibilité HTTP de `/api/health` ;
+* aucun test synthétique métier externe n’est documenté comme configuré ;
+* la centralisation complète des logs n’est pas documentée comme configurée ;
+* aucun SLA contractuel n’est documenté dans le dépôt ;
+* aucun seuil de latence autre que le timeout de 30s n’est documenté comme configuré ;
 * aucun mécanisme automatisé complet de rollback n’est actuellement configuré ;
 * la disponibilité de certaines fonctionnalités dépend de l’API externe TMDB.
 
