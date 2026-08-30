@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import LoginPage from "@/features/auth/pages/LoginPage";
 import { authApi } from "@/features/auth/auth.api";
 import { authStorage } from "@/services/auth.storage";
+import { toast } from "sonner";
 
 const mockNavigate = vi.fn();
 
@@ -35,6 +36,7 @@ vi.mock("@/services/auth.storage", () => ({
     authStorage: {
         set: vi.fn(),
         setUser: vi.fn(),
+        clear: vi.fn(),
     },
 }));
 
@@ -96,6 +98,9 @@ describe("LoginPage", () => {
         });
 
         expect(authStorage.set).toHaveBeenCalledWith("fake-token");
+        expect(vi.mocked(authStorage.clear).mock.invocationCallOrder[0]).toBeLessThan(
+            vi.mocked(authStorage.set).mock.invocationCallOrder[0]
+        );
         expect(mockNavigate).toHaveBeenCalledWith("/app/movies");
     });
 
@@ -152,6 +157,11 @@ describe("LoginPage", () => {
         await user.click(screen.getByRole("button", { name: /se connecter/i }));
 
         expect(await screen.findByRole("button", { name: /se connecter/i })).toBeEnabled();
+        expect(await screen.findByRole("alert")).toHaveTextContent("Identifiants invalides.");
         expect(screen.queryByRole("button", { name: /connexion en cours/i })).not.toBeInTheDocument();
+        expect(authStorage.set).not.toHaveBeenCalled();
+        expect(authStorage.clear).toHaveBeenCalled();
+        expect(mockNavigate).not.toHaveBeenCalled();
+        expect(toast.error).not.toHaveBeenCalled();
     });
 });
