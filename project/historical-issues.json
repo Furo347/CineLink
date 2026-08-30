@@ -1,0 +1,494 @@
+[
+  {
+    "title": "[BACKEND] Mettre en place l'architecture Express et TypeScript",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nMettre en place une API backend structurée avec Express, TypeScript et une organisation maintenable.\n\n## Réalisation\n\nLe backend a été organisé autour d'une application Express, d'un point d'entrée serveur, de routes, contrôleurs, modèles, middlewares et fichiers de configuration TypeScript.\n\n## Critères d'acceptation\n\n- [x] L'application Express est configurée dans un module dédié\n- [x] Le serveur démarre depuis un point d'entrée séparé\n- [x] La compilation TypeScript est configurée\n- [x] Les responsabilités sont séparées entre routes, contrôleurs, modèles et middlewares\n\n## Preuves\n\n- `cinelink-backend/src/app.ts`\n- `cinelink-backend/src/server.ts`\n- `cinelink-backend/tsconfig.json`\n- `cinelink-backend/src/controllers`\n- `cinelink-backend/src/routes`\n- `cinelink-backend/src/models`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "backend"
+    ],
+    "status": "Done",
+    "category": "Backend",
+    "evidence": [
+      "cinelink-backend/src/app.ts",
+      "cinelink-backend/src/server.ts",
+      "cinelink-backend/tsconfig.json",
+      "cinelink-backend/src/controllers",
+      "cinelink-backend/src/routes",
+      "cinelink-backend/src/models"
+    ]
+  },
+  {
+    "title": "[DATA] Configurer la connexion MongoDB avec Mongoose",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nConnecter le backend à MongoDB avec Mongoose et externaliser la configuration de connexion.\n\n## Réalisation\n\nLa connexion MongoDB est centralisée dans un module dédié. Le backend utilise `MONGO_URI`, journalise l'état de connexion et échoue explicitement si l'URI est absente.\n\n## Critères d'acceptation\n\n- [x] La connexion Mongoose est centralisée\n- [x] `MONGO_URI` est utilisé comme variable d'environnement\n- [x] Une erreur est levée si `MONGO_URI` est absent\n- [x] Les modèles Mongoose principaux sont présents\n\n## Preuves\n\n- `cinelink-backend/src/config/db.ts`\n- `cinelink-backend/src/models/User.ts`\n- `cinelink-backend/src/models/Favorite.ts`\n- `cinelink-backend/src/models/Comment.ts`\n- `cinelink-backend/src/models/Follow.ts`\n- `cinelink-backend/src/models/Activity.ts`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "backend",
+      "database"
+    ],
+    "status": "Done",
+    "category": "Data",
+    "evidence": [
+      "cinelink-backend/src/config/db.ts",
+      "cinelink-backend/src/models/User.ts",
+      "cinelink-backend/src/models/Favorite.ts",
+      "cinelink-backend/src/models/Comment.ts",
+      "cinelink-backend/src/models/Follow.ts",
+      "cinelink-backend/src/models/Activity.ts"
+    ]
+  },
+  {
+    "title": "[BACKEND] Ajouter les endpoints de statut et les logs applicatifs",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nPermettre la vérification de disponibilité du backend et disposer de logs exploitables côté serveur.\n\n## Réalisation\n\nUne route racine publique et un endpoint `/api/health` ont été ajoutés. Le backend utilise Winston pour les logs applicatifs et Morgan pour les logs HTTP.\n\n## Critères d'acceptation\n\n- [x] Une route racine publique retourne l'état de base de l'API\n- [x] `/api/health` retourne l'état API et MongoDB\n- [x] Le healthcheck retourne `503` lorsque MongoDB est indisponible\n- [x] Les logs applicatifs et HTTP sont configurés\n\n## Preuves\n\n- `cinelink-backend/src/app.ts`\n- `cinelink-backend/src/routes/health.ts`\n- `cinelink-backend/src/config/logger.ts`\n- `cinelink-backend/docs/monitoring.md`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "backend",
+      "deployment"
+    ],
+    "status": "Done",
+    "category": "Backend",
+    "evidence": [
+      "cinelink-backend/src/app.ts",
+      "cinelink-backend/src/routes/health.ts",
+      "cinelink-backend/src/config/logger.ts",
+      "cinelink-backend/docs/monitoring.md"
+    ]
+  },
+  {
+    "title": "[AUTH] Implémenter l'inscription et la connexion JWT",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nPermettre aux utilisateurs de créer un compte, se connecter et accéder aux routes protégées avec un token JWT.\n\n## Réalisation\n\nLes routes d'inscription et de connexion ont été implémentées. Les mots de passe sont hashés avec bcrypt, les JWT sont générés à la connexion et vérifiés par un middleware d'authentification.\n\n## Critères d'acceptation\n\n- [x] Un utilisateur peut s'inscrire\n- [x] Un utilisateur peut se connecter\n- [x] Les mots de passe sont hashés avant stockage\n- [x] Les routes protégées vérifient un JWT\n\n## Preuves\n\n- `cinelink-backend/src/controllers/authController.ts`\n- `cinelink-backend/src/routes/auth.ts`\n- `cinelink-backend/src/middlewares/authMiddleware.ts`\n- `cinelink-backend/tests/auth.test.ts`\n- `cinelink-backend/tests/auth-flow.test.ts`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "authentication",
+      "security"
+    ],
+    "status": "Done",
+    "category": "Authentication",
+    "evidence": [
+      "cinelink-backend/src/controllers/authController.ts",
+      "cinelink-backend/src/routes/auth.ts",
+      "cinelink-backend/src/middlewares/authMiddleware.ts",
+      "cinelink-backend/tests/auth.test.ts",
+      "cinelink-backend/tests/auth-flow.test.ts"
+    ]
+  },
+  {
+    "title": "[SECURITY] Renforcer la validation et les protections HTTP",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nRéduire les risques liés aux entrées utilisateur, aux appels abusifs et à la configuration HTTP du backend.\n\n## Réalisation\n\nLe backend utilise `express-validator` sur les routes d'authentification et de profil, `express-rate-limit` sur l'authentification, `helmet` pour les en-têtes HTTP et CORS configuré via `FRONTEND_URL`.\n\n## Critères d'acceptation\n\n- [x] Les champs d'inscription et de connexion sont validés\n- [x] Un rate limit protège les routes d'authentification\n- [x] `helmet` est activé dans l'application Express\n- [x] CORS utilise une origine configurable par environnement\n\n## Preuves\n\n- `cinelink-backend/src/routes/auth.ts`\n- `cinelink-backend/src/routes/users.ts`\n- `cinelink-backend/src/app.ts`\n- `docs/SECURITY.md`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "security",
+      "backend"
+    ],
+    "status": "Done",
+    "category": "Security",
+    "evidence": [
+      "cinelink-backend/src/routes/auth.ts",
+      "cinelink-backend/src/routes/users.ts",
+      "cinelink-backend/src/app.ts",
+      "docs/SECURITY.md"
+    ]
+  },
+  {
+    "title": "[SECURITY] Ajouter les rôles administrateur et le contrôle RBAC",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nProtéger les opérations d'administration avec un rôle `ADMIN` vérifié côté backend.\n\n## Réalisation\n\nLe modèle utilisateur porte un rôle, les routes admin sont protégées par `requireAdmin`, un script de promotion admin existe et les actions de suppression admin sont testées.\n\n## Critères d'acceptation\n\n- [x] Le rôle `USER` ou `ADMIN` existe sur le modèle utilisateur\n- [x] Les routes admin exigent un utilisateur authentifié et administrateur\n- [x] Le rôle est vérifié côté backend depuis MongoDB\n- [x] Un script permet de promouvoir un utilisateur existant\n\n## Preuves\n\n- `cinelink-backend/src/models/User.ts`\n- `cinelink-backend/src/middlewares/requireAdmin.ts`\n- `cinelink-backend/src/routes/admin.ts`\n- `cinelink-backend/src/controllers/adminController.ts`\n- `cinelink-backend/src/scripts/promoteAdmin.ts`\n- `cinelink-backend/tests/admin.test.ts`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "security",
+      "backend"
+    ],
+    "status": "Done",
+    "category": "Security",
+    "evidence": [
+      "cinelink-backend/src/models/User.ts",
+      "cinelink-backend/src/middlewares/requireAdmin.ts",
+      "cinelink-backend/src/routes/admin.ts",
+      "cinelink-backend/src/controllers/adminController.ts",
+      "cinelink-backend/src/scripts/promoteAdmin.ts",
+      "cinelink-backend/tests/admin.test.ts"
+    ]
+  },
+  {
+    "title": "[FEATURE] Intégrer les films TMDB et la recherche",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nPermettre la consultation des films populaires, le détail d'un film et la recherche de films via TMDB.\n\n## Réalisation\n\nDes routes backend appellent TMDB pour récupérer les films populaires, le détail d'un film et les résultats de recherche. Les contrôleurs gèrent les erreurs TMDB et les tests mockent les appels Axios.\n\n## Critères d'acceptation\n\n- [x] Une route expose les films populaires\n- [x] Une route expose le détail d'un film\n- [x] Une route expose la recherche de films\n- [x] Les appels TMDB sont testés avec mocks\n\n## Preuves\n\n- `cinelink-backend/src/controllers/moviesController.ts`\n- `cinelink-backend/src/controllers/searchController.ts`\n- `cinelink-backend/src/routes/movies.ts`\n- `cinelink-backend/src/routes/search.ts`\n- `cinelink-backend/tests/movies-extra.test.ts`\n- `cinelink-backend/tests/search.test.ts`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "feature",
+      "backend"
+    ],
+    "status": "Done",
+    "category": "Feature",
+    "evidence": [
+      "cinelink-backend/src/controllers/moviesController.ts",
+      "cinelink-backend/src/controllers/searchController.ts",
+      "cinelink-backend/src/routes/movies.ts",
+      "cinelink-backend/src/routes/search.ts",
+      "cinelink-backend/tests/movies-extra.test.ts",
+      "cinelink-backend/tests/search.test.ts"
+    ]
+  },
+  {
+    "title": "[FEATURE] Ajouter la gestion des favoris et des notes",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nPermettre aux utilisateurs authentifiés de gérer leurs films favoris et de les noter.\n\n## Réalisation\n\nLe backend fournit des routes pour lister, ajouter, supprimer et noter les favoris. Les favoris sont associés à l'utilisateur connecté et enrichis avec les données TMDB lorsque possible.\n\n## Critères d'acceptation\n\n- [x] Un modèle `Favorite` existe\n- [x] Les favoris sont associés à un utilisateur\n- [x] Les routes favoris sont protégées par authentification\n- [x] La notation d'un favori est prise en charge\n\n## Preuves\n\n- `cinelink-backend/src/models/Favorite.ts`\n- `cinelink-backend/src/controllers/favoriteController.ts`\n- `cinelink-backend/src/routes/favorites.ts`\n- `cinelink-backend/tests/favorites-follow-comments.test.ts`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "feature",
+      "backend"
+    ],
+    "status": "Done",
+    "category": "Feature",
+    "evidence": [
+      "cinelink-backend/src/models/Favorite.ts",
+      "cinelink-backend/src/controllers/favoriteController.ts",
+      "cinelink-backend/src/routes/favorites.ts",
+      "cinelink-backend/tests/favorites-follow-comments.test.ts"
+    ]
+  },
+  {
+    "title": "[FEATURE] Implémenter les commentaires de films",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nPermettre l'ajout, la lecture et la suppression contrôlée de commentaires associés à un film TMDB.\n\n## Réalisation\n\nUn modèle `Comment`, un contrôleur et des routes dédiées ont été ajoutés. Les commentaires sont associés à un utilisateur et à un identifiant TMDB, avec suppression par propriétaire ou administration selon les routes.\n\n## Critères d'acceptation\n\n- [x] Les commentaires sont stockés en base\n- [x] Les commentaires peuvent être lus par film\n- [x] Un utilisateur authentifié peut créer un commentaire\n- [x] La suppression respecte les règles de propriété ou d'administration\n\n## Preuves\n\n- `cinelink-backend/src/models/Comment.ts`\n- `cinelink-backend/src/controllers/commentController.ts`\n- `cinelink-backend/src/routes/comments.ts`\n- `cinelink-backend/tests/comments.test.ts`\n- `cinelink-backend/tests/favorites-follow-comments.test.ts`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "feature",
+      "backend"
+    ],
+    "status": "Done",
+    "category": "Feature",
+    "evidence": [
+      "cinelink-backend/src/models/Comment.ts",
+      "cinelink-backend/src/controllers/commentController.ts",
+      "cinelink-backend/src/routes/comments.ts",
+      "cinelink-backend/tests/comments.test.ts",
+      "cinelink-backend/tests/favorites-follow-comments.test.ts"
+    ]
+  },
+  {
+    "title": "[FEATURE] Ajouter les profils utilisateurs et les avatars",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nPermettre la consultation et la mise à jour des profils utilisateurs, avec avatar et données publiques.\n\n## Réalisation\n\nLes routes utilisateurs permettent de lister, rechercher et consulter des profils, ainsi que de mettre à jour le profil courant et son avatar. Le frontend propose un choix d'avatar, affiche les avatars sur les profils et utilise les images d'avatar configurées. Les favoris et commentaires publics d'un utilisateur sont également exposés.\n\n## Critères d'acceptation\n\n- [x] Les utilisateurs peuvent être listés ou recherchés\n- [x] Un profil public peut être consulté\n- [x] Le profil courant peut être mis à jour\n- [x] Les avatars sont validés, sélectionnables et affichés dans l'application\n\n## Preuves\n\n- `cinelink-backend/src/controllers/usersController.ts`\n- `cinelink-backend/src/routes/users.ts`\n- `cinelink-backend/src/models/User.ts`\n- `cinelink-backend/tests/users.test.ts`\n- `cinelink-frontend/src/lib/avatars.ts`\n- `cinelink-frontend/src/lib/avatar.ts`\n- `cinelink-frontend/src/features/auth/components/AvatarPicker.tsx`\n- `cinelink-frontend/src/features/users/pages/MePage.tsx`\n- `cinelink-frontend/src/features/users/pages/UserProfilePage.tsx`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "feature",
+      "backend"
+    ],
+    "status": "Done",
+    "category": "Feature",
+    "evidence": [
+      "cinelink-backend/src/controllers/usersController.ts",
+      "cinelink-backend/src/routes/users.ts",
+      "cinelink-backend/src/models/User.ts",
+      "cinelink-backend/tests/users.test.ts",
+      "cinelink-frontend/src/lib/avatars.ts",
+      "cinelink-frontend/src/lib/avatar.ts",
+      "cinelink-frontend/src/features/auth/components/AvatarPicker.tsx",
+      "cinelink-frontend/src/features/users/pages/MePage.tsx",
+      "cinelink-frontend/src/features/users/pages/UserProfilePage.tsx"
+    ]
+  },
+  {
+    "title": "[FEATURE] Implémenter le follow et unfollow",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nPermettre aux utilisateurs de suivre ou ne plus suivre d'autres utilisateurs.\n\n## Réalisation\n\nLe backend dispose d'un modèle `Follow`, de routes pour suivre, arrêter de suivre et lister les utilisateurs suivis. Les règles empêchent notamment le self-follow et les doublons.\n\n## Critères d'acceptation\n\n- [x] Une relation follower / following est modélisée\n- [x] Un utilisateur peut suivre un autre utilisateur\n- [x] Un utilisateur peut arrêter de suivre un autre utilisateur\n- [x] Les doublons et le self-follow sont contrôlés\n\n## Preuves\n\n- `cinelink-backend/src/models/Follow.ts`\n- `cinelink-backend/src/controllers/followController.ts`\n- `cinelink-backend/src/routes/follow.ts`\n- `cinelink-backend/tests/favorites-follow-comments.test.ts`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "feature",
+      "backend"
+    ],
+    "status": "Done",
+    "category": "Feature",
+    "evidence": [
+      "cinelink-backend/src/models/Follow.ts",
+      "cinelink-backend/src/controllers/followController.ts",
+      "cinelink-backend/src/routes/follow.ts",
+      "cinelink-backend/tests/favorites-follow-comments.test.ts"
+    ]
+  },
+  {
+    "title": "[FEATURE] Construire le feed social personnalisé",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nAfficher un feed d'activité basé sur les utilisateurs suivis et leurs actions sociales.\n\n## Réalisation\n\nLe backend enregistre des activités et expose un feed enrichi avec les données utilisateur et film. Le frontend possède une page dédiée au feed social.\n\n## Critères d'acceptation\n\n- [x] Les activités sociales sont modélisées\n- [x] Une route feed protégée est disponible\n- [x] Le feed tient compte des utilisateurs suivis\n- [x] Une page frontend affiche les activités\n\n## Preuves\n\n- `cinelink-backend/src/models/Activity.ts`\n- `cinelink-backend/src/controllers/feedController.ts`\n- `cinelink-backend/src/routes/feed.ts`\n- `cinelink-backend/tests/feed.test.ts`\n- `cinelink-frontend/src/features/feed/pages/FeedPage.tsx`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "feature",
+      "backend"
+    ],
+    "status": "Done",
+    "category": "Feature",
+    "evidence": [
+      "cinelink-backend/src/models/Activity.ts",
+      "cinelink-backend/src/controllers/feedController.ts",
+      "cinelink-backend/src/routes/feed.ts",
+      "cinelink-backend/tests/feed.test.ts",
+      "cinelink-frontend/src/features/feed/pages/FeedPage.tsx"
+    ]
+  },
+  {
+    "title": "[FRONTEND] Initialiser l'application React, Vite et TypeScript",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nMettre en place le socle frontend avec React, Vite, TypeScript, Tailwind CSS et une structure applicative maintenable.\n\n## Réalisation\n\nLe frontend est organisé avec un dossier `app`, des features, des composants UI, des services et une configuration Vite / TypeScript / Tailwind.\n\n## Critères d'acceptation\n\n- [x] React et Vite sont configurés\n- [x] TypeScript est configuré côté frontend\n- [x] Tailwind CSS est présent\n- [x] L'application est structurée par domaines fonctionnels\n\n## Preuves\n\n- `cinelink-frontend/package.json`\n- `cinelink-frontend/vite.config.ts`\n- `cinelink-frontend/tsconfig.app.json`\n- `cinelink-frontend/tailwind.config.ts`\n- `cinelink-frontend/src/app`\n- `cinelink-frontend/src/features`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "frontend"
+    ],
+    "status": "Done",
+    "category": "Frontend",
+    "evidence": [
+      "cinelink-frontend/package.json",
+      "cinelink-frontend/vite.config.ts",
+      "cinelink-frontend/tsconfig.app.json",
+      "cinelink-frontend/tailwind.config.ts",
+      "cinelink-frontend/src/app",
+      "cinelink-frontend/src/features"
+    ]
+  },
+  {
+    "title": "[FRONTEND] Configurer le routing et la session utilisateur",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nGérer la navigation frontend, les routes protégées, le stockage du token et l'intégration avec l'API backend.\n\n## Réalisation\n\nLe frontend utilise React Router, un composant `RequireAuth`, un stockage local de session et un client API Axios centralisé qui ajoute le token JWT aux requêtes.\n\n## Critères d'acceptation\n\n- [x] Les routes publiques et protégées sont définies\n- [x] Les routes applicatives sont protégées par token\n- [x] Le token JWT est stocké côté frontend\n- [x] Le client API ajoute l'en-tête d'autorisation\n\n## Preuves\n\n- `cinelink-frontend/src/app/router.tsx`\n- `cinelink-frontend/src/app/RequireAuth.tsx`\n- `cinelink-frontend/src/services/auth.storage.ts`\n- `cinelink-frontend/src/services/api.ts`\n- `cinelink-frontend/test/critical-pages.test.tsx`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "frontend",
+      "authentication"
+    ],
+    "status": "Done",
+    "category": "Frontend",
+    "evidence": [
+      "cinelink-frontend/src/app/router.tsx",
+      "cinelink-frontend/src/app/RequireAuth.tsx",
+      "cinelink-frontend/src/services/auth.storage.ts",
+      "cinelink-frontend/src/services/api.ts",
+      "cinelink-frontend/test/critical-pages.test.tsx"
+    ]
+  },
+  {
+    "title": "[FRONTEND] Créer les pages d'inscription et de connexion",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nFournir les écrans d'inscription et de connexion côté frontend, avec une expérience utilisateur utilisable.\n\n## Réalisation\n\nLes pages de login et register ont été créées, avec shell d'authentification, choix d'avatar, appels API et états de chargement documentés par les tests.\n\n## Critères d'acceptation\n\n- [x] La page de connexion existe\n- [x] La page d'inscription existe\n- [x] Le choix d'avatar est présent côté inscription\n- [x] Les états de chargement et erreurs sont testés\n\n## Preuves\n\n- `cinelink-frontend/src/features/auth/pages/LoginPage.tsx`\n- `cinelink-frontend/src/features/auth/pages/RegisterPage.tsx`\n- `cinelink-frontend/src/features/auth/components/AuthShell.tsx`\n- `cinelink-frontend/src/features/auth/components/AvatarPicker.tsx`\n- `cinelink-frontend/test/login-page.test.tsx`\n- `cinelink-frontend/test/register-page.test.tsx`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "frontend",
+      "authentication"
+    ],
+    "status": "Done",
+    "category": "Frontend",
+    "evidence": [
+      "cinelink-frontend/src/features/auth/pages/LoginPage.tsx",
+      "cinelink-frontend/src/features/auth/pages/RegisterPage.tsx",
+      "cinelink-frontend/src/features/auth/components/AuthShell.tsx",
+      "cinelink-frontend/src/features/auth/components/AvatarPicker.tsx",
+      "cinelink-frontend/test/login-page.test.tsx",
+      "cinelink-frontend/test/register-page.test.tsx"
+    ]
+  },
+  {
+    "title": "[FRONTEND] Développer les écrans films et recherche",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nPermettre aux utilisateurs de consulter les films populaires, rechercher un film et ouvrir le détail d'un film.\n\n## Réalisation\n\nLe frontend contient des pages films, détail et recherche, des composants de grille et de carte, ainsi que des services API dédiés aux données movies et search.\n\n## Critères d'acceptation\n\n- [x] Une page liste les films populaires\n- [x] Une page affiche le détail d'un film\n- [x] Une page permet la recherche de films\n- [x] Des composants UI dédiés affichent les films\n\n## Preuves\n\n- `cinelink-frontend/src/features/movies/pages/MoviesPage.tsx`\n- `cinelink-frontend/src/features/movies/pages/MovieDetailsPage.tsx`\n- `cinelink-frontend/src/features/search/pages/SearchPage.tsx`\n- `cinelink-frontend/src/features/movies/components/MovieGrid.tsx`\n- `cinelink-frontend/src/features/movies/components/MovieCard.tsx`\n- `cinelink-frontend/src/features/search/components/SearchSpotlight.tsx`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "frontend",
+      "feature"
+    ],
+    "status": "Done",
+    "category": "Frontend",
+    "evidence": [
+      "cinelink-frontend/src/features/movies/pages/MoviesPage.tsx",
+      "cinelink-frontend/src/features/movies/pages/MovieDetailsPage.tsx",
+      "cinelink-frontend/src/features/search/pages/SearchPage.tsx",
+      "cinelink-frontend/src/features/movies/components/MovieGrid.tsx",
+      "cinelink-frontend/src/features/movies/components/MovieCard.tsx",
+      "cinelink-frontend/src/features/search/components/SearchSpotlight.tsx"
+    ]
+  },
+  {
+    "title": "[FRONTEND] Ajouter les écrans sociaux et favoris",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nFournir les écrans frontend liés aux favoris, profils, follows et feed social.\n\n## Réalisation\n\nLe frontend contient des pages pour les favoris, le profil courant, les profils publics, la liste des utilisateurs suivis, le feed social et les actions follow / unfollow.\n\n## Critères d'acceptation\n\n- [x] Une page favoris existe\n- [x] Les profils utilisateur sont consultables\n- [x] Les relations follow sont manipulables côté UI\n- [x] Une page feed social existe\n\n## Preuves\n\n- `cinelink-frontend/src/features/favorites/pages/FavoritesPage.tsx`\n- `cinelink-frontend/src/features/users/pages/UserProfilePage.tsx`\n- `cinelink-frontend/src/features/users/pages/MePage.tsx`\n- `cinelink-frontend/src/features/follow/pages/FollowingPage.tsx`\n- `cinelink-frontend/src/features/follow/components/FollowButton.tsx`\n- `cinelink-frontend/src/features/feed/pages/FeedPage.tsx`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "frontend",
+      "feature"
+    ],
+    "status": "Done",
+    "category": "Frontend",
+    "evidence": [
+      "cinelink-frontend/src/features/favorites/pages/FavoritesPage.tsx",
+      "cinelink-frontend/src/features/users/pages/UserProfilePage.tsx",
+      "cinelink-frontend/src/features/users/pages/MePage.tsx",
+      "cinelink-frontend/src/features/follow/pages/FollowingPage.tsx",
+      "cinelink-frontend/src/features/follow/components/FollowButton.tsx",
+      "cinelink-frontend/src/features/feed/pages/FeedPage.tsx"
+    ]
+  },
+  {
+    "title": "[FRONTEND] Ajouter l'administration frontend",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nPermettre aux administrateurs d'accéder aux statistiques et actions de modération depuis l'interface frontend.\n\n## Réalisation\n\nUne page admin reliée au routeur, un lien de navigation conditionnel et un service API admin ont été ajoutés. La page affiche un écran de refus pour les utilisateurs non administrateurs et les endpoints appelés restent protégés côté backend par `authMiddleware` et `requireAdmin`. Les tests frontend couvrent l'affichage et certaines actions admin.\n\n## Critères d'acceptation\n\n- [x] Une page d'administration existe et est reliée au routeur\n- [x] Le lien de navigation admin est conditionné au rôle stocké côté frontend\n- [x] Le frontend appelle des endpoints admin protégés côté backend\n- [x] Les actions admin sont couvertes par des tests frontend\n- [x] La documentation précise que le backend reste la source d'autorité\n\n## Preuves\n\n- `cinelink-frontend/src/app/router.tsx`\n- `cinelink-frontend/src/app/AppShell.tsx`\n- `cinelink-frontend/src/features/admin/pages/AdminPage.tsx`\n- `cinelink-frontend/src/features/admin/admin.api.ts`\n- `cinelink-backend/src/routes/admin.ts`\n- `cinelink-backend/src/middlewares/requireAdmin.ts`\n- `cinelink-frontend/test/admin-page.test.tsx`\n- `cinelink-frontend/test/admin-comments.test.tsx`\n- `docs/FRONTEND.md`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "frontend",
+      "security"
+    ],
+    "status": "Done",
+    "category": "Frontend",
+    "evidence": [
+      "cinelink-frontend/src/app/router.tsx",
+      "cinelink-frontend/src/app/AppShell.tsx",
+      "cinelink-frontend/src/features/admin/pages/AdminPage.tsx",
+      "cinelink-frontend/src/features/admin/admin.api.ts",
+      "cinelink-backend/src/routes/admin.ts",
+      "cinelink-backend/src/middlewares/requireAdmin.ts",
+      "cinelink-frontend/test/admin-page.test.tsx",
+      "cinelink-frontend/test/admin-comments.test.tsx",
+      "docs/FRONTEND.md"
+    ]
+  },
+  {
+    "title": "[TEST] Mettre en place les tests automatisés du backend",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nGarantir les principaux comportements backend avec Jest, Supertest et MongoMemoryServer.\n\n## Réalisation\n\nLes tests backend couvrent notamment le healthcheck, l'authentification, les utilisateurs, la recherche, les films, les favoris, les follows, les commentaires, le feed et l'administration. Le setup crée une base MongoDB en mémoire, nettoie les collections et ferme les ressources en fin de campagne.\n\n## Critères d'acceptation\n\n- [x] Jest est configuré pour les tests TypeScript\n- [x] Supertest teste les routes Express\n- [x] MongoMemoryServer isole les tests base de données\n- [x] Les suites backend principales sont présentes\n- [x] La configuration `ts-jest` dépréciée a été corrigée\n\n## Preuves\n\n- `cinelink-backend/jest.config.ts`\n- `cinelink-backend/tests/setup.ts`\n- `cinelink-backend/tests/app.test.ts`\n- `cinelink-backend/tests/auth.test.ts`\n- `cinelink-backend/tests/users.test.ts`\n- `cinelink-backend/tests/admin.test.ts`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "testing",
+      "backend"
+    ],
+    "status": "Done",
+    "category": "Testing",
+    "evidence": [
+      "cinelink-backend/jest.config.ts",
+      "cinelink-backend/tests/setup.ts",
+      "cinelink-backend/tests/app.test.ts",
+      "cinelink-backend/tests/auth.test.ts",
+      "cinelink-backend/tests/users.test.ts",
+      "cinelink-backend/tests/admin.test.ts"
+    ]
+  },
+  {
+    "title": "[TEST] Mettre en place les tests automatisés du frontend",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nTester les composants, pages et parcours frontend critiques avec Vitest, React Testing Library et jsdom.\n\n## Réalisation\n\nLa configuration de test frontend est présente et couvre notamment les pages critiques, les formulaires auth, le stockage JWT, les composants UI, l'administration et les interactions utilisateur. La commande `npm test` lance `vitest run`.\n\n## Critères d'acceptation\n\n- [x] Une commande de test frontend existe dans `package.json`\n- [x] Vitest est configuré\n- [x] jsdom est utilisé pour les tests frontend\n- [x] React Testing Library est présent\n- [x] Les parcours critiques frontend sont couverts par des tests exécutables\n\n## Preuves\n\n- `cinelink-frontend/package.json`\n- `cinelink-frontend/vite.config.ts`\n- `cinelink-frontend/test/setup.ts`\n- `cinelink-frontend/test/critical-pages.test.tsx`\n- `cinelink-frontend/test/login-page.test.tsx`\n- `cinelink-frontend/test/register-page.test.tsx`\n- `cinelink-frontend/test/admin-page.test.tsx`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "testing",
+      "frontend"
+    ],
+    "status": "Done",
+    "category": "Testing",
+    "evidence": [
+      "cinelink-frontend/package.json",
+      "cinelink-frontend/vite.config.ts",
+      "cinelink-frontend/test/setup.ts",
+      "cinelink-frontend/test/critical-pages.test.tsx",
+      "cinelink-frontend/test/login-page.test.tsx",
+      "cinelink-frontend/test/register-page.test.tsx",
+      "cinelink-frontend/test/admin-page.test.tsx"
+    ]
+  },
+  {
+    "title": "[CI] Configurer l'intégration continue GitHub Actions",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nAutomatiser les contrôles backend et frontend sur GitHub Actions.\n\n## Réalisation\n\nDes workflows distincts installent les dépendances, exécutent les tests, le lint frontend, le typecheck backend des tests et les builds. Le backend CI démarre un service MongoDB pour les tests.\n\n## Critères d'acceptation\n\n- [x] Un workflow CI backend existe\n- [x] Un workflow CI frontend existe\n- [x] Les tests sont exécutés automatiquement\n- [x] Les builds sont exécutés automatiquement\n- [x] La CI backend dispose d'un service MongoDB\n\n## Preuves\n\n- `.github/workflows/backend-ci.yml`\n- `.github/workflows/frontend-ci.yml`\n- `cinelink-backend/package.json`\n- `cinelink-frontend/package.json`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "ci-cd",
+      "testing"
+    ],
+    "status": "Done",
+    "category": "CI",
+    "evidence": [
+      ".github/workflows/backend-ci.yml",
+      ".github/workflows/frontend-ci.yml",
+      "cinelink-backend/package.json",
+      "cinelink-frontend/package.json"
+    ]
+  },
+  {
+    "title": "[QUALITY] Configurer l'analyse SonarCloud",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nAjouter une analyse qualité continue sur les sources backend et frontend.\n\n## Réalisation\n\nLe projet contient une configuration SonarCloud, un workflow dédié et les chemins LCOV attendus pour les couvertures backend et frontend.\n\n## Critères d'acceptation\n\n- [x] Le projet SonarCloud est configuré dans le dépôt\n- [x] Les sources backend et frontend sont déclarées\n- [x] Les rapports LCOV sont déclarés\n- [x] Un workflow GitHub Actions lance l'analyse SonarCloud\n\n## Preuves\n\n- `sonar-project.properties`\n- `.github/workflows/sonarcloud.yml`\n- `docs/QUALITY.md`\n- `README.md`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "quality",
+      "ci-cd"
+    ],
+    "status": "Done",
+    "category": "Quality",
+    "evidence": [
+      "sonar-project.properties",
+      ".github/workflows/sonarcloud.yml",
+      "docs/QUALITY.md",
+      "README.md"
+    ]
+  },
+  {
+    "title": "[DEVOPS] Conteneuriser le backend avec Docker",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nPermettre l'exécution reproductible du backend et d'un MongoDB local pour le développement.\n\n## Réalisation\n\nLe backend dispose d'un Dockerfile multi-stage et d'un `docker-compose.yml` qui lance l'API et un conteneur MongoDB local avec volume persistant.\n\n## Critères d'acceptation\n\n- [x] Un Dockerfile backend existe\n- [x] L'image compile le projet TypeScript\n- [x] Docker Compose lance l'API backend\n- [x] Docker Compose fournit un MongoDB local\n\n## Preuves\n\n- `cinelink-backend/Dockerfile`\n- `cinelink-backend/docker-compose.yml`\n- `docs/BACKEND.md`\n- `README.md`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "devops",
+      "backend"
+    ],
+    "status": "Done",
+    "category": "DevOps",
+    "evidence": [
+      "cinelink-backend/Dockerfile",
+      "cinelink-backend/docker-compose.yml",
+      "docs/BACKEND.md",
+      "README.md"
+    ]
+  },
+  {
+    "title": "[DEPLOY] Préparer la configuration de production backend",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nPréparer le backend pour une exécution en production avec Render, MongoDB Atlas et variables d'environnement.\n\n## Réalisation\n\nLe serveur utilise `process.env.PORT` avec repli local, la documentation liste les variables Render attendues, `MONGO_URI` cible MongoDB Atlas en production et la commande `npm start` exécute la version compilée.\n\n## Critères d'acceptation\n\n- [x] Le port est configurable par variable d'environnement\n- [x] Les variables de production backend sont documentées\n- [x] MongoDB Atlas est identifié comme base de production via `MONGO_URI`\n- [x] La commande de démarrage production est documentée\n\n## Preuves\n\n- `cinelink-backend/src/server.ts`\n- `cinelink-backend/docs/deployment.md`\n- `cinelink-backend/package.json`\n- `docs/runbook.md`\n- `README.md`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "deployment",
+      "backend"
+    ],
+    "status": "Done",
+    "category": "Deployment",
+    "evidence": [
+      "cinelink-backend/src/server.ts",
+      "cinelink-backend/docs/deployment.md",
+      "cinelink-backend/package.json",
+      "README.md"
+    ]
+  },
+  {
+    "title": "[DEPLOY] Configurer le déploiement frontend Vercel",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nPréparer le frontend React pour un hébergement Vercel compatible avec le routing SPA.\n\n## Réalisation\n\nLe frontend dispose d'un fichier `vercel.json` qui redirige les routes vers `index.html`. La documentation précise que `VITE_API_URL` doit pointer vers l'API Render en production.\n\n## Critères d'acceptation\n\n- [x] La configuration Vercel existe\n- [x] Le fallback SPA est défini\n- [x] Le build frontend est disponible via script npm\n- [x] La variable `VITE_API_URL` est documentée\n\n## Preuves\n\n- `cinelink-frontend/vercel.json`\n- `cinelink-frontend/package.json`\n- `docs/FRONTEND.md`\n- `README.md`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "deployment",
+      "frontend"
+    ],
+    "status": "Done",
+    "category": "Deployment",
+    "evidence": [
+      "cinelink-frontend/vercel.json",
+      "cinelink-frontend/package.json",
+      "docs/FRONTEND.md",
+      "README.md"
+    ]
+  },
+  {
+    "title": "[DEVOPS] Automatiser la surveillance des dépendances",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nMettre en place une surveillance automatique des dépendances npm et GitHub Actions.\n\n## Réalisation\n\nDependabot est configuré pour le backend, le frontend et les GitHub Actions avec une fréquence hebdomadaire et des limites de pull requests ouvertes.\n\n## Critères d'acceptation\n\n- [x] Dependabot surveille les dépendances backend\n- [x] Dependabot surveille les dépendances frontend\n- [x] Dependabot surveille les GitHub Actions\n- [x] Les mises à jour sont labellisées `dependencies`\n\n## Preuves\n\n- `.github/dependabot.yml`\n- `cinelink-backend/package-lock.json`\n- `cinelink-frontend/package-lock.json`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "devops",
+      "security"
+    ],
+    "status": "Done",
+    "category": "DevOps",
+    "evidence": [
+      ".github/dependabot.yml",
+      "cinelink-backend/package-lock.json",
+      "cinelink-frontend/package-lock.json"
+    ]
+  },
+  {
+    "title": "[DOCS] Documenter l'architecture et les procédures techniques",
+    "body": "## Contexte\n\nIssue historique créée a posteriori afin de reconstituer la traçabilité du projet à partir de l'historique Git et des livrables existants.\n\n## Objectif\n\nFournir une documentation exploitable pour comprendre l'architecture, les endpoints, la qualité, la sécurité et les recettes du projet CineLink.\n\n## Réalisation\n\nLe dépôt contient un README principal, des documentations backend, frontend, qualité, sécurité et recette. Les documents MCO récents, comme le runbook, le changelog, les incidents et l'audit de production, ne sont pas inclus dans ce ticket afin d'éviter les doublons avec les issues MCO.\n\n## Critères d'acceptation\n\n- [x] Le README principal décrit le projet et son architecture\n- [x] Les endpoints backend sont documentés\n- [x] Les procédures de qualité et CI/CD sont documentées\n- [x] La sécurité est documentée\n- [x] Les éléments de recette sont présents\n\n## Preuves\n\n- `README.md`\n- `docs/BACKEND.md`\n- `docs/FRONTEND.md`\n- `docs/QUALITY.md`\n- `docs/SECURITY.md`\n- `docs/RECETTE.md`\n\n## Statut\n\nTravail réalisé avant la création du GitHub Project. Ticket ajouté directement dans la colonne `Done`.",
+    "labels": [
+      "historical",
+      "documentation"
+    ],
+    "status": "Done",
+    "category": "Documentation",
+    "evidence": [
+      "README.md",
+      "docs/BACKEND.md",
+      "docs/FRONTEND.md",
+      "docs/QUALITY.md",
+      "docs/SECURITY.md",
+      "docs/RECETTE.md"
+    ]
+  }
+]
