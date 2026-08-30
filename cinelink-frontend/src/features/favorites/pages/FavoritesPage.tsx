@@ -114,13 +114,13 @@ export default function FavoritesPage() {
                                     <p className="text-sm text-text-secondary line-clamp-3">{f.overview}</p>
                                 )}
 
-                                <div className="pt-2 flex items-center justify-between">
-                                    <div className="flex items-center gap-1">
+                                <div className="pt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                    <div className="flex flex-wrap items-center gap-1">
                                         {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
                                             <button
                                                 key={n}
                                                 onClick={() => rate(f._id, n)}
-                                                className="p-1 rounded-lg hover:bg-white/10 transition"
+                                                className="shrink-0 p-1 rounded-lg hover:bg-white/10 transition"
                                                 aria-label={`Noter ${n}`}
                                             >
                                                 <Star

@@ -1,0 +1,83 @@
+name: Maintenance task
+description: Request technical maintenance work with implementation and risk controls.
+title: "[Maintenance]: "
+labels:
+  - maintenance
+body:
+  - type: textarea
+    id: maintenance_context
+    attributes:
+      label: Maintenance context
+      description: Provide context and background for this maintenance task.
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected_software_perimeter
+    attributes:
+      label: Affected software perimeter
+      description: Specify systems, modules, services, or environments impacted.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reason_for_maintenance
+    attributes:
+      label: Reason for the maintenance
+      description: Explain the trigger for this maintenance activity.
+      placeholder: Security update, dependency obsolescence, technical debt reduction
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_impact
+    attributes:
+      label: Expected impact
+      description: Describe expected functional, operational, and user impacts.
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation_plan
+    attributes:
+      label: Implementation plan
+      description: Outline the planned implementation steps and sequencing.
+    validations:
+      required: true
+
+  - type: textarea
+    id: validation_and_rollback_plan
+    attributes:
+      label: Validation and rollback plan
+      description: Define verification steps and rollback strategy if issues occur.
+    validations:
+      required: true
+
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks
+      description: List major risks and mitigation measures.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria
+      description: Define criteria confirming the maintenance has been successfully completed.
+      placeholder: |
+        - [ ] Target systems are stable after maintenance
+        - [ ] Validation checks are successful
+        - [ ] No critical regressions detected
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence_to_retain
+    attributes:
+      label: Evidence to retain
+      description: Specify evidence to retain for traceability and audit purposes.
+      placeholder: Change logs, test results, monitoring snapshots, rollback records
+    validations:
+      required: true
