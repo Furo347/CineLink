@@ -1,0 +1,127 @@
+name: Bug report
+description: Report a defect with clear, reproducible details.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: input
+    id: concise_summary
+    attributes:
+      label: Concise summary
+      description: Provide a short and precise description of the issue.
+      placeholder: A short sentence describing the bug
+    validations:
+      required: true
+
+  - type: dropdown
+    id: affected_component
+    attributes:
+      label: Affected component
+      description: Select the primary component impacted by the bug.
+      options:
+        - Frontend
+        - Backend
+        - API
+        - Database
+        - Authentication
+        - CI/CD
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Describe the execution environment where the issue occurs.
+      placeholder: OS, browser/app version, device, runtime version, deployment target
+    validations:
+      required: true
+
+  - type: textarea
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: List prerequisites or setup conditions needed before reproducing the issue.
+      placeholder: Required account, permissions, data state, feature flags
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction_steps
+    attributes:
+      label: Exact reproduction steps
+      description: Provide a numbered sequence of steps to reproduce the issue.
+      placeholder: |
+        1. Go to ...
+        2. Click on ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected behavior
+      description: Describe what should happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: Actual behavior
+      description: Describe what currently happens.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs_or_screenshots
+    attributes:
+      label: Logs or screenshots
+      description: Attach relevant logs, stack traces, screenshots, or recordings.
+      placeholder: Paste logs or drag and drop images/files here
+    validations:
+      required: false
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: Assess the impact of this issue.
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+
+  - type: textarea
+    id: possible_analysis
+    attributes:
+      label: Possible analysis
+      description: Share your preliminary analysis of the root cause, if available.
+    validations:
+      required: false
+
+  - type: textarea
+    id: proposed_correction
+    attributes:
+      label: Proposed correction
+      description: Suggest a potential fix or mitigation strategy.
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria
+      description: Define clear criteria that confirm the issue is resolved.
+      placeholder: |
+        - [ ] Reproduction steps no longer trigger the issue
+        - [ ] Related regression checks pass
+        - [ ] User impact is fully resolved
+    validations:
+      required: true

@@ -25,6 +25,7 @@ const WAIT_MESSAGE = "Le premier chargement peut prendre quelques instants lorsq
 export default function LoginPage() {
     const nav = useNavigate();
     const [showWaitMessage, setShowWaitMessage] = useState(false);
+    const [loginError, setLoginError] = useState("");
     const form = useForm<FormValues>({
         resolver: zodResolver(schema),
         defaultValues: { email: "", password: "" },
@@ -32,6 +33,8 @@ export default function LoginPage() {
 
     const onSubmit = async (values: FormValues) => {
         setShowWaitMessage(false);
+        setLoginError("");
+        authStorage.clear();
         try {
             const { token, user } = await authApi.login(values);
             authStorage.set(token);
@@ -39,7 +42,7 @@ export default function LoginPage() {
             toast.success("Connexion réussie.");
             nav("/app/movies");
         } catch {
-            toast.error("Identifiants invalides.");
+            setLoginError("Identifiants invalides.");
         } finally {
             setShowWaitMessage(false);
         }
@@ -74,19 +77,21 @@ export default function LoginPage() {
                     {errors.password && <p className="text-sm text-primary">{errors.password.message}</p>}
                 </div>
 
+                <p className="min-h-5 text-sm text-primary" role="alert" aria-live="polite">
+                    <span hidden={!loginError}>{loginError || "Identifiants invalides."}</span>
+                </p>
+
                 <Button className="w-full" disabled={isSubmitting} aria-busy={isSubmitting}>
-                    {isSubmitting ? (
-                        <>
-                            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-                            Connexion en cours…
-                        </>
-                    ) : (
-                        "Se connecter"
-                    )}
+                    <Loader2
+                        className={`h-4 w-4 ${isSubmitting ? "animate-spin opacity-100" : "opacity-0"}`}
+                        aria-hidden="true"
+                    />
+                    <span hidden={isSubmitting}>Se connecter</span>
+                    <span hidden={!isSubmitting}>Connexion en cours…</span>
                 </Button>
 
                 <p className="min-h-5 text-center text-xs text-text-secondary" aria-live="polite">
-                    {showWaitMessage ? WAIT_MESSAGE : ""}
+                    <span hidden={!showWaitMessage}>{WAIT_MESSAGE}</span>
                 </p>
 
                 <p className="text-sm text-text-secondary text-center">
