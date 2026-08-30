@@ -1,0 +1,86 @@
+name: Feature request
+description: Propose a new capability or enhancement with measurable value.
+title: "[Feature]: "
+labels:
+  - feature
+body:
+  - type: textarea
+    id: problem_or_user_need
+    attributes:
+      label: Problem or user need
+      description: Describe the problem to solve or the user need to address.
+      placeholder: Current limitation and who is affected
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed solution
+      description: Describe the proposed feature or enhancement.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_value
+    attributes:
+      label: Expected business or user value
+      description: Explain the value this feature is expected to generate.
+      placeholder: Better retention, reduced support tickets, faster workflows
+    validations:
+      required: true
+
+  - type: textarea
+    id: functional_scope
+    attributes:
+      label: Functional scope
+      description: Define what is in scope and out of scope.
+      placeholder: Key behaviors, boundaries, exclusions
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical_considerations
+    attributes:
+      label: Technical considerations
+      description: Highlight architecture, dependencies, data, performance, and security considerations.
+    validations:
+      required: true
+
+  - type: textarea
+    id: measurable_success_indicators
+    attributes:
+      label: Measurable success indicators
+      description: Define quantitative or observable indicators of success.
+      placeholder: Adoption rate, conversion change, response time target
+    validations:
+      required: true
+
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks
+      description: Identify potential risks, constraints, or trade-offs.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria
+      description: Define testable criteria that must be met for acceptance.
+      placeholder: |
+        - [ ] Functional requirements are met
+        - [ ] Non-functional requirements are met
+        - [ ] Stakeholders validate expected outcomes
+    validations:
+      required: true
+
+  - type: textarea
+    id: definition_of_done
+    attributes:
+      label: Definition of done
+      description: List the completion conditions required to consider the feature done.
+      placeholder: Code merged, tests updated, documentation delivered, monitoring in place
+    validations:
+      required: true
